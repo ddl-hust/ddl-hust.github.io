@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DDL&#39;s homepage</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2020-05-19T05:20:06.945Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>ddl</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>2020年5月19日</title>
+    <link href="http://yoursite.com/2020/05/19/2020%E5%B9%B45%E6%9C%8819%E6%97%A5/"/>
+    <id>http://yoursite.com/2020/05/19/2020%E5%B9%B45%E6%9C%8819%E6%97%A5/</id>
+    <published>2020-05-19T05:13:10.667Z</published>
+    <updated>2020-05-19T05:20:06.945Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="我的第一篇博客"><a href="#我的第一篇博客" class="headerlink" title="我的第一篇博客"></a>我的第一篇博客</h1><p>hi 我是XXX</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;我的第一篇博客&quot;&gt;&lt;a href=&quot;#我的第一篇博客&quot; class=&quot;headerlink&quot; title=&quot;我的第一篇博客&quot;&gt;&lt;/a&gt;我的第一篇博客&lt;/h1&gt;&lt;p&gt;hi 我是XXX&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+</feed>
