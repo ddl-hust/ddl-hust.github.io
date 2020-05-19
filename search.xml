@@ -15,6 +15,7 @@
     <title>IO复用</title>
     <url>/2020/05/19/IO%E5%A4%8D%E7%94%A8/</url>
     <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。<br>于是就有了IO多路转接，</p>
+<a id="more"></a>
 <p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
 <h3 id="select"><a href="#select" class="headerlink" title="select()"></a>select()</h3><h4 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h4><p><code>int select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);</code></p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//@parm1 :nfds 表示所监听的文件描述符最大值+1</span></span><br><span class="line"><span class="comment">// @parm2,3,4 所监听文件描述符事件(可读/可写/异常)</span></span><br><span class="line"><span class="comment">//@parm5:设置超时限制</span></span><br><span class="line"><span class="comment">//返回值&gt;0：监听的所有集合，总满足条件的总数;==0 超时；&lt;0 错误</span></span><br></pre></td></tr></table></figure>
