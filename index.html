@@ -297,7 +297,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/19/IO%E5%A4%8D%E7%94%A8/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/19/%E6%B7%BB%E5%8A%A0%E6%A0%87%E7%AD%BE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ddl">
@@ -316,7 +316,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/05/19/IO%E5%A4%8D%E7%94%A8/" itemprop="url">IO复用</a></h1>
+                <a class="post-title-link" href="/2020/05/19/%E6%B7%BB%E5%8A%A0%E6%A0%87%E7%AD%BE/" itemprop="url">添加标签</a></h1>
         
 
         <div class="post-meta">
@@ -328,7 +328,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-19T14:22:30+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-19T14:41:52+08:00">
                 2020-05-19
               </time>
             
@@ -368,39 +368,126 @@
       
         
           
-            <!-- TOC -->
+            
+          
+        
+      
+    </div>
+    
+    
+    
 
-<ul>
-<li><a href="#select">select()</a><ul>
-<li><a href="#%e5%87%bd%e6%95%b0%e5%8e%9f%e5%9e%8b">函数原型</a></li>
-<li><a href="#%e9%85%8d%e5%a5%97%e6%93%8d%e4%bd%9c">配套操作</a></li>
-<li><a href="#%e5%86%8d%e7%9c%8b%e6%96%87%e4%bb%b6%e6%8f%8f%e8%bf%b0%e9%9b%86">再看文件描述集</a></li>
-<li><a href="#select-%e8%af%a6%e7%bb%86%e8%bf%87%e7%a8%8b">select 详细过程：</a></li>
-<li><a href="#select%e7%bc%ba%e7%82%b9">select()缺点</a></li>
-<li><a href="#select%e5%a4%84%e7%90%86%e5%ae%8c%e6%95%b4%e4%bb%a3%e7%a0%81">select处理完整代码</a></li>
-</ul>
-</li>
-<li><a href="#poll">poll</a></li>
-<li><a href="#poll%e4%b8%8eselect%e5%af%b9%e6%af%94">poll与select对比</a><ul>
-<li><a href="#%e5%8a%9f%e8%83%bd%e5%ae%9e%e7%8e%b0%e4%b8%8a">功能实现上</a></li>
-<li><a href="#%e9%80%9f%e5%ba%a6">速度</a></li>
-<li><a href="#%e5%8f%af%e7%a7%bb%e6%a4%8d%e6%80%a7">可移植性</a></li>
-</ul>
-</li>
-<li><a href="#epoll">epoll</a><ul>
-<li><a href="#ltet">LT&amp;&amp;ET</a></li>
-</ul>
-</li>
-<li><a href="#%e4%b8%89%e7%a7%8dio%e5%a4%8d%e7%94%a8%e5%ba%94%e7%94%a8%e5%9c%ba%e6%99%af">三种IO复用应用场景</a><ul>
-<li><a href="#select-1">select</a></li>
-<li><a href="#poll-1">poll</a></li>
-<li><a href="#epoll-1">epoll</a></li>
-</ul>
-</li>
-</ul>
-<!-- /TOC -->
+    
 
-<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。<br>于是就有了IO多路转接，</p>
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/19/IO%E5%A4%8D%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ddl">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DDL's homepage">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/19/IO%E5%A4%8D%E7%94%A8/" itemprop="url">IO复用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-19T14:41:52+08:00">
+                2020-05-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。<br>于是就有了IO多路转接，</p>
 <p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
 <h3 id="select"><a href="#select" class="headerlink" title="select()"></a>select()</h3><h4 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h4><p><code>int select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);</code></p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//@parm1 :nfds 表示所监听的文件描述符最大值+1</span></span><br><span class="line"><span class="comment">// @parm2,3,4 所监听文件描述符事件(可读/可写/异常)</span></span><br><span class="line"><span class="comment">//@parm5:设置超时限制</span></span><br><span class="line"><span class="comment">//返回值&gt;0：监听的所有集合，总满足条件的总数;==0 超时；&lt;0 错误</span></span><br></pre></td></tr></table></figure>
@@ -667,7 +754,7 @@
               
                 <a href="/archives/%20%7C%7C%20archive">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -675,6 +762,15 @@
 
             
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
             
 
           </nav>
