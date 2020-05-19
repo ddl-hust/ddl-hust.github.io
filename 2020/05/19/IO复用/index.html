@@ -83,11 +83,15 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="DDL&#39;s homepage">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="select() 函数原型 配套操作 再看文件描述集 select 详细过程： select()缺点 select处理完整代码   poll poll与select对比 功能实现上 速度 可移植性   epoll LT&amp;&amp;ET   三种IO复用应用场景 select poll epoll      以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IO复用">
+<meta property="og:url" content="http://yoursite.com/2020/05/19/IO%E5%A4%8D%E7%94%A8/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
+<meta property="og:description" content="select() 函数原型 配套操作 再看文件描述集 select 详细过程： select()缺点 select处理完整代码   poll poll与select对比 功能实现上 速度 可移植性   epoll LT&amp;&amp;ET   三种IO复用应用场景 select poll epoll      以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-19T06:22:30.452Z">
+<meta property="article:modified_time" content="2020-05-19T06:22:30.472Z">
 <meta property="article:author" content="ddl">
 <meta name="twitter:card" content="summary">
 
@@ -119,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/05/19/IO复用/"/>
 
 
 
 
 
-  <title>DDL's homepage</title>
+  <title>IO复用 | DDL's homepage</title>
   
 
 
@@ -144,8 +148,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -282,9 +285,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -314,9 +317,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/05/19/IO%E5%A4%8D%E7%94%A8/" itemprop="url">IO复用</a></h1>
+          <h1 class="post-title" itemprop="name headline">IO复用</h1>
         
 
         <div class="post-meta">
@@ -348,6 +349,11 @@
           
 
           
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 阅读数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
 
           
 
@@ -366,9 +372,7 @@
       
 
       
-        
-          
-            <!-- TOC -->
+        <!-- TOC -->
 
 <ul>
 <li><a href="#select">select()</a><ul>
@@ -467,8 +471,6 @@
 <li>监控的描述符状态变化多，而且都是非常短暂的，因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。</li>
 </ul>
 
-          
-        
       
     </div>
     
@@ -485,132 +487,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/19/2020%E5%B9%B45%E6%9C%8819%E6%97%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/05/19/2020%E5%B9%B45%E6%9C%8819%E6%97%A5/" itemprop="url">2020年5月19日</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-19T13:13:10+08:00">
-                2020-05-19
-              </time>
+              <a href="/2020/05/19/2020%E5%B9%B45%E6%9C%8819%E6%97%A5/" rel="next" title="2020年5月19日">
+                <i class="fa fa-chevron-left"></i> 2020年5月19日
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h1 id="我的第一篇博客"><a href="#我的第一篇博客" class="headerlink" title="我的第一篇博客"></a>我的第一篇博客</h1><p>hi 我是XXX</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -620,10 +518,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -631,6 +530,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -651,8 +554,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -717,6 +629,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#select"><span class="nav-number">1.</span> <span class="nav-text">select()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#函数原型"><span class="nav-number">1.1.</span> <span class="nav-text">函数原型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配套操作"><span class="nav-number">1.2.</span> <span class="nav-text">配套操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#再看文件描述集"><span class="nav-number">1.3.</span> <span class="nav-text">再看文件描述集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#select-详细过程："><span class="nav-number">1.4.</span> <span class="nav-text">select 详细过程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#select-缺点"><span class="nav-number">1.5.</span> <span class="nav-text">select()缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#select处理完整代码"><span class="nav-number">1.6.</span> <span class="nav-text">select处理完整代码</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poll"><span class="nav-number">2.</span> <span class="nav-text">poll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poll与select对比"><span class="nav-number">3.</span> <span class="nav-text">poll与select对比</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#功能实现上"><span class="nav-number">3.1.</span> <span class="nav-text">功能实现上</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#速度"><span class="nav-number">3.2.</span> <span class="nav-text">速度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可移植性"><span class="nav-number">3.3.</span> <span class="nav-text">可移植性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll"><span class="nav-number">4.</span> <span class="nav-text">epoll</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#LT-amp-amp-ET"><span class="nav-number">4.1.</span> <span class="nav-text">LT&amp;&amp;ET</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三种IO复用应用场景"><span class="nav-number">5.</span> <span class="nav-text">三种IO复用应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#select-1"><span class="nav-number">5.1.</span> <span class="nav-text">select</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#poll-1"><span class="nav-number">5.2.</span> <span class="nav-text">poll</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#epoll-1"><span class="nav-number">5.3.</span> <span class="nav-text">epoll</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -877,6 +805,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
