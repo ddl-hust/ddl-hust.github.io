@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>添加标签</title>
-    <url>/2020/05/19/%E6%B7%BB%E5%8A%A0%E6%A0%87%E7%AD%BE/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>2020年5月19日</title>
     <url>/2020/05/19/2020%E5%B9%B45%E6%9C%8819%E6%97%A5/</url>
     <content><![CDATA[<h1 id="我的第一篇博客"><a href="#我的第一篇博客" class="headerlink" title="我的第一篇博客"></a>我的第一篇博客</h1><p>hi 我是XXX</p>
@@ -14,7 +9,7 @@
   <entry>
     <title>IO复用</title>
     <url>/2020/05/19/IO%E5%A4%8D%E7%94%A8/</url>
-    <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。<br>于是就有了IO多路转接，</p>
+    <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
 <a id="more"></a>
 <p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
 <h3 id="select"><a href="#select" class="headerlink" title="select()"></a>select()</h3><h4 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h4><p><code>int select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);</code></p>
@@ -82,6 +77,9 @@
 <li>监控的描述符状态变化多，而且都是非常短暂的，因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。</li>
 </ul>
 ]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
       <tags>
         <tag>Linux</tag>
       </tags>
@@ -89,9 +87,9 @@
   <entry>
     <title>stringstream 处理字符串</title>
     <url>/2020/05/20/stringstream-%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
-    <content><![CDATA[<h3 id="stringstream-处理字符串"><a href="#stringstream-处理字符串" class="headerlink" title="stringstream 处理字符串"></a>stringstream 处理字符串</h3><p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
 <p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
 <a id="more"></a>
 
 <h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
@@ -114,5 +112,24 @@
       <tags>
         <tag>C++</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <url>/2020/05/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/</url>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>读书</category>
+      </categories>
   </entry>
 </search>
