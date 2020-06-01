@@ -7,6 +7,196 @@
 ]]></content>
   </entry>
   <entry>
+    <title>最长上升子序列</title>
+    <url>/2020/05/27/%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97/</url>
+    <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
+<a id="more"></a>
+
+<h3 id="解法1-动态规划"><a href="#解法1-动态规划" class="headerlink" title="解法1.动态规划"></a>解法1.动态规划</h3><p><strong>时间复杂度O($n^2$)</strong></p>
+<p><strong>思路</strong></p>
+<p><code>f[i]</code>表示以ith字符结尾的最长上升子序列长度</p>
+<p>这道题难在状态转移的求解<br><code>f[i]=max(f[i-1],f[i-2],......)+1</code>  前提条件是 f[j]&lt;f[i] 才能构成上升子序列</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;f(n);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            f[i]=<span class="number">1</span>; <span class="comment">//表示只含当前字符的序列长度</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(nums[j]&lt;nums[i]) f[i]=<span class="built_in">max</span>(f[i],f[j]+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:f) res=<span class="built_in">max</span>(res,c);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解法2-直接构造最长上升子序列"><a href="#解法2-直接构造最长上升子序列" class="headerlink" title="解法2  直接构造最长上升子序列"></a>解法2  直接构造最长上升子序列</h3><p>时间复杂度 $O(nlogn)$</p>
+<p>开一个辅助数组 <code>f[i]</code> 表示最长上升子序列长度为<code>i+1</code> 中最小结尾值</p>
+<p>eg. [1,2,4] ,[1,2,3]两个子序列长度都为3， 但是第一个子序列结尾值3&lt;4 ，于是 f[2]=3;</p>
+<p>这里面的思路背景是 在dp解法中  f[i]=max(f[j]+1)  nums[j] 越小 那么对nums[i]限制就越小</p>
+<p>两个最长上升子序列长度相同 那么子序列尾部值越小 越有可能构建成更加长的子序列</p>
+<p>由于构造的辅助数组一定单调上升，因此可以通过二分查找来做。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.size(),len=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; f;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            <span class="keyword">int</span> p=lower_bound(f.begin(),f.end(),c)-f.begin(); </span><br><span class="line">            <span class="keyword">if</span>(p==f.size()) f.push_back(c);<span class="comment">//查找元素比辅助数组最大值还要大</span></span><br><span class="line">            <span class="keyword">else</span> f[p]=c;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f.size();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>最好是通过一个 toy example 来给给面试官讲这个思路。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>stringstream 处理字符串</title>
+    <url>/2020/05/20/stringstream-%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+<a id="more"></a>
+
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>系统调用open(),read(),write()具体发了什么?</title>
+    <url>/2020/06/01/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8open-read-write-%E5%85%B7%E4%BD%93%E5%8F%91%E4%BA%86%E4%BB%80%E4%B9%88/</url>
+    <content><![CDATA[<p>在面试腾讯的时候，被问到了文件IO细节，这里做一个小结。主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来了。</p>
+<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
+<a id="more"></a>
+
+
+
+<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
+<p><strong>文件系统</strong></p>
+<p>文件系统可以简单的理解为数据结构+方法</p>
+<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
+<p>方法:open(),read()等调用如何与数据结构打交道</p>
+<p>一个简单的文件系统一般有这几部分</p>
+<ul>
+<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
+<li>data block 存储实际问文件内容</li>
+<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
+<li>data bitmap 记录data blocks 分配情况</li>
+<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
+</ul>
+<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
+<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
+<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
+<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
+<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
+<p>下面的图直观的说明这一过程</p>
+<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <url>/2020/05/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/</url>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>读书</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>排序二叉树转化为双向链表</title>
+    <url>/2020/05/24/%E6%8E%92%E5%BA%8F%E4%BA%8C%E5%8F%89%E6%A0%91%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/</url>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
+<a id="more"></a>
+
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>overload,override,overwrite小结</title>
+    <url>/2020/05/23/overload-override-overwrite%E5%B0%8F%E7%BB%93/</url>
+    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
+<a id="more"></a>
+
+<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
+<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
+<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
+<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
+<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>什么函数不能够被重载?</p>
+<ol>
+<li>仅仅返回类型不同，不能够做函数重载</li>
+<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
+<li>函数参数差别仅在于有无顶层const或volatile</li>
+</ol>
+<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
+<p>这里就引入什么是top-level const/volatile</p>
+<blockquote>
+<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
+</blockquote>
+<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
+<p>override 可能存在二义性</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
+<ul>
+<li><p>范围不同(作用域不同)</p>
+</li>
+<li><p>函数签名完全一样(名字，常数列表)</p>
+</li>
+<li><p>基类函数必须带有virtual 关键字</p>
+<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
+</li>
+</ul>
+<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
+<ul>
+<li>派生类函数参数与基类不同，不管基类有无virtual</li>
+<li>派生类函数参数与基类相同，但是基类没有virtual</li>
+</ul>
+<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
+<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>IO复用</title>
     <url>/2020/05/19/IO%E5%A4%8D%E7%94%A8/</url>
     <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
@@ -82,196 +272,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/2020/05/20/stringstream-%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
-<a id="more"></a>
-
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/2020/05/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/</url>
-    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
-<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
-<blockquote>
-<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
-</blockquote>
-<blockquote>
-<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
-</blockquote>
-<blockquote>
-<p>如果不感到自身充满力量，就不可能有爱情。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>读书</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>overload,override,overwrite小结</title>
-    <url>/2020/05/23/overload-override-overwrite%E5%B0%8F%E7%BB%93/</url>
-    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
-<a id="more"></a>
-
-<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
-<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
-<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
-<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
-<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>什么函数不能够被重载?</p>
-<ol>
-<li>仅仅返回类型不同，不能够做函数重载</li>
-<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
-<li>函数参数差别仅在于有无顶层const或volatile</li>
-</ol>
-<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
-<p>这里就引入什么是top-level const/volatile</p>
-<blockquote>
-<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
-</blockquote>
-<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
-<p>override 可能存在二义性</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
-<ul>
-<li><p>范围不同(作用域不同)</p>
-</li>
-<li><p>函数签名完全一样(名字，常数列表)</p>
-</li>
-<li><p>基类函数必须带有virtual 关键字</p>
-<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
-</li>
-</ul>
-<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
-<ul>
-<li>派生类函数参数与基类不同，不管基类有无virtual</li>
-<li>派生类函数参数与基类相同，但是基类没有virtual</li>
-</ul>
-<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
-<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
-<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>排序二叉树转化为双向链表</title>
-    <url>/2020/05/24/%E6%8E%92%E5%BA%8F%E4%BA%8C%E5%8F%89%E6%A0%91%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
-<a id="more"></a>
-
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>最长上升子序列</title>
-    <url>/2020/05/27/%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97/</url>
-    <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
-<a id="more"></a>
-
-<h3 id="解法1-动态规划"><a href="#解法1-动态规划" class="headerlink" title="解法1.动态规划"></a>解法1.动态规划</h3><p><strong>时间复杂度O($n^2$)</strong></p>
-<p><strong>思路</strong></p>
-<p><code>f[i]</code>表示以ith字符结尾的最长上升子序列长度</p>
-<p>这道题难在状态转移的求解<br><code>f[i]=max(f[i-1],f[i-2],......)+1</code>  前提条件是 f[j]&lt;f[i] 才能构成上升子序列</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;f(n);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            f[i]=<span class="number">1</span>; <span class="comment">//表示只含当前字符的序列长度</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(nums[j]&lt;nums[i]) f[i]=<span class="built_in">max</span>(f[i],f[j]+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:f) res=<span class="built_in">max</span>(res,c);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解法2-直接构造最长上升子序列"><a href="#解法2-直接构造最长上升子序列" class="headerlink" title="解法2  直接构造最长上升子序列"></a>解法2  直接构造最长上升子序列</h3><p>时间复杂度 $O(nlogn)$</p>
-<p>开一个辅助数组 <code>f[i]</code> 表示最长上升子序列长度为<code>i+1</code> 中最小结尾值</p>
-<p>eg. [1,2,4] ,[1,2,3]两个子序列长度都为3， 但是第一个子序列结尾值3&lt;4 ，于是 f[2]=3;</p>
-<p>这里面的思路背景是 在dp解法中  f[i]=max(f[j]+1)  nums[j] 越小 那么对nums[i]限制就越小</p>
-<p>两个最长上升子序列长度相同 那么子序列尾部值越小 越有可能构建成更加长的子序列</p>
-<p>由于构造的辅助数组一定单调上升，因此可以通过二分查找来做。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.size(),len=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; f;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            <span class="keyword">int</span> p=lower_bound(f.begin(),f.end(),c)-f.begin(); </span><br><span class="line">            <span class="keyword">if</span>(p==f.size()) f.push_back(c);<span class="comment">//查找元素比辅助数组最大值还要大</span></span><br><span class="line">            <span class="keyword">else</span> f[p]=c;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f.size();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>最好是通过一个 toy example 来给给面试官讲这个思路。</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>系统调用open(),read(),write()具体发了什么?</title>
-    <url>/2020/06/01/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8open-read-write-%E5%85%B7%E4%BD%93%E5%8F%91%E4%BA%86%E4%BB%80%E4%B9%88/</url>
-    <content><![CDATA[<p>在面试腾讯的时候，被问到了文件IO细节，这里做一个小结。主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来了。</p>
-<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
-<a id="more"></a>
-
-
-
-<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
-<p><strong>文件系统</strong></p>
-<p>文件系统可以简单的理解为数据结构+方法</p>
-<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
-<p>方法:open(),read()等调用如何与数据结构打交道</p>
-<p>一个简单的文件系统一般有这几部分</p>
-<ul>
-<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
-<li>data block 存储实际问文件内容</li>
-<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
-<li>data bitmap 记录data blocks 分配情况</li>
-<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
-</ul>
-<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
-<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
-<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
-<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
-<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
-<p>下面的图直观的说明这一过程</p>
-<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>操作系统</tag>
       </tags>
   </entry>
 </search>
