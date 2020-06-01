@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-06-01T06:27:52.157Z</updated>
+  <updated>2020-06-01T11:48:38.124Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="http://yoursite.com/2020/06/01/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8open-read-write-%E5%85%B7%E4%BD%93%E5%8F%91%E4%BA%86%E4%BB%80%E4%B9%88/"/>
     <id>http://yoursite.com/2020/06/01/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8open-read-write-%E5%85%B7%E4%BD%93%E5%8F%91%E4%BA%86%E4%BB%80%E4%B9%88/</id>
     <published>2020-06-01T04:12:25.000Z</published>
-    <updated>2020-06-01T06:27:52.157Z</updated>
+    <updated>2020-06-01T11:48:38.124Z</updated>
     
-    <content type="html"><![CDATA[<p>在面试腾讯的时候，被问到了文件IO细节，这里做一个小结。主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来了。</p><a id="more"></a><p>在讲具体的系统调用之前，先要简单了解几个概念</p><p><strong>文件系统</strong></p><p>文件系统可以简单的理解为数据结构+方法</p><p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p><p>方法:open(),read()等调用如何与数据结构打交道</p><p>一个简单的文件系统一般有这几部分</p><ul><li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li><li>data block 存储实际问文件内容</li><li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li><li>data bitmap 记录data blocks 分配情况</li><li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li></ul><h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p><p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p><p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p><p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p><p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p><p>下面的图直观的说明这一过程</p><img src="../images/1.png" style="zoom:80%;" />]]></content>
+    <content type="html"><![CDATA[<p>在面试腾讯的时候，被问到了文件IO细节，这里做一个小结。主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来了。</p><a id="more"></a><p>在讲具体的系统调用之前，先要简单了解几个概念</p><p><strong>文件系统</strong></p><p>文件系统可以简单的理解为数据结构+方法</p><p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p><p>方法:open(),read()等调用如何与数据结构打交道</p><p>一个简单的文件系统一般有这几部分</p><ul><li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li><li>data block 存储实际问文件内容</li><li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li><li>data bitmap 记录data blocks 分配情况</li><li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li></ul><h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p><p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p><p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p><p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p><p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p><p>下面的图直观的说明这一过程</p><p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>]]></content>
     
     <summary type="html">
     
