@@ -262,8 +262,7 @@
 <p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
 <p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
 <p>下面的图直观的说明这一过程</p>
-<img src="../image/image-20200601135318693.png" alt="image-20200601135318693" style="zoom:80%;" />
-
+<p><img src="../images/image-20200601135318693.png" alt=""></p>
 ]]></content>
       <categories>
         <category>技术</category>
