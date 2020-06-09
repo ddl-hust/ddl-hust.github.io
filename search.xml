@@ -288,4 +288,25 @@
         <category>C++</category>
       </categories>
   </entry>
+  <entry>
+    <title>数据流算法题目小结</title>
+    <url>/2020/06/09/%E6%95%B0%E6%8D%AE%E6%B5%81%E7%AE%97%E6%B3%95%E9%A2%98%E7%9B%AE%E5%B0%8F%E7%BB%93/</url>
+    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
+<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
+<a id="more"></a>
+
+<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
+<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
+<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
+<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
+<p>当新元素val加入如何维护堆?</p>
+<ol>
+<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
+<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
+</ol>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
 </search>
