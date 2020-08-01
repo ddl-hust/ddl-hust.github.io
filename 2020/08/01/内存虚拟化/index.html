@@ -26,18 +26,18 @@
 <meta property="og:url" content="http://yoursite.com/2020/08/01/%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
 <meta property="og:description" content="《OSTEP》 内存虚拟化部分小结">
-<meta property="og:image" content="http://yoursite.com/2020/08/image/a1UDsg.png">
-<meta property="og:image" content="http://yoursite.com/2020/08/image/a1Uwz8.png">
-<meta property="og:image" content="http://yoursite.com/2020/08/image/a1UBQS.png">
-<meta property="og:image" content="http://yoursite.com/2020/08/image/a1UzOe.png">
-<meta property="og:image" content="http://yoursite.com/2020/08/image/a1UxyD.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/31/a1UDsg.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/31/a1Uwz8.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/31/a1UBQS.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/31/a1UzOe.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/07/31/a1UxyD.png">
 <meta property="article:published_time" content="2020-08-01T01:55:22.000Z">
-<meta property="article:modified_time" content="2020-08-01T01:57:01.842Z">
+<meta property="article:modified_time" content="2020-08-01T02:01:56.947Z">
 <meta property="article:author" content="ddl">
 <meta property="article:tag" content="操作系统">
 <meta property="article:tag" content="OSTEP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/08/image/a1UDsg.png">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/07/31/a1UDsg.png">
 
 <link rel="canonical" href="http://yoursite.com/2020/08/01/%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/">
 
@@ -241,7 +241,7 @@
         <p>《OSTEP》 内存虚拟化部分小结</p>
 <a id="more"></a>
 
-<h3 id=""><a href="#" class="headerlink" title=""></a></h3><h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
+<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
 <p>为什么引入了虚拟地址?</p>
 </blockquote>
 <ul>
@@ -288,11 +288,11 @@
 <p><strong>缺点</strong></p>
 <p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
 <h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
-<p><img src="../../image/a1UDsg.png" alt="a1UDsg.png"></p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
 <p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
 <p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
 <p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
-<p><img src="../../image/a1Uwz8.png" alt="a1Uwz8.png"></p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
 <p>分段机制下地址转化伪码</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
 
@@ -321,13 +321,13 @@
 <p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
 </blockquote>
 <p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
-<p><img src="../../image/a1UBQS.png" alt="a1UBQS.png"></p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
 <h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
 <p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
 </blockquote>
 <h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
 <p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
-<p>​                                               <img src="../../image/a1UzOe.png" alt="a1UzOe.png"></p>
+<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
 <p>实现页机制有几个问题</p>
 <blockquote>
 <p>1.页表存在哪里?</p>
@@ -340,7 +340,7 @@
 <li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
 <li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
 </ul>
-<p><img src="../../image/a1UxyD.png" alt="a1UxyD.png"></p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
 <p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
 
@@ -445,7 +445,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#"><span class="nav-number">1.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#地址空间"><span class="nav-number">1.1.</span> <span class="nav-text">地址空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单地址翻译"><span class="nav-number">1.2.</span> <span class="nav-text">简单地址翻译</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#硬件支持地址翻译"><span class="nav-number">1.2.1.</span> <span class="nav-text">硬件支持地址翻译</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#小结"><span class="nav-number">1.2.2.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分段机制"><span class="nav-number">1.3.</span> <span class="nav-text">分段机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#小结-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空闲物理内存管理"><span class="nav-number">1.4.</span> <span class="nav-text">空闲物理内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#伙伴系统"><span class="nav-number">1.4.1.</span> <span class="nav-text">伙伴系统</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分页机制"><span class="nav-number">1.5.</span> <span class="nav-text">分页机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#小结-2"><span class="nav-number">1.5.1.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#地址空间"><span class="nav-number">1.</span> <span class="nav-text">地址空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单地址翻译"><span class="nav-number">2.</span> <span class="nav-text">简单地址翻译</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#硬件支持地址翻译"><span class="nav-number">2.1.</span> <span class="nav-text">硬件支持地址翻译</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#小结"><span class="nav-number">2.2.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分段机制"><span class="nav-number">3.</span> <span class="nav-text">分段机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#小结-1"><span class="nav-number">3.1.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空闲物理内存管理"><span class="nav-number">4.</span> <span class="nav-text">空闲物理内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#伙伴系统"><span class="nav-number">4.1.</span> <span class="nav-text">伙伴系统</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分页机制"><span class="nav-number">5.</span> <span class="nav-text">分页机制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#小结-2"><span class="nav-number">5.1.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
