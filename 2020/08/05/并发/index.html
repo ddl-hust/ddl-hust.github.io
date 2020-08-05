@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="《OSTEP》线程并发小结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发">
+<meta property="og:url" content="http://yoursite.com/2020/08/05/%E5%B9%B6%E5%8F%91/index.html">
+<meta property="og:site_name" content="DDL&#39;s homepage">
+<meta property="og:description" content="《OSTEP》线程并发小结">
+<meta property="article:published_time" content="2020-08-05T13:17:21.000Z">
+<meta property="article:modified_time" content="2020-08-05T13:18:53.177Z">
+<meta property="article:author" content="ddl">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/08/05/%E5%B9%B6%E5%8F%91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>并发 | DDL's homepage</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="DDL's homepage" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DDL's homepage</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/05/%E5%B9%B6%E5%8F%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ddl">
+      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DDL's homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          并发
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-05 21:17:21" itemprop="dateCreated datePublished" datetime="2020-08-05T21:17:21+08:00">2020-08-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>《OSTEP》线程并发小结</p>
+<a id="more"></a>
+
+<h4 id="理解多线程为什么会有竞争状态问题"><a href="#理解多线程为什么会有竞争状态问题" class="headerlink" title="理解多线程为什么会有竞争状态问题"></a>理解多线程为什么会有竞争状态问题</h4><p>多线程对共享资源访问，可能不是原子操作，导致不确定结果。</p>
+<h4 id="条件量使用"><a href="#条件量使用" class="headerlink" title="条件量使用"></a>条件量使用</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_wait</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond, <span class="keyword">pthread_mutex_t</span> *mutex)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_signal</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>wait 操作传入参数除了条件变量还有锁，这样做的目的是为了把进程休眠同时释放锁。否则其他线程就没法获得锁，唤醒休眠线程。</p>
+<p>下面代码做线程之间同步存在什么问题</p>
+<ol>
+<li>spin 忙等待浪费cpu</li>
+</ol>
+<p>但是这个能够实现线程之间同步操作么?</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//全局标志变量</span></span><br><span class="line"><span class="keyword">int</span> flag=<span class="number">0</span>;</span><br><span class="line"><span class="comment">//thread A</span></span><br><span class="line"><span class="keyword">while</span>(flag==<span class="number">0</span>); <span class="comment">//spin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//thread B singal</span></span><br><span class="line">flag=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="锁的设计"><a href="#锁的设计" class="headerlink" title="锁的设计"></a>锁的设计</h4><p>在设计锁之前，有几个指标能够来衡量设计方案的好坏。</p>
+<ol>
+<li><p>能否实现互斥</p>
+</li>
+<li><p>公平性(防止饥饿）</p>
+</li>
+<li><p>实现锁带来的额外负担</p>
+</li>
+</ol>
+<p>最朴素的是通过关闭中断来实现互斥，初衷是之所以静态条件下结果不稳定，就是线程执行过程中被打断，调度。自然我们通过关闭中断，就能够实现对资源的互斥访问，但是这个在实际情况不太可能实现。</p>
+<h5 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h5><p>通过硬件支持的同步原语来实现互斥，首先我们看一个没有原子操作的互斥锁方案</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span> <span class="keyword">int</span> flag; &#125; <span class="keyword">lock_t</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 0 -&gt; lock is available, 1 -&gt; held</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (mutex-&gt;flag == <span class="number">1</span>);<span class="comment">// TEST the flag spin-wait (do nothing)</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">1</span>;<span class="comment">// now SET it!</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">    mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述方案的问题在于检查flag和设置flag不是原子操作，可能存在一种情况线程A执行完while()然后被调度，导致两个线程都获得锁。</p>
+<p>改进方案如下</p>
+<p>CAS（compare and swap）一种原子操作，</p>
+<p>bool CAS(V, A,B) // 检查现有V 是否与A== 如果== 将V设置为B 同时返回true</p>
+<p><strong>自旋锁伪码实现</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CAS（compare <span class="keyword">and</span> swap）一种原子操作，</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">CAS</span><span class="params">(V, A,B)</span> <span class="comment">// 检查现有V 是否与A== 如果==  将V设置为B 同时返回true</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line">自旋锁伪码实现</span><br><span class="line"><span class="keyword">bool</span> flag =<span class="literal">false</span>; <span class="comment">//锁为true 表示被占用</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>));</span><br><span class="line"><span class="comment">//do-something</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//release lock</span></span><br><span class="line">flag=<span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自旋锁虽然能够实现对临界区的互斥访问，但是带来了性能问题，spin通过忙等待形式去获取锁，导致了CPU资源的浪费。</p>
+<p>比如场景：单核cpu运行多个线程</p>
+<p>线程1获得lock进入临界区,然后被打断，线程2被调度，一直自旋等待锁被释放。</p>
+<h5 id="yield"><a href="#yield" class="headerlink" title="yield"></a>yield</h5><p>针对上述问题，一种解决方法是通过主动放弃CPU，当线程发现锁被占用，主动将自己的状态由RUNNING-&gt;READY， 避免了自旋等待占用CPU。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>)) <span class="built_in">yield</span>();</span><br></pre></td></tr></table></figure>
+
+<p>yield 带来的问题</p>
+<ol>
+<li><p>大量的上下文切换操作</p>
+</li>
+<li><p>仍然没有解决饥饿问题</p>
+</li>
+</ol>
+<h5 id="sleep队列"><a href="#sleep队列" class="headerlink" title="sleep队列"></a>sleep队列</h5><p>无论自旋，还是yield， 调度器的选择很多，导致了资源的浪费。如果线程发现自己暂时不能获取锁，将自己休眠，就带来了效率提升。</p>
+<p>下面实现代码还是很巧妙的</p>
+<ul>
+<li>guard作用: 用于自旋等待变量</li>
+</ul>
+<p>相比于自旋等待整个临界区，gaurd的获取和释放间隔很短；eg.多核CPU, 当一个进程A拿到gaurd,然后另一个进程B被调度，此时B就拿不到gaurd，自旋等待，但是由于A临界区代码很短，很快A就会释放gaurd.</p>
+<ul>
+<li>unlock()中， 唤醒线程之后，没有将flag设置为0</li>
+</ul>
+<p>这么做的原因是线程被唤醒之后，可以看作是从park（）返回，此时线程没有拿到guard,锁没有释放就直接传递给了被唤醒线程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> flag;</span><br><span class="line">	<span class="keyword">int</span> guard;</span><br><span class="line">	<span class="keyword">queue_t</span> *q;</span><br><span class="line">	&#125; <span class="keyword">lock_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock_init</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	m-&gt;flag= <span class="number">0</span>;</span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">	queue_init(m-&gt;q);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (m-&gt;flag == <span class="number">0</span>) &#123;</span><br><span class="line">		m-&gt;flag = <span class="number">1</span>; <span class="comment">// lock is acquired</span></span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">		queue_add(m-&gt;q, gettid());</span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">		park(); <span class="comment">//线程休眠</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (queue_empty(m-&gt;q))</span><br><span class="line">		m-&gt;flag = <span class="number">0</span>; <span class="comment">// let go of lock; no one wants it</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		unpark(queue_remove(m-&gt;q)); <span class="comment">// hold lock (for next thread!)</span></span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="基于锁的数据结构"><a href="#基于锁的数据结构" class="headerlink" title="基于锁的数据结构"></a>基于锁的数据结构</h4><h5 id="并发链表设计"><a href="#并发链表设计" class="headerlink" title="并发链表设计"></a>并发链表设计</h5><p>关键在于数据结构的定义，节点如何定义(int, node*) ，链表怎么定义(锁+链表头)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// basic node structure</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> key;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; <span class="keyword">node_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// basic list structure (one used per list)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">list_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">node_t</span> * head;</span><br><span class="line">    <span class="keyword">pthread_mutex_t</span> lock;</span><br><span class="line">&#125; <span class="keyword">list_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">List_Init</span><span class="params">(<span class="keyword">list_t</span> * L)</span> </span>&#123;</span><br><span class="line">    L-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">    pthread_mutex_init(&amp;L-&gt;lock, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Insert</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">node_t</span> * <span class="keyword">new</span> = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">node_t</span>)); <span class="comment">//先分配节点，如果失败</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">new</span> == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        perror(<span class="string">"malloc"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>; <span class="comment">// fail</span></span><br><span class="line">    &#125;</span><br><span class="line">	pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">new</span>-&gt;key = key;</span><br><span class="line">    <span class="keyword">new</span>-&gt;next = L-&gt;head;</span><br><span class="line">    L-&gt;head = <span class="keyword">new</span>;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// success</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Lookup</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">node_t</span> * curr = L-&gt;head;</span><br><span class="line">    <span class="keyword">int</span> rv=<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">while</span> (curr) &#123;</span><br><span class="line">        <span class="keyword">if</span> (curr-&gt;key == key) &#123;</span><br><span class="line">            rv=<span class="number">0</span>;<span class="comment">//返回0 表示找到</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> rv;  <span class="comment">// faulure</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="并发哈希表"><a href="#并发哈希表" class="headerlink" title="并发哈希表"></a>并发哈希表</h5><p>有了这个基础，设计并发哈希表就很简单，通过拉链方法来避免哈希冲突</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUCKETS (101)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">hash_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">list_t</span> lists[BUCKETS];</span><br><span class="line">&#125; <span class="keyword">hash_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Hash_Init</span><span class="params">(<span class="keyword">hash_t</span> * H)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BUCKETS; i++) &#123;</span><br><span class="line">        List_Init(&amp;H-&gt;lists[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Insert</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Insert(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Lookup</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Lookup(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><blockquote>
+<p>什么是信号量?</p>
+<p>信号量和条件变量区别</p>
+</blockquote>
+<p>信号量用来做lock,也能够用来做条件变量，关键在于信号量的初始化。</p>
+<p>信号量=变量+操作</p>
+<p><strong>信号量操作伪码</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_wait</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	decrement the value of semaphore s by one</span><br><span class="line">	wait <span class="keyword">if</span> value of semaphore s is negative</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_post</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	increment the value of semaphore s by one</span><br><span class="line">	<span class="keyword">if</span> there are one <span class="keyword">or</span> more threads waiting, wake one</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>信号量做二元锁</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> m;</span><br><span class="line">sem_init(&amp;m, <span class="number">0</span>, <span class="number">1</span>); <span class="comment">// initialize semaphore to 1</span></span><br><span class="line">sem_wait(&amp;m);</span><br><span class="line"><span class="comment">// critical section here</span></span><br><span class="line">sem_post(&amp;m);</span><br></pre></td></tr></table></figure>
+
+<p><strong>信号量做条件变量</strong></p>
+<p>下面代码目的是同步父子进程，父进程等待子进程结束。</p>
+<p>注意条件变量被初始化为0，分两个情况考虑，如果子进程被创建之后先执行，sem_post将信号量+1,父进程执行sem_wait正常返回；如果父进程先执行，sem-1小于0，父进程被挂起，子进程执行，将sem+1，然后唤醒父进程。 所以符合我们预定执行顺序。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> s</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">child</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"child\n"</span>);</span><br><span class="line">sem_post(&amp;s); <span class="comment">// signal here: child is done</span></span><br><span class="line"><span class="keyword">return</span> <span class="literal">NULL</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">	sem_init(&amp;s, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">// </span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: begin\n"</span>);</span><br><span class="line">	<span class="keyword">pthread_t</span> c;</span><br><span class="line">	Pthread_create(c, <span class="literal">NULL</span>, child, <span class="literal">NULL</span>);</span><br><span class="line">	sem_wait(&amp;s); <span class="comment">// wait here for child</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: end\n"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h5><p>允许多个读，一个写，第一个读者自动获得写锁，最后一个读锁释放，写锁也释放。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span>&#123;</span></span><br><span class="line">    <span class="keyword">sem_t</span> lock;</span><br><span class="line">    <span class="keyword">sem_t</span> <span class="built_in">write</span>;</span><br><span class="line">    <span class="keyword">int</span> readers;</span><br><span class="line">&#125; rw_lock;</span><br><span class="line"></span><br><span class="line">init(rw_lock*m)&#123;</span><br><span class="line">    sem_init(m-&gt;lock,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    sem_init(m-&gt;<span class="built_in">write</span>,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    m-&gt;readers=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers++;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">1</span>) sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_release_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers--;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">0</span>) sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 技术</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/08/01/%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="prev" title="内存虚拟化">
+      <i class="fa fa-chevron-left"></i> 内存虚拟化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/05/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%94%B6%E5%8C%85%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/" rel="next" title="网络协议栈收包过程小结">
+      网络协议栈收包过程小结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81MDQwNS8yNjg5NQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#理解多线程为什么会有竞争状态问题"><span class="nav-number">1.</span> <span class="nav-text">理解多线程为什么会有竞争状态问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#条件量使用"><span class="nav-number">2.</span> <span class="nav-text">条件量使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#锁的设计"><span class="nav-number">3.</span> <span class="nav-text">锁的设计</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#原子操作"><span class="nav-number">3.1.</span> <span class="nav-text">原子操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#yield"><span class="nav-number">3.2.</span> <span class="nav-text">yield</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#sleep队列"><span class="nav-number">3.3.</span> <span class="nav-text">sleep队列</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基于锁的数据结构"><span class="nav-number">4.</span> <span class="nav-text">基于锁的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#并发链表设计"><span class="nav-number">4.1.</span> <span class="nav-text">并发链表设计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#并发哈希表"><span class="nav-number">4.2.</span> <span class="nav-text">并发哈希表</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#信号量"><span class="nav-number">5.</span> <span class="nav-text">信号量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#读写锁"><span class="nav-number">5.1.</span> <span class="nav-text">读写锁</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ddl</p>
+  <div class="site-description" itemprop="description">世间之奇伟瑰怪常在于险远，而人之所罕至也</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ddl-hust" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ddl-hust" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ddl196526@163.com" title="E-Mail → mailto:ddl196526@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.douban.com/people/119649216" title="douban → https:&#x2F;&#x2F;www.douban.com&#x2F;people&#x2F;119649216" rel="noopener" target="_blank"><i class="fa fa-egg fa-fw"></i>douban</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ddl</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>
