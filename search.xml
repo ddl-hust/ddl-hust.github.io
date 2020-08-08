@@ -671,7 +671,7 @@
 <li><code>bind()</code>绑定套接字</li>
 <li><code>listen()</code>监听套接字</li>
 </ul>
-<p><a href="">这里详细参考我的这篇文章</a>   socket从创建到连接过程小结</p>
+<p>这里详细参考我的这篇文章   <a href="https://hustddl.com/2020/08/08/socket%E4%BB%8E%E5%88%9B%E5%BB%BA%E5%88%B0%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/#more" target="_blank" rel="noopener">socket从创建到连接过程小结</a></p>
 <h4 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h4><p>TCP 栈简要过程：</p>
 <ol>
 <li><p>tcp_sendmsg 函数会首先检查已经建立的 TCP connection 的状态，然后获取该连接的 MSS，开始 segement 发送流程。</p>
