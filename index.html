@@ -190,6 +190,99 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/23/%E2%80%9Ctcp40ms%E5%BB%B6%E8%BF%9F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E2%80%9D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ddl">
+      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DDL's homepage">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/08/23/%E2%80%9Ctcp40ms%E5%BB%B6%E8%BF%9F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E2%80%9D/" class="post-title-link" itemprop="url">tcp40ms延迟问题分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-23 14:53:50" itemprop="dateCreated datePublished" datetime="2020-08-23T14:53:50+08:00">2020-08-23</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <a id="more"></a>
+
+<p><strong>背景</strong></p>
+<p>tcp抓包发现服务端回复ack存在40ms左右延迟</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p>
+<p><strong>问题排查过程</strong></p>
+<p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p>
+<p>先介绍下重要的概念</p>
+<p><strong>delay ack</strong></p>
+<p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p>
+<p><strong>nagle算法</strong></p>
+<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
+<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
+<p>（1）如果包长度达到MSS，则允许发送；</p>
+<p>（2）如果该包含有FIN，则允许发送；</p>
+<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
+<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
+<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
+<p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p>
+<ol>
+<li>当客户端请求数据小于mss大小</li>
+</ol>
+<p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p>
+<ol start="2">
+<li>客户端请求数据大于mss</li>
+</ol>
+<p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p>
+<p><strong>解决方案</strong></p>
+<p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p>
+<ol>
+<li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p>
+</li>
+<li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/08/socket%E4%BB%8E%E5%88%9B%E5%BB%BA%E5%88%B0%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -834,80 +927,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/27/%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/05/27/%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97/" class="post-title-link" itemprop="url">最长上升子序列</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-05-27 00:00:48" itemprop="dateCreated datePublished" datetime="2020-05-27T00:00:48+08:00">2020-05-27</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/05/27/%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -977,7 +996,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">17</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
