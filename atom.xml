@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-08-24T09:44:00.509Z</updated>
+  <updated>2020-12-09T08:22:14.066Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <link href="http://yoursite.com/2020/11/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/"/>
+    <id>http://yoursite.com/2020/11/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/</id>
+    <published>2020-11-20T13:07:07.000Z</published>
+    <updated>2020-12-09T08:22:14.066Z</updated>
+    
+    <content type="html"><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p><p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p><blockquote><p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p></blockquote><blockquote><p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p></blockquote><blockquote><p>如果不感到自身充满力量，就不可能有爱情。</p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;《树上的男爵》是一本小册子，200来页，很快就能读完。&lt;/p&gt;
+&lt;p&gt;书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;他懂得这个道理：集体会使人更强大，能突出每个人的长
+      
+    
+    </summary>
+    
+    
+      <category term="读书" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>套接字选项小结</title>
@@ -69,7 +96,7 @@
     <link href="http://yoursite.com/2020/08/23/%E2%80%9Ctcp40ms%E5%BB%B6%E8%BF%9F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E2%80%9D/"/>
     <id>http://yoursite.com/2020/08/23/%E2%80%9Ctcp40ms%E5%BB%B6%E8%BF%9F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E2%80%9D/</id>
     <published>2020-08-23T06:53:50.000Z</published>
-    <updated>2020-08-23T06:54:46.959Z</updated>
+    <updated>2020-08-23T07:07:00.659Z</updated>
     
     <content type="html"><![CDATA[<a id="more"></a><p><strong>背景</strong></p><p>tcp抓包发现服务端回复ack存在40ms左右延迟</p><p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p><p><strong>问题排查过程</strong></p><p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p><p>先介绍下重要的概念</p><p><strong>delay ack</strong></p><p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p><p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p><p><strong>nagle算法</strong></p><p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p><p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p><p>（1）如果包长度达到MSS，则允许发送；</p><p>（2）如果该包含有FIN，则允许发送；</p><p>（3）设置了TCP_NODELAY选项，则允许发送；</p><p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p><p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p><p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p><ol><li>当客户端请求数据小于mss大小</li></ol><p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p><ol start="2"><li>客户端请求数据大于mss</li></ol><p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p><p><strong>解决方案</strong></p><p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p><ol><li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p></li><li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p></li></ol>]]></content>
     
@@ -164,7 +191,7 @@
     <link href="http://yoursite.com/2020/08/01/%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/"/>
     <id>http://yoursite.com/2020/08/01/%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/</id>
     <published>2020-08-01T01:55:22.000Z</published>
-    <updated>2020-08-01T02:01:56.947Z</updated>
+    <updated>2020-08-03T15:49:09.669Z</updated>
     
     <content type="html"><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p><a id="more"></a><h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote><p>为什么引入了虚拟地址?</p></blockquote><ul><li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li><li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li></ul><p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p><blockquote><p>设计一套虚拟内存需要满足满足那些目标?</p></blockquote><ol><li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p></li><li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p></li><li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p><p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p></li></ol><h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p><p> 一开始作者假设</p><ol><li>虚拟地址空间连续存放到物理内存</li><li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li></ol><h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p><p>地址转化： <code>physical address = virtual address + base</code></p><p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p><p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p><p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p><ul><li>进程创建时，分配与地址空间对应的物理内存</li><li>当进程结束时，回收内存</li><li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li></ul><h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p><p><strong>优点</strong></p><ul><li><p>在硬件支持下起来很高效快速</p></li><li><p>提供了进程间的保护隔离</p></li></ul><p><strong>缺点</strong></p><p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p><h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p><p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p><p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p><p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p><p>显示的做法时用虚拟地址前几个bit来标识，如下图</p><p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p><p>分段机制下地址转化伪码</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">PhysAddr = Base[Segment] + Offset</span><br><span class="line">Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure><p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p><h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p><ul><li><p>减少了内部碎片,内存浪费</p></li><li><p>代码段等可以共享</p></li></ul><p>问题：</p><ul><li><p>大小不一的段可能导致外部碎片</p></li><li><p>内存不能做到按需分配</p></li></ul><p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p><h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure><blockquote><p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p></blockquote><p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p><p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p><h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote><p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p></blockquote><h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p><p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p><p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p><p>实现页机制有几个问题</p><blockquote><p>1.页表存在哪里?</p><p>2.每一个页表项具体有什么内容?</p></blockquote><p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p><p>X86下一个页表项的内容如下，有几个flag需要注意下</p><ul><li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li><li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li><li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li></ul><p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p><p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure><h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p><ul><li><p>固定大小内存单元，避免外部碎片</p></li><li><p>相对分段内存使用灵活</p></li></ul><p>缺点</p><ul><li><p>页表占用内存过大</p></li><li><p>访问太慢(相比直接内存访问，多一次内存访问)</p></li></ul>]]></content>
     
@@ -231,7 +258,7 @@
     <link href="http://yoursite.com/2020/06/09/%E6%95%B0%E6%8D%AE%E6%B5%81%E7%AE%97%E6%B3%95%E9%A2%98%E7%9B%AE%E5%B0%8F%E7%BB%93/"/>
     <id>http://yoursite.com/2020/06/09/%E6%95%B0%E6%8D%AE%E6%B5%81%E7%AE%97%E6%B3%95%E9%A2%98%E7%9B%AE%E5%B0%8F%E7%BB%93/</id>
     <published>2020-06-09T00:09:21.000Z</published>
-    <updated>2020-06-09T00:12:36.747Z</updated>
+    <updated>2020-06-09T05:08:24.019Z</updated>
     
     <content type="html"><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p><p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p><a id="more"></a><h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p><p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p><h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p><p>通过堆顶元素就能够很方便的得到数据流的中位数。</p><p>当新元素val加入如何维护堆?</p><ol><li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li><li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li></ol>]]></content>
     
@@ -279,7 +306,7 @@
     <link href="http://yoursite.com/2020/06/01/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8open-read-write-%E5%85%B7%E4%BD%93%E5%8F%91%E4%BA%86%E4%BB%80%E4%B9%88/"/>
     <id>http://yoursite.com/2020/06/01/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8open-read-write-%E5%85%B7%E4%BD%93%E5%8F%91%E4%BA%86%E4%BB%80%E4%B9%88/</id>
     <published>2020-06-01T04:12:25.000Z</published>
-    <updated>2020-06-01T12:24:27.491Z</updated>
+    <updated>2020-06-01T12:25:18.707Z</updated>
     
     <content type="html"><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p><a id="more"></a><p>在讲具体的系统调用之前，先要简单了解几个概念</p><p><strong>文件系统</strong></p><p>文件系统可以简单的理解为数据结构+方法</p><p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p><p>方法:open(),read()等调用如何与数据结构打交道</p><p>一个简单的文件系统一般有这几部分</p><ul><li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li><li>data block 存储实际问文件内容</li><li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li><li>data bitmap 记录data blocks 分配情况</li><li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li></ul><h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p><p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p><p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p><p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p><p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p><p>下面的图直观的说明这一过程</p><p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>]]></content>
     
@@ -360,33 +387,6 @@
     
     
       <category term="C++" scheme="http://yoursite.com/tags/C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <link href="http://yoursite.com/2020/05/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/"/>
-    <id>http://yoursite.com/2020/05/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/</id>
-    <published>2020-05-20T13:07:07.000Z</published>
-    <updated>2020-05-20T13:13:47.885Z</updated>
-    
-    <content type="html"><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p><p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p><blockquote><p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p></blockquote><blockquote><p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p></blockquote><blockquote><p>如果不感到自身充满力量，就不可能有爱情。</p></blockquote>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;《树上的男爵》是一本小册子，200来页，很快就能读完。&lt;/p&gt;
-&lt;p&gt;书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;他懂得这个道理：集体会使人更强大，能突出每个人的长
-      
-    
-    </summary>
-    
-    
-      <category term="读书" scheme="http://yoursite.com/categories/%E8%AF%BB%E4%B9%A6/"/>
-    
     
   </entry>
   
