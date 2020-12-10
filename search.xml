@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>2020年5月19日</title>
-    <url>/2020/12/09/2020%E5%B9%B45%E6%9C%8819%E6%97%A5/</url>
-    <content><![CDATA[<h1 id="我的第一篇博客"><a href="#我的第一篇博客" class="headerlink" title="我的第一篇博客"></a>我的第一篇博客</h1><p>hi 我是XXX</p>
-]]></content>
-  </entry>
-  <entry>
     <title>overload,override,overwrite小结</title>
     <url>/2020/05/23/overload-override-overwrite%E5%B0%8F%E7%BB%93/</url>
     <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
@@ -1268,6 +1262,87 @@
 <li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
 <li>调整tcp_max_tw_buckets</li>
 </ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>bash学习</title>
+    <url>/2020/12/10/bash%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">&lt;<introduction-to-bash-scripting>&gt;</a>的学习笔记</p>
+<p>bash 脚本开头一行 都有 <code>#!/bin/bash</code> 指此脚本使用<strong>/bin/sh</strong>来解释执行，<strong>#!</strong>是特殊的表示符，其后面根的是此解释此脚本的shell的路径, python脚本在开头也有类似的语句， <code>#!/bin/python2</code> or <code>#!/bin/python3</code></p>
+<p>创建完一个bash脚本之后，需要通过<code>chmod +x XXX.sh</code> 赋予bash脚本执行权限， 文件的权限可以通过<code>ls -l</code> 查看详细， 用户组，其他，用户都具有自己对文件的权限。</p>
+<p>bash 脚本执行可以 通过<code>./XXX.sh</code> 也可以直接指明<code>bash xxx.sh</code>  其中前者指定了sh 文件的路径，<a href="https://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell" target="_blank" rel="noopener">参考</a></p>
+<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>bash 变量不需要指定类型，直接赋值，解释器动态解释。</p>
+<p><strong>变量定义</strong>:</p>
+<p><code>name=&quot;DevDojo&quot;</code>  note： 赋值号左右不能又空格，如果平时编码习惯和这个不一样，需要注意下。</p>
+<p><strong>变量使用</strong></p>
+<p><code>echo ${name}</code> 括号增加可读性。同时变量也可以在表达式中使用，语法与直接使用一样。</p>
+<p>bash 语句不像c++需要显式<code>;</code>表示语句结束</p>
+<p><strong>用户输入</strong></p>
+<p>从命令行读取用户输入</p>
+<p><code>read variable</code></p>
+<p><strong>外部参数</strong></p>
+<p>bash 脚本在运行时候,可以跟可变多的参数,在脚本内部用$1, $2来指代,如下面例子</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument one is <span class="variable">$1</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument two is <span class="variable">$2</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument three is <span class="variable">$3</span>"</span></span><br><span class="line"><span class="comment"># excute</span></span><br><span class="line">./arguments.sh dog cat bird</span><br></pre></td></tr></table></figure>
+
+<p>也可以很方便的用 <code>$@</code> 来引用所有的外部参数.</p>
+<p>$0表示脚本文件名,一个用处就是在执行完脚本之后,可以用$0获取脚本名,然后做自删除.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"The name of the file is: <span class="variable">$0</span> and it is going to be self-</span></span><br><span class="line"><span class="string">deleted."</span></span><br><span class="line">rm -f <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>数组</strong></p>
+<p>语法:<code>my_array=(&quot;value 1&quot; &quot;value 2&quot; &quot;value 3&quot; &quot;value 4&quot;)</code>  元素之间用空格隔开</p>
+<p>数组引用类似C,  <code>echo ${my_array[1]}</code>  元素起始下标为0</p>
+<p>数组长度获取</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">list=(1 2 3 4)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#list[@]&#125;</span>  <span class="comment">#输出4</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h4><ul>
+<li>算数表达  语法类似, 用英文字母的缩写来表示比较属性, eg. lt(less than) ,eq(equal) …..<ul>
+<li>[[ ${arg1} -eq ${arg2} ]]    equal  如果两个变量相同返回true</li>
+</ul>
+</li>
+<li>字符串<ul>
+<li>[[ -v ${varname} ]] 变量如果被赋值返回true</li>
+<li>[[ -z ${string} ]] 字符串长度为0 为true</li>
+<li>[[ -n ${string} ]] 字符串长度不为0</li>
+</ul>
+</li>
+<li>文件表达式 在linux 下面一切都是文件,文件具有不同的类型 比如块文件,字符设备,目录等<ul>
+<li>[[ -d ${file} ]]    是否为目录</li>
+<li>[[ -x ${file} ]]  文件是否可执行</li>
+<li>[[ -L ${file} ]]  文件是否为符号链接</li>
+</ul>
+</li>
+</ul>
+<p>有了条件表达式,自然引出了条件语句</p>
+<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p><strong>if-else</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ some_test ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span> &lt;commands&gt;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>swith 语句</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$some_variable</span> <span class="keyword">in</span></span><br><span class="line">  pattern_1)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  pattern_2| pattern_3)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    default commands</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>注意点</p>
+<ol>
+<li>case 语句用关键字<strong>case</strong>开始,引用变量,然后加关键字<strong>in</strong></li>
+<li>匹配模式用) 结束</li>
+<li>All clauses have to be terminated by adding ;; at the end</li>
+<li>默认模式用*匹配</li>
+<li>case 语句结束用esac关键字</li>
+</ol>
+<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p><strong>while</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_conditions</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>条件表达式都用[] 或者[[]]括起来, <a href="https://stackoverflow.com/questions/3427872/whats-the-difference-between-and-in-bash" target="_blank" rel="noopener">区别</a></p>
+<p><strong>until</strong></p>
+<p>含义是当条件不为真时候一直运行</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">until [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_commands</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
 ]]></content>
   </entry>
 </search>
