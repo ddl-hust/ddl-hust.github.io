@@ -67,29 +67,6 @@
   </entry>
   
   <entry>
-    <title>20201221一周小结</title>
-    <link href="http://yoursite.com/2020/12/21/20201221%E4%B8%80%E5%91%A8%E5%B0%8F%E7%BB%93/"/>
-    <id>http://yoursite.com/2020/12/21/20201221%E4%B8%80%E5%91%A8%E5%B0%8F%E7%BB%93/</id>
-    <published>2020-12-21T02:06:42.984Z</published>
-    <updated>2020-12-21T02:15:03.786Z</updated>
-    
-    <content type="html"><![CDATA[<p>一周小结</p><p>看完了进击的巨人，第三季结尾曲尤其打动我，里面对于是非善恶的哲学探讨，让人深思。 但是思考之后，我便陷入虚无，不同的观点在脑海里面互相冲击，不能够很好的协调共处，我深知没有一套理论能够解释所有的一切，但是摆脱了二元是非观之后，脑子里面剩下的就是混沌，没有什么是绝对，同时也没有什么值得100%相信。</p><p>在这个阶段我充满了痛苦，对很多事情的目的性没有那么明确了。但我也知道不能再向以前一样逃避，为了避免思考而简化问题。今天我把它记录下来，虽然我还没有完全想清楚怎么处理现在的困境，但我希望能够一直记住这个状态，并且努力去寻求答案。</p><p>这一周我察觉到自己信息又一次过载了，于是昨天卸载了手机上的即刻。最近没有很多外在的压力，于是我让自己放松开来，变的敏感起来，听了很多的播客。但是这种新鲜感已经没有之前强烈了，过多的输入给你一种错觉-突然懂了很多，但是并没有内化和自己的知识体系联系起来。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;一周小结&lt;/p&gt;
-&lt;p&gt;看完了进击的巨人，第三季结尾曲尤其打动我，里面对于是非善恶的哲学探讨，让人深思。 但是思考之后，我便陷入虚无，不同的观点在脑海里面互相冲击，不能够很好的协调共处，我深知没有一套理论能够解释所有的一切，但是摆脱了二元是非观之后，脑子里面剩下的就是混沌，
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>Peter Thiel&#39;s Religion — David Perell</title>
     <link href="http://yoursite.com/2020/12/17/Peter%20Thiel&#39;s%20Religion%20%E2%80%94%20David%20Perell/"/>
     <id>http://yoursite.com/2020/12/17/Peter%20Thiel&#39;s%20Religion%20%E2%80%94%20David%20Perell/</id>
@@ -488,6 +465,29 @@
     
       <category term="算法" scheme="http://yoursite.com/categories/%E7%AE%97%E6%B3%95/"/>
     
+    
+  </entry>
+  
+  <entry>
+    <title>overload,override,overwrite小结</title>
+    <link href="http://yoursite.com/2020/05/23/overload-override-overwrite%E5%B0%8F%E7%BB%93/"/>
+    <id>http://yoursite.com/2020/05/23/overload-override-overwrite%E5%B0%8F%E7%BB%93/</id>
+    <published>2020-05-23T15:48:48.000Z</published>
+    <updated>2020-05-23T15:56:20.026Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p><a id="more"></a><h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p><p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p><p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p><p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p><p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure><p>什么函数不能够被重载?</p><ol><li>仅仅返回类型不同，不能够做函数重载</li><li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li><li>函数参数差别仅在于有无顶层const或volatile</li></ol><p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p><p>这里就引入什么是top-level const/volatile</p><blockquote><p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p></blockquote><p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p><p>override 可能存在二义性</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p><ul><li><p>范围不同(作用域不同)</p></li><li><p>函数签名完全一样(名字，常数列表)</p></li><li><p>基类函数必须带有virtual 关键字</p><p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p></li></ul><h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p><ul><li>派生类函数参数与基类不同，不管基类有无virtual</li><li>派生类函数参数与基类相同，但是基类没有virtual</li></ul><p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p><h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p><p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p><p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;overload-override-overwrite小结&quot;&gt;&lt;a href=&quot;#overload-override-overwrite小结&quot; class=&quot;headerlink&quot; title=&quot;overload,override,overwrite小结&quot;&gt;&lt;/a&gt;overload,override,overwrite小结&lt;/h3&gt;&lt;p&gt;这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="C++" scheme="http://yoursite.com/tags/C/"/>
     
   </entry>
   
