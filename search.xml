@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>shared_from_this解决了什么问题</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<a id="more"></a>
 
 <p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
@@ -17,7 +17,7 @@
   </entry>
   <entry>
     <title>IO复用</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
 <a id="more"></a>
 <p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
@@ -95,7 +95,7 @@
   </entry>
   <entry>
     <title>bash学习</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<a id="more"></a>
 
 <h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
@@ -176,7 +176,7 @@
   </entry>
   <entry>
     <title>overload,override,overwrite小结</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
 <a id="more"></a>
 
@@ -237,7 +237,7 @@
   </entry>
   <entry>
     <title>Peter Thiel&#39;s Religion — David Perell</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
 <blockquote>
 <ol>
@@ -283,7 +283,7 @@
   </entry>
   <entry>
     <title>socket从创建到连接过程小结</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>分析了套接字创建到连接过程中，一些关键的函数调用以及数据结构，同时分析了connect()过程中tcp三次握手状态变化。</p>
 <a id="more"></a>
 
@@ -523,7 +523,7 @@
   </entry>
   <entry>
     <title>多抓鱼采访</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<ul>
 <li>多抓鱼和咸鱼区别？</li>
 </ul>
@@ -561,7 +561,7 @@
   </entry>
   <entry>
     <title>stringstream 处理字符串</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
 <p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
 <p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
@@ -590,7 +590,7 @@
   </entry>
   <entry>
     <title>并发</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>《OSTEP》线程并发小结</p>
 <a id="more"></a>
 
@@ -696,7 +696,7 @@
   </entry>
   <entry>
     <title>内存虚拟化</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
 <a id="more"></a>
 
@@ -825,7 +825,7 @@
   </entry>
   <entry>
     <title>套接字选项小结</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>总结影响网络收发包的一些套接字选项，对一些概念可能理解不对，希望大家多多指教。后面会持续更新ing。</p>
 <a id="more"></a>
 
@@ -998,7 +998,7 @@
   </entry>
   <entry>
     <title>排序二叉树转化为双向链表</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
 <p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
 <a id="more"></a>
@@ -1016,7 +1016,7 @@
   </entry>
   <entry>
     <title>tcp40ms延迟问题分析</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<a id="more"></a>
 
 <p><strong>背景</strong></p>
@@ -1057,7 +1057,7 @@
   </entry>
   <entry>
     <title>数据流算法题目小结</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
 <p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
 <a id="more"></a>
@@ -1078,7 +1078,7 @@
   </entry>
   <entry>
     <title>许知远-罗翔访谈记录</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
 <a id="more"></a>
 <blockquote>
@@ -1113,7 +1113,7 @@
   </entry>
   <entry>
     <title>文件系统的持久化</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>《OSTEP》文件持久化部分阅读笔记</p>
 <a id="more"></a>
 
@@ -1178,7 +1178,7 @@
   </entry>
   <entry>
     <title>系统调用open(),read(),write()具体发了什么?</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
 <a id="more"></a>
 
@@ -1214,7 +1214,7 @@
   </entry>
   <entry>
     <title>最长上升子序列</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
 <a id="more"></a>
 
@@ -1240,7 +1240,7 @@
   </entry>
   <entry>
     <title>滑动窗口小结</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。</p>
 <a id="more"></a>
 
@@ -1270,7 +1270,7 @@
   </entry>
   <entry>
     <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
 <p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
 <blockquote>
@@ -1289,7 +1289,7 @@
   </entry>
   <entry>
     <title>适合反复看的技术入门教程</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<a id="more"></a>
 
 <ol>
@@ -1320,7 +1320,7 @@
   </entry>
   <entry>
     <title>负载均衡大量TW分析</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<a id="more"></a>
 
 <p>背景</p>
@@ -1335,7 +1335,7 @@
   </entry>
   <entry>
     <title>网络协议栈收包过程小结</title>
-    <url>/p/undefined.html</url>
+    <url>/posts/undefined/</url>
     <content><![CDATA[<p>linux网络协议栈学习小结</p>
 <a id="more"></a>
 
