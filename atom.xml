@@ -18,8 +18,8 @@
   
   <entry>
     <title>许知远-罗翔访谈记录</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-12-29T00:54:46.199Z</published>
     <updated>2020-12-29T00:57:40.361Z</updated>
     
@@ -37,8 +37,8 @@
   
   <entry>
     <title>多抓鱼采访</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-12-28T14:42:09.949Z</published>
     <updated>2020-12-28T14:42:09.949Z</updated>
     
@@ -62,8 +62,8 @@
   
   <entry>
     <title>适合反复看的技术入门教程</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-12-23T11:55:39.000Z</published>
     <updated>2020-12-23T12:16:53.303Z</updated>
     
@@ -87,8 +87,8 @@
   
   <entry>
     <title>Peter Thiel&#39;s Religion — David Perell</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-12-17T06:36:29.081Z</published>
     <updated>2020-12-23T12:53:18.280Z</updated>
     
@@ -114,8 +114,8 @@
   
   <entry>
     <title>bash学习</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-12-10T08:38:24.000Z</published>
     <updated>2020-12-10T08:55:44.560Z</updated>
     
@@ -138,8 +138,8 @@
   
   <entry>
     <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-11-20T13:07:07.000Z</published>
     <updated>2020-12-09T08:22:14.066Z</updated>
     
@@ -165,8 +165,8 @@
   
   <entry>
     <title>套接字选项小结</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-08-24T09:41:40.000Z</published>
     <updated>2020-08-24T09:44:00.509Z</updated>
     
@@ -186,8 +186,8 @@
   
   <entry>
     <title>负载均衡大量TW分析</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-08-23T06:59:02.000Z</published>
     <updated>2020-08-23T07:03:47.004Z</updated>
     
@@ -213,8 +213,8 @@
   
   <entry>
     <title>tcp40ms延迟问题分析</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-08-23T06:53:50.000Z</published>
     <updated>2020-08-23T07:07:00.659Z</updated>
     
@@ -239,8 +239,8 @@
   
   <entry>
     <title>socket从创建到连接过程小结</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-08-08T02:40:45.000Z</published>
     <updated>2020-08-08T02:44:29.819Z</updated>
     
@@ -264,8 +264,8 @@
   
   <entry>
     <title>网络协议栈收包过程小结</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-08-05T13:19:25.000Z</published>
     <updated>2020-08-08T02:47:57.119Z</updated>
     
@@ -285,8 +285,8 @@
   
   <entry>
     <title>并发</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-08-05T13:17:21.000Z</published>
     <updated>2020-08-08T02:17:12.819Z</updated>
     
@@ -308,8 +308,8 @@
   
   <entry>
     <title>内存虚拟化</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-08-01T01:55:22.000Z</published>
     <updated>2020-08-03T15:49:09.669Z</updated>
     
@@ -323,16 +323,16 @@
     
     
     
-      <category term="操作系统" scheme="http://yoursite.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
       <category term="OSTEP" scheme="http://yoursite.com/tags/OSTEP/"/>
+    
+      <category term="操作系统" scheme="http://yoursite.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
     
   </entry>
   
   <entry>
     <title>文件系统的持久化</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-06-11T01:54:53.000Z</published>
     <updated>2020-06-11T02:51:28.763Z</updated>
     
@@ -354,8 +354,8 @@
   
   <entry>
     <title>滑动窗口小结</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-06-11T01:45:39.000Z</published>
     <updated>2020-06-11T01:51:51.825Z</updated>
     
@@ -375,8 +375,8 @@
   
   <entry>
     <title>数据流算法题目小结</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-06-09T00:09:21.000Z</published>
     <updated>2020-06-09T05:08:24.019Z</updated>
     
@@ -397,8 +397,8 @@
   
   <entry>
     <title>shared_from_this解决了什么问题</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-06-02T05:39:07.000Z</published>
     <updated>2020-06-07T23:57:22.596Z</updated>
     
@@ -423,8 +423,8 @@
   
   <entry>
     <title>系统调用open(),read(),write()具体发了什么?</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-06-01T04:12:25.000Z</published>
     <updated>2020-06-01T12:25:18.707Z</updated>
     
@@ -446,8 +446,8 @@
   
   <entry>
     <title>最长上升子序列</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-05-26T16:00:48.000Z</published>
     <updated>2020-05-30T11:58:29.789Z</updated>
     
@@ -467,8 +467,8 @@
   
   <entry>
     <title>排序二叉树转化为双向链表</title>
-    <link href="http://yoursite.com/posts/undefined/"/>
-    <id>http://yoursite.com/posts/undefined/</id>
+    <link href="http://yoursite.com/post/undefined.html"/>
+    <id>http://yoursite.com/post/undefined.html</id>
     <published>2020-05-24T13:51:08.000Z</published>
     <updated>2020-05-24T13:53:12.405Z</updated>
     

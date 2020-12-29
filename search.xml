@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>IO复用</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
 <a id="more"></a>
 <p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
@@ -80,7 +80,7 @@
   </entry>
   <entry>
     <title>Peter Thiel&#39;s Religion — David Perell</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
 <blockquote>
 <ol>
@@ -125,8 +125,37 @@
 ]]></content>
   </entry>
   <entry>
+    <title>stringstream 处理字符串</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+<a id="more"></a>
+
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>bash学习</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<a id="more"></a>
 
 <h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
@@ -207,7 +236,7 @@
   </entry>
   <entry>
     <title>tcp40ms延迟问题分析</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<a id="more"></a>
 
 <p><strong>背景</strong></p>
@@ -247,8 +276,46 @@
 ]]></content>
   </entry>
   <entry>
+    <title>多抓鱼采访</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<ul>
+<li>多抓鱼和咸鱼区别？</li>
+</ul>
+<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
+<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
+<p><strong>为什么做多抓鱼</strong>？</p>
+<ul>
+<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
+</li>
+<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
+</li>
+<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
+</li>
+<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
+</li>
+<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
+</li>
+<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
+</li>
+</ul>
+<blockquote>
+<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
+</blockquote>
+<p><strong>多抓鱼的定价策略</strong></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
+<ul>
+<li>确定几类书不收</li>
+<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
+<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
+</ul>
+<p><strong>shownotes</strong></p>
+<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
+<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>overload,override,overwrite小结</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
 <a id="more"></a>
 
@@ -309,7 +376,7 @@
   </entry>
   <entry>
     <title>shared_from_this解决了什么问题</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<a id="more"></a>
 
 <p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
@@ -323,204 +390,181 @@
       </categories>
   </entry>
   <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+    <title>套接字选项小结</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>总结影响网络收发包的一些套接字选项，对一些概念可能理解不对，希望大家多多指教。后面会持续更新ing。</p>
 <a id="more"></a>
 
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>[TOC]</p>
+<h3 id="套接字属性设置"><a href="#套接字属性设置" class="headerlink" title="套接字属性设置"></a><strong>套接字属性设置</strong></h3><hr>
+<p>通过setsockopt我们可以设置套接字的一些属性，函数原型如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,<span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
 
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>内存虚拟化</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
-<a id="more"></a>
-
-<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
-<p>为什么引入了虚拟地址?</p>
+<p>其中<code>level</code> 参数设定的套接字属性使用范围，<code>SOL_SOCKET</code>表示用于通用套接字，<code>IPPROTO_TCP</code> 用于tcp协议，<code>IPPROTO_IP</code> 用于IP协议。</p>
+<p>下表是《APUE》中给出的一些通用套接字设置选项</p>
+<p><img src="https://s1.ax1x.com/2020/08/07/ahtjHI.png" alt="ahtjHI.png"></p>
+<h3 id="SO-KEEPALIVE"><a href="#SO-KEEPALIVE" class="headerlink" title="SO_KEEPALIVE"></a>SO_KEEPALIVE</h3><blockquote>
+<p>为什么需要保活?</p>
 </blockquote>
-<ul>
-<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
-<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
-</ul>
-<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
-<blockquote>
-<p>设计一套虚拟内存需要满足满足那些目标?</p>
-</blockquote>
+<p>在tcp连接双方，建立连接之后，很长时间没有交换数据，在这种长时间没有数据交换情况下，双方不知道对方状态，交互双方都有可能出现掉电、死机、异常重启等各种意外，当这些意外发生之后，这些TCP连接并未来得及正常释放，那么，连接的另一方并不知道对端的情况，它会一直维护这个连接，长时间的积累会导致非常多的半打开连接，造成端系统资源的消耗和浪费，为了解决这个问题，在传输层可以利用TCP的保活报文来实现。</p>
 <ol>
-<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
+<li>探测连接的对端是否存活</li>
+</ol>
+<p>在应用交互的过程中，可能存在以下几种情况：</p>
+<ol>
+<li><p>客户主机依然正常运行，并从服务器可达。客户的TCP响应正常，而服务器也知道对方是正常工作的。服务器在两小时以后将保活定时器复位。如果在两个小时定时器到时间之前有应用程序的通信量通过此连接，则定时器在交换数据后的未来 2小时再复位。</p>
 </li>
-<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
+<li><p>客户主机已经崩溃，并且关闭或者正在重新启动。在任何一种情况下，客户的TCP没有响应。服务器将不能够收到对探查的响应，并在<strong>75s</strong>后超时。服务器总共发送<strong>10个</strong>这样的探查，每个间隔75秒。如果服务器没有收到一个响应，它就认为客户主机已经关闭并终止连接。</p>
 </li>
-<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
-<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+<li><p><strong>客户主机崩溃并已经重新启动</strong>。这时服务器将收到一个对其保活探查的响应，但是这个响应是一个复位，使得服务器终止这个连接。</p>
+</li>
+<li><p>客户主机正常运行，但是从服务器不可达。这与状态2相同，因为TCP不能够区分状态4与状态2之间的区别，它所能发现的就是没有收到探查的响应。</p>
 </li>
 </ol>
-<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
-<p> 一开始作者假设</p>
-<ol>
-<li>虚拟地址空间连续存放到物理内存</li>
-<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
+<p>​     利用保活探测功能，可以探知这种对端的意外情况，从而保证在意外发生时，可以释放半打开的TCP连接。</p>
+<ol start="2">
+<li><p><strong>防止中间设备因超时删除连接相关的连接表</strong></p>
+<p>中间设备如防火墙等，会为经过它的数据报文建立相关的连接信息表，并为其设置一个超时时间的定时器，如果超出预定时间，某连接无任何报文交互的中间设备会将该连接信息从表中删除，在删除后，再有应用报文过来时，中间设备将丢弃该报文，从而导致应用出现异常，这个交互的过程大致如下图所示：</p>
+</li>
 </ol>
-<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
-<p>地址转化： <code>physical address = virtual address + base</code></p>
-<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
-<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
-<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
-<ul>
-<li>进程创建时，分配与地址空间对应的物理内存</li>
-<li>当进程结束时，回收内存</li>
-<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
-</ul>
-<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
-<p><strong>优点</strong></p>
-<ul>
-<li><p>在硬件支持下起来很高效快速</p>
-</li>
-<li><p>提供了进程间的保护隔离</p>
-</li>
-</ul>
-<p><strong>缺点</strong></p>
-<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
-<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
-<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
-<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
-<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
-<p>分段机制下地址转化伪码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+<p>默认情况下tcp的保活是关闭的,需要我们自己打开。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">optval = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, &amp;optval, optlen);</span><br></pre></td></tr></table></figure>
 
 
 
-<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
-<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>减少了内部碎片,内存浪费</p>
-</li>
-<li><p>代码段等可以共享</p>
-</li>
-</ul>
-<p>问题：</p>
-<ul>
-<li><p>大小不一的段可能导致外部碎片</p>
-</li>
-<li><p>内存不能做到按需分配</p>
-</li>
-</ul>
-<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
-<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><strong>全局修改探测活参数</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">echo <span class="number">600</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_time <span class="comment">//超时时间</span></span><br><span class="line">echo <span class="number">60</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_intvl <span class="comment">//探测报文发送间隔</span></span><br><span class="line">echo <span class="number">20</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_probes <span class="comment">//探测报文发送次数</span></span><br></pre></td></tr></table></figure>
 
+<p><strong>通过系统调用对单个进程修改</strong></p>
+<p>对应到的几个套接字选项如下</p>
+<p><strong>TCP_KEEPCNT</strong>: 对应到探测报文发送次数；</p>
+<p><strong>TCP_KEEPINTVL</strong>: 探测报文发送间隔</p>
+<p><strong>TCP_KEEPIDLE</strong>: 超时时间</p>
 <blockquote>
-<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
+<p>TCP层的保活和应用层保活对比</p>
 </blockquote>
-<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
-<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
-<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
-</blockquote>
-<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
-<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
-<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
-<p>实现页机制有几个问题</p>
-<blockquote>
-<p>1.页表存在哪里?</p>
-<p>2.每一个页表项具体有什么内容?</p>
-</blockquote>
-<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
-<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
+<p><code>KeepAlive</code>通过定时发送探测包来探测连接的对端是否存活， 但通常也会许多在业务层面处理的，他们之间的特点：</p>
 <ul>
-<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
-<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
-<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
+<li>TCP自带的<code>KeepAlive</code>使用简单，发送的数据包相比应用层心跳检测包更小，仅提供检测连接功能</li>
+<li>应用层心跳包不依赖于传输层协议，无论传输层协议是TCP还是UDP都可以用</li>
+<li>应用层心跳包可以定制，可以应对更复杂的情况或传输一些额外信息</li>
+<li><code>KeepAlive</code>仅代表连接保持着，而心跳包往往还代表客户端可正常工作</li>
 </ul>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
-<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
+<h3 id="SO-LINGER"><a href="#SO-LINGER" class="headerlink" title="SO_LINGER"></a><strong>SO_LINGER</strong></h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,</span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
 
-<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p>对应的<code>val</code>是一个结构体</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> &#123;</span></span><br><span class="line">　　<span class="keyword">int</span> l_onoff; <span class="comment">//开关 0:关闭</span></span><br><span class="line">　　<span class="keyword">int</span> l_linger;<span class="comment">//延迟关闭时间</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一个简单的使用例子</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> <span class="title">lin</span>&#123;</span><span class="number">0</span>,<span class="number">1</span>&#125;;</span><br><span class="line">setsockopt(fd,SOL_SOCKET,SO_SOCKET,&amp;lin);</span><br></pre></td></tr></table></figure>
+
+<p>linger打开与否，以及不同时间的设置，可能导致不同的关闭结果。</p>
+<p>三种断开方式：</p>
+<ol>
+<li>l_onoff = 0; l_linger忽略</li>
+</ol>
+<p>close()立刻返回，底层会将未发送完的数据发送完成后再释放资源，即优雅退出。</p>
+<ol start="2">
+<li>l_onoff != 0; l_linger = 0;</li>
+</ol>
+<p>close()立刻返回，但不会发送未发送完成的数据，而是通过一个RST包强制的关闭socket描述符，即强制退出。</p>
+<ol start="3">
+<li>l_onoff != 0; l_linger &gt; 0;</li>
+</ol>
+<p>close()不会立刻返回，内核会延迟一段时间，这个时间就由l_linger的值来决定。如果超时时间到达之前，发送完未发送的数据(包括FIN包)并得到另一端的确认，close()会返回正确，socket描述符优雅性退出。否则，close()会直接返回错误值，未发送数据丢失，socket描述符被强制性退出</p>
+<h4 id="SO-LINGER实现原理"><a href="#SO-LINGER实现原理" class="headerlink" title="SO_LINGER实现原理"></a>SO_LINGER实现原理</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> SO_LINGER:</span><br><span class="line">			<span class="keyword">if</span>(optlen&lt;<span class="keyword">sizeof</span>(ling)) &#123;</span><br><span class="line">				ret = -EINVAL;	<span class="comment">/* 1003.1g */</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">...</span><br><span class="line">			<span class="keyword">if</span> (!ling.l_onoff)<span class="comment">//没有打开linger</span></span><br><span class="line">				sock_reset_flag(sk, SOCK_LINGER);</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">#<span class="keyword">if</span> (BITS_PER_LONG == <span class="number">32</span>)</span><br><span class="line">				<span class="keyword">if</span> (ling.l_linger &gt;= MAX_SCHEDULE_TIMEOUT/HZ)</span><br><span class="line">					sk-&gt;sk_lingertime = MAX_SCHEDULE_TIMEOUT;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">#endif</span><br><span class="line">					sk-&gt;sk_lingertime = ling.l_linger * HZ;<span class="comment">//设置linger时间</span></span><br><span class="line">				sock_set_flag(sk, SOCK_LINGER);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>程序调用函数close()关闭套接口时，与此相关的函数调用路径如下：<code>sys_close() -&gt; filp_close() -&gt; fput() -&gt; __fput() -&gt; sock_close() -&gt; sock_release() -&gt; inet_release() -&gt; tcp_close()</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_release</span><span class="params">(struct socket *sock)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">sk</span> = <span class="title">sock</span>-&gt;<span class="title">sk</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk) &#123;</span><br><span class="line">		<span class="keyword">long</span> timeout;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Applications forget to leave groups before exiting */</span></span><br><span class="line">		ip_mc_drop_socket(sk);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* If linger is set, we don't return until the close</span></span><br><span class="line"><span class="comment">		 * is complete.  Otherwise we return immediately. The</span></span><br><span class="line"><span class="comment">		 * actually closing is done the same either way.</span></span><br><span class="line"><span class="comment">		 *</span></span><br><span class="line"><span class="comment">		 * If the close is due to the process exiting, we never</span></span><br><span class="line"><span class="comment">		 * linger..</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		timeout = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp;</span><br><span class="line">		    !(current-&gt;flags &amp; PF_EXITING))</span><br><span class="line">			timeout = sk-&gt;sk_lingertime;</span><br><span class="line">		sock-&gt;sk = <span class="literal">NULL</span>;</span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">close</span>(sk, timeout);<span class="comment">//对应到tcp_close</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="tcp-close"><a href="#tcp-close" class="headerlink" title="tcp_close()"></a><code>tcp_close()</code></h4><p>当一个套接口正在或已经被关闭，如果在其接收队列有未读数据（不管是在关闭前就已收到的，或者还是在关闭后新到达的），那么此时就需给对端发送一个RST数据包,对应到下面一段代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (data_was_unread) &#123;<span class="comment">//接受区还有数据没有被读完</span></span><br><span class="line">	<span class="comment">/* Unread data was tossed, zap the connection. */</span></span><br><span class="line">	NET_INC_STATS_USER(LINUX_MIB_TCPABORTONCLOSE);</span><br><span class="line">	tcp_set_state(sk, TCP_CLOSE);</span><br><span class="line">	tcp_send_active_reset(sk, GFP_KERNEL);<span class="comment">//发送RST</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果linger结构体的字段<code>l_onoff</code>为1,而<code>l_linger</code>为0</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp; !sk-&gt;sk_lingertime) &#123;</span><br><span class="line">		<span class="comment">/* Check zero linger _after_ checking for unread data. */</span></span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">disconnect</span>(sk, <span class="number">0</span>); <span class="comment">//直接丢掉所有接收数据并且直接断开连接，具体也就是发送RST数据包，清空相关接收队列</span></span><br><span class="line">		NET_INC_STATS_USER(LINUX_MIB_TCPABORTONDATA);</span><br></pre></td></tr></table></figure>
+
+<p>下面就是对应正常四次挥手关闭流程，</p>
+<p>先调用函数<code>tcp_close_state()</code>切换状态，判断是否需要发送FIN数据包（eg.如果当前还处于<code>TCP_SYN_SENT</code>状态，连接尚未完全建立，自然就不用发送FIN数据包），如果需要发送FIN数据包则调用<code>tcp_send_fin()</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">....... </span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (tcp_close_state(sk)) &#123;</span><br><span class="line">		tcp_send_fin(sk);</span><br><span class="line">	&#125;</span><br><span class="line"> sk_stream_wait_close(sk, timeout);</span><br></pre></td></tr></table></figure>
+
+<h4 id="tcp-send-fin"><a href="#tcp-send-fin" class="headerlink" title="tcp_send_fin"></a><strong>tcp_send_fin</strong></h4><p>深入到发送fin内部来看，</p>
+<p>如果发送队列还有数据，那么直接将取出末尾数据包，设置FIN。否则分配一个新的skb,最后调用函数<code>__tcp_push_pending_frames() -&gt; tcp_write_xmit()</code>发送数据包。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tcp_send_fin</span><span class="params">(struct sock *sk)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tcp_sock</span> *<span class="title">tp</span> = <span class="title">tcp_sk</span>(<span class="title">sk</span>);</span>	</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sk_buff</span> *<span class="title">skb</span> = <span class="title">skb_peek_tail</span>(&amp;<span class="title">sk</span>-&gt;<span class="title">sk_write_queue</span>);</span> <span class="comment">//取出末尾数据包</span></span><br><span class="line">	<span class="keyword">int</span> mss_now;</span><br><span class="line">	</span><br><span class="line">	mss_now = tcp_current_mss(sk, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_send_head != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_FIN;<span class="comment">//</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq++;</span><br><span class="line">		tp-&gt;write_seq++;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">/* Socket is locked, keep trying until memory is available. */</span></span><br><span class="line">		<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">			skb = alloc_skb(MAX_TCP_HEADER, GFP_KERNEL);</span><br><span class="line">			<span class="keyword">if</span> (skb)</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="built_in">yield</span>();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Reserve space for headers and prepare control bits. */</span></span><br><span class="line">		skb_reserve(skb, MAX_TCP_HEADER);</span><br><span class="line">		skb-&gt;csum = <span class="number">0</span>;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags = (TCPCB_FLAG_ACK | TCPCB_FLAG_FIN);</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;sacked = <span class="number">0</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_segs = <span class="number">1</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_size = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* FIN eats a sequence byte, write_seq advanced by tcp_queue_skb(). */</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;seq = tp-&gt;write_seq;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq = TCP_SKB_CB(skb)-&gt;seq + <span class="number">1</span>;</span><br><span class="line">		tcp_queue_skb(sk, skb);</span><br><span class="line">	&#125;</span><br><span class="line">	__tcp_push_pending_frames(sk, tp, mss_now, TCP_NAGLE_OFF);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="sk-stream-wait-close"><a href="#sk-stream-wait-close" class="headerlink" title="sk_stream_wait_close"></a><strong>sk_stream_wait_close</strong></h4><p>这是一个阻塞等待函数，参数timeout指示了等待的时间（单位为时钟滴答）。</p>
+<p>while循环的退出点有两处</p>
 <ul>
-<li><p>固定大小内存单元，避免外部碎片</p>
+<li><p>当前进程收到信号或时间超时（timeout）</p>
 </li>
-<li><p>相对分段内存使用灵活</p>
+<li><p>sk_wait_event()</p>
 </li>
 </ul>
-<p>缺点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sk_stream_wait_close</span><span class="params">(struct sock *sk, <span class="keyword">long</span> timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (timeout) &#123;</span><br><span class="line">		DEFINE_WAIT(wait);</span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			prepare_to_wait(sk-&gt;sk_sleep, &amp;wait,</span><br><span class="line">					TASK_INTERRUPTIBLE);</span><br><span class="line">			<span class="keyword">if</span> (sk_wait_event(sk, &amp;timeout, !sk_stream_closing(sk)))<span class="comment">// 退出点1</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125; <span class="keyword">while</span> (!signal_pending(current) &amp;&amp; timeout); <span class="comment">//退出点2</span></span><br><span class="line">		finish_wait(sk-&gt;sk_sleep, &amp;wait);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>至此我们结合源码大致搞清楚了SO_LINGER选项的设置对TCP连接关闭的影响。</p>
+<h3 id="SO-REUSEPORT-amp-amp-SO-REUSEADDR"><a href="#SO-REUSEPORT-amp-amp-SO-REUSEADDR" class="headerlink" title="SO_REUSEPORT&amp;&amp;SO_REUSEADDR"></a>SO_REUSEPORT&amp;&amp;SO_REUSEADDR</h3><p>SO_REUSEADDR和SO_REUSEPORT主要是影响socket绑定ip和port的成功与否。有几点绑定规则主要注意下<br> <strong>规则1</strong>：socket可以指定绑定到一个特定的ip和port，例如绑定到192.168.0.11:9000上；<br> <strong>规则2</strong>：同时也支持通配绑定方式，即绑定到本地”any address”（例如一个socket绑定为 0.0.0.0:21，那么它同时绑定了所有的本地地址）；<br> <strong>规则3</strong>：默认情况下，任意两个socket都无法绑定到相同的源IP地址和源端口</p>
+<h4 id="SO-REUSEADDR"><a href="#SO-REUSEADDR" class="headerlink" title="SO_REUSEADDR"></a><strong>SO_REUSEADDR</strong></h4><p><strong>1、改变了通配绑定时处理源地址冲突的处理方式</strong></p>
+<p>so_reuseaddr作用在于允许一个socket 绑定了统配地址+port， 另外一个套接字绑定具体地址+相同端口</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SO_REUSEADDR       socketA        socketB       Result</span><br><span class="line">---------------------------------------------------------------------</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21   192.168.0.1:21    Error (EADDRINUSE)</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21      10.0.0.1:21    OK</span><br><span class="line">  ON&#x2F;OFF          10.0.0.1:21   192.168.0.1:21    OK</span><br><span class="line">   OFF             0.0.0.0:21   192.168.1.0:21    Error (EADDRINUSE)</span><br><span class="line">   OFF         192.168.1.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br><span class="line">   ON              0.0.0.0:21   192.168.1.0:21    OK</span><br><span class="line">   ON          192.168.1.0:21       0.0.0.0:21    OK</span><br><span class="line">  ON&#x2F;OFF           0.0.0.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、改变了系统对处于TIME_WAIT状态的socket绑定地址的处理</strong></p>
+<p>处于time-wait 状态下的套接字需要等待2msl 才能重新使用其绑定的端口与地址，设置了so_reuseaddr没有此限制</p>
+<h4 id="SO-REUSEPORT"><a href="#SO-REUSEPORT" class="headerlink" title="SO_REUSEPORT"></a><strong>SO_REUSEPORT</strong></h4><ol>
+<li>允许将多个socket绑定到相同的地址和端口，前提每个socket绑定前都需设置</li>
+<li>linux内核在处理SO_REUSEPORT socket的集合时，进行了简单的负载均衡操作，即对于UDP socket，内核尝试平均的转发数据报，对于TCP监听socket，内核尝试将新的客户连接请求(由accept返回)平均的交给共享同一地址和端口的socket(监听socket)。</li>
+</ol>
+<p>通过设置套接字的SO_REUSEPORT能够用来解决epoll_wait存在的惊群问题，把监听描述符添加到epoll监听事件，多个子进程都epoll_wait阻塞等待，由内核来做负载均衡，这样就避免了当实践发生时同时惊醒多个工作进程，添加了SO_REUSEPORT的模型如下:</p>
+<img src="https://s1.ax1x.com/2020/08/13/azw6DU.png" alt="azw6DU.png" style="zoom:80%;" />
+
+
+
+
+<h3 id="TCP-CORK"><a href="#TCP-CORK" class="headerlink" title="TCP_CORK"></a>TCP_CORK</h3><p>tcp_cork与tcp_nodelay 以及nagle 容易搞混，这里我们结合他们的应用场景以及代码来理清楚。</p>
+<p><strong>nagle算法</strong></p>
+<p>大致思想：</p>
+<p>为了提高网络吞吐量，如果发送小数据包，那么20字节包头的负担太大，于是通过将小数据包累积到一个MSS长度再发出来。</p>
+<p>同样影响小包发送的套接字选项:<strong>TCP_NODELAY，TCP_CORK</strong></p>
+<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
+<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
+<p>（1）如果包长度达到MSS，则允许发送；</p>
+<p>（2）如果该包含有FIN，则允许发送；</p>
+<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
+<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
+<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
+<p><code>TCP_NODELAY</code>是禁用Nagle算法，即数据包立即发送出去，而选项TCP_CORK与此相反，可以认为它是Nagle算法的进一步增强，即阻塞数据包发送，具体点说就是：TCP_CORK选项的功能类似于在发送数据管道出口处插入一个“塞子”，使得发送数据全部被阻塞，直到取消TCP_CORK选项（即拔去塞子）或被阻塞数据长度已超过MSS才将其发送出去。举个对比示例，比如收到接收端的ACK确认后，Nagle算法可以让当前待发送数据包发送出去，即便它的当前长度仍然不够一个MSS，但选项TCP_CORK则会要求继续等待。</p>
+<h4 id="TCP-CORK的应用场景"><a href="#TCP-CORK的应用场景" class="headerlink" title="TCP_CORK的应用场景"></a>TCP_CORK的应用场景</h4><p>TCP_CORK选项的作用主要是阻塞小数据发送，服务器处理一个客户端请求，发送的响应数据包括响应头和响应体两部分，利用TCP_CORK选项就能让这两部分数据一起发送。</p>
+<p>按照之前的分析，设置了CORK之后，有几种可能数据会被发送</p>
 <ul>
-<li><p>页表占用内存过大</p>
-</li>
-<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
-</li>
+<li>通过setoptsock关闭TCP_CORK这个选项。</li>
+<li>socket阻塞的数据大于MSS。</li>
+<li>自从堵上塞子写入第一个字节开始，已经经过200ms。</li>
+<li>socket被关闭。</li>
 </ul>
+<p>一旦满足上面的任何一个条件，TCP就会将数据发送出去。对于Server来说，发送HTTP响应既要发送尽量少的segment，同时又要保证低延迟，那么需要在写完数据后显式取消设置<code>TCP_CORK</code>选项，让数据立即发送出去：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> state = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//开启cork</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">write</span>(http_resp_header);</span><br><span class="line">sendfile(sockfd, fd, &amp;off, len); <span class="comment">//阻塞</span></span><br><span class="line"></span><br><span class="line">state = <span class="number">0</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//关闭cork</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://www.lenky.info/archives/2013/02/2220" target="_blank" rel="noopener">Socket选项系列之SO_LINGER</a></p>
+<p><a href="http://senlinzhan.github.io/2017/02/10/Linux的TCP-CORK/" target="_blank" rel="noopener">Nagle 算法与 TCP socket 选项 TCP_CORK</a></p>
+<p><a href="https://juejin.im/post/6844903878819840008" target="_blank" rel="noopener">https://juejin.im/post/6844903878819840008</a></p>
+<p><a href="https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html" target="_blank" rel="noopener">https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html</a></p>
 ]]></content>
       <tags>
-        <tag>操作系统</tag>
-        <tag>OSTEP</tag>
+        <tag>网络</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>多抓鱼采访</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<ul>
-<li>多抓鱼和咸鱼区别？</li>
-</ul>
-<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
-<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
-<p><strong>为什么做多抓鱼</strong>？</p>
-<ul>
-<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
-</li>
-<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
-</li>
-<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
-</li>
-<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
-</li>
-<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
-</li>
-<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
-</li>
-</ul>
-<blockquote>
-<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
-</blockquote>
-<p><strong>多抓鱼的定价策略</strong></p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
-<ul>
-<li>确定几类书不收</li>
-<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
-<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
-</ul>
-<p><strong>shownotes</strong></p>
-<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
-<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
-]]></content>
   </entry>
   <entry>
     <title>socket从创建到连接过程小结</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>分析了套接字创建到连接过程中，一些关键的函数调用以及数据结构，同时分析了connect()过程中tcp三次握手状态变化。</p>
 <a id="more"></a>
 
@@ -760,7 +804,7 @@
   </entry>
   <entry>
     <title>并发</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>《OSTEP》线程并发小结</p>
 <a id="more"></a>
 
@@ -865,181 +909,137 @@
       </tags>
   </entry>
   <entry>
-    <title>套接字选项小结</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>总结影响网络收发包的一些套接字选项，对一些概念可能理解不对，希望大家多多指教。后面会持续更新ing。</p>
+    <title>内存虚拟化</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
 <a id="more"></a>
 
-<p>[TOC]</p>
-<h3 id="套接字属性设置"><a href="#套接字属性设置" class="headerlink" title="套接字属性设置"></a><strong>套接字属性设置</strong></h3><hr>
-<p>通过setsockopt我们可以设置套接字的一些属性，函数原型如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,<span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>其中<code>level</code> 参数设定的套接字属性使用范围，<code>SOL_SOCKET</code>表示用于通用套接字，<code>IPPROTO_TCP</code> 用于tcp协议，<code>IPPROTO_IP</code> 用于IP协议。</p>
-<p>下表是《APUE》中给出的一些通用套接字设置选项</p>
-<p><img src="https://s1.ax1x.com/2020/08/07/ahtjHI.png" alt="ahtjHI.png"></p>
-<h3 id="SO-KEEPALIVE"><a href="#SO-KEEPALIVE" class="headerlink" title="SO_KEEPALIVE"></a>SO_KEEPALIVE</h3><blockquote>
-<p>为什么需要保活?</p>
+<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
+<p>为什么引入了虚拟地址?</p>
 </blockquote>
-<p>在tcp连接双方，建立连接之后，很长时间没有交换数据，在这种长时间没有数据交换情况下，双方不知道对方状态，交互双方都有可能出现掉电、死机、异常重启等各种意外，当这些意外发生之后，这些TCP连接并未来得及正常释放，那么，连接的另一方并不知道对端的情况，它会一直维护这个连接，长时间的积累会导致非常多的半打开连接，造成端系统资源的消耗和浪费，为了解决这个问题，在传输层可以利用TCP的保活报文来实现。</p>
-<ol>
-<li>探测连接的对端是否存活</li>
-</ol>
-<p>在应用交互的过程中，可能存在以下几种情况：</p>
-<ol>
-<li><p>客户主机依然正常运行，并从服务器可达。客户的TCP响应正常，而服务器也知道对方是正常工作的。服务器在两小时以后将保活定时器复位。如果在两个小时定时器到时间之前有应用程序的通信量通过此连接，则定时器在交换数据后的未来 2小时再复位。</p>
-</li>
-<li><p>客户主机已经崩溃，并且关闭或者正在重新启动。在任何一种情况下，客户的TCP没有响应。服务器将不能够收到对探查的响应，并在<strong>75s</strong>后超时。服务器总共发送<strong>10个</strong>这样的探查，每个间隔75秒。如果服务器没有收到一个响应，它就认为客户主机已经关闭并终止连接。</p>
-</li>
-<li><p><strong>客户主机崩溃并已经重新启动</strong>。这时服务器将收到一个对其保活探查的响应，但是这个响应是一个复位，使得服务器终止这个连接。</p>
-</li>
-<li><p>客户主机正常运行，但是从服务器不可达。这与状态2相同，因为TCP不能够区分状态4与状态2之间的区别，它所能发现的就是没有收到探查的响应。</p>
-</li>
-</ol>
-<p>​     利用保活探测功能，可以探知这种对端的意外情况，从而保证在意外发生时，可以释放半打开的TCP连接。</p>
-<ol start="2">
-<li><p><strong>防止中间设备因超时删除连接相关的连接表</strong></p>
-<p>中间设备如防火墙等，会为经过它的数据报文建立相关的连接信息表，并为其设置一个超时时间的定时器，如果超出预定时间，某连接无任何报文交互的中间设备会将该连接信息从表中删除，在删除后，再有应用报文过来时，中间设备将丢弃该报文，从而导致应用出现异常，这个交互的过程大致如下图所示：</p>
-</li>
-</ol>
-<p>默认情况下tcp的保活是关闭的,需要我们自己打开。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">optval = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, &amp;optval, optlen);</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>全局修改探测活参数</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">echo <span class="number">600</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_time <span class="comment">//超时时间</span></span><br><span class="line">echo <span class="number">60</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_intvl <span class="comment">//探测报文发送间隔</span></span><br><span class="line">echo <span class="number">20</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_probes <span class="comment">//探测报文发送次数</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>通过系统调用对单个进程修改</strong></p>
-<p>对应到的几个套接字选项如下</p>
-<p><strong>TCP_KEEPCNT</strong>: 对应到探测报文发送次数；</p>
-<p><strong>TCP_KEEPINTVL</strong>: 探测报文发送间隔</p>
-<p><strong>TCP_KEEPIDLE</strong>: 超时时间</p>
+<ul>
+<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
+<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
+</ul>
+<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
 <blockquote>
-<p>TCP层的保活和应用层保活对比</p>
+<p>设计一套虚拟内存需要满足满足那些目标?</p>
 </blockquote>
-<p><code>KeepAlive</code>通过定时发送探测包来探测连接的对端是否存活， 但通常也会许多在业务层面处理的，他们之间的特点：</p>
-<ul>
-<li>TCP自带的<code>KeepAlive</code>使用简单，发送的数据包相比应用层心跳检测包更小，仅提供检测连接功能</li>
-<li>应用层心跳包不依赖于传输层协议，无论传输层协议是TCP还是UDP都可以用</li>
-<li>应用层心跳包可以定制，可以应对更复杂的情况或传输一些额外信息</li>
-<li><code>KeepAlive</code>仅代表连接保持着，而心跳包往往还代表客户端可正常工作</li>
-</ul>
-<h3 id="SO-LINGER"><a href="#SO-LINGER" class="headerlink" title="SO_LINGER"></a><strong>SO_LINGER</strong></h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,</span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p>对应的<code>val</code>是一个结构体</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> &#123;</span></span><br><span class="line">　　<span class="keyword">int</span> l_onoff; <span class="comment">//开关 0:关闭</span></span><br><span class="line">　　<span class="keyword">int</span> l_linger;<span class="comment">//延迟关闭时间</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>一个简单的使用例子</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> <span class="title">lin</span>&#123;</span><span class="number">0</span>,<span class="number">1</span>&#125;;</span><br><span class="line">setsockopt(fd,SOL_SOCKET,SO_SOCKET,&amp;lin);</span><br></pre></td></tr></table></figure>
-
-<p>linger打开与否，以及不同时间的设置，可能导致不同的关闭结果。</p>
-<p>三种断开方式：</p>
 <ol>
-<li>l_onoff = 0; l_linger忽略</li>
-</ol>
-<p>close()立刻返回，底层会将未发送完的数据发送完成后再释放资源，即优雅退出。</p>
-<ol start="2">
-<li>l_onoff != 0; l_linger = 0;</li>
-</ol>
-<p>close()立刻返回，但不会发送未发送完成的数据，而是通过一个RST包强制的关闭socket描述符，即强制退出。</p>
-<ol start="3">
-<li>l_onoff != 0; l_linger &gt; 0;</li>
-</ol>
-<p>close()不会立刻返回，内核会延迟一段时间，这个时间就由l_linger的值来决定。如果超时时间到达之前，发送完未发送的数据(包括FIN包)并得到另一端的确认，close()会返回正确，socket描述符优雅性退出。否则，close()会直接返回错误值，未发送数据丢失，socket描述符被强制性退出</p>
-<h4 id="SO-LINGER实现原理"><a href="#SO-LINGER实现原理" class="headerlink" title="SO_LINGER实现原理"></a>SO_LINGER实现原理</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> SO_LINGER:</span><br><span class="line">			<span class="keyword">if</span>(optlen&lt;<span class="keyword">sizeof</span>(ling)) &#123;</span><br><span class="line">				ret = -EINVAL;	<span class="comment">/* 1003.1g */</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">...</span><br><span class="line">			<span class="keyword">if</span> (!ling.l_onoff)<span class="comment">//没有打开linger</span></span><br><span class="line">				sock_reset_flag(sk, SOCK_LINGER);</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">#<span class="keyword">if</span> (BITS_PER_LONG == <span class="number">32</span>)</span><br><span class="line">				<span class="keyword">if</span> (ling.l_linger &gt;= MAX_SCHEDULE_TIMEOUT/HZ)</span><br><span class="line">					sk-&gt;sk_lingertime = MAX_SCHEDULE_TIMEOUT;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">#endif</span><br><span class="line">					sk-&gt;sk_lingertime = ling.l_linger * HZ;<span class="comment">//设置linger时间</span></span><br><span class="line">				sock_set_flag(sk, SOCK_LINGER);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>程序调用函数close()关闭套接口时，与此相关的函数调用路径如下：<code>sys_close() -&gt; filp_close() -&gt; fput() -&gt; __fput() -&gt; sock_close() -&gt; sock_release() -&gt; inet_release() -&gt; tcp_close()</code></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_release</span><span class="params">(struct socket *sock)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">sk</span> = <span class="title">sock</span>-&gt;<span class="title">sk</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk) &#123;</span><br><span class="line">		<span class="keyword">long</span> timeout;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Applications forget to leave groups before exiting */</span></span><br><span class="line">		ip_mc_drop_socket(sk);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* If linger is set, we don't return until the close</span></span><br><span class="line"><span class="comment">		 * is complete.  Otherwise we return immediately. The</span></span><br><span class="line"><span class="comment">		 * actually closing is done the same either way.</span></span><br><span class="line"><span class="comment">		 *</span></span><br><span class="line"><span class="comment">		 * If the close is due to the process exiting, we never</span></span><br><span class="line"><span class="comment">		 * linger..</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		timeout = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp;</span><br><span class="line">		    !(current-&gt;flags &amp; PF_EXITING))</span><br><span class="line">			timeout = sk-&gt;sk_lingertime;</span><br><span class="line">		sock-&gt;sk = <span class="literal">NULL</span>;</span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">close</span>(sk, timeout);<span class="comment">//对应到tcp_close</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="tcp-close"><a href="#tcp-close" class="headerlink" title="tcp_close()"></a><code>tcp_close()</code></h4><p>当一个套接口正在或已经被关闭，如果在其接收队列有未读数据（不管是在关闭前就已收到的，或者还是在关闭后新到达的），那么此时就需给对端发送一个RST数据包,对应到下面一段代码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (data_was_unread) &#123;<span class="comment">//接受区还有数据没有被读完</span></span><br><span class="line">	<span class="comment">/* Unread data was tossed, zap the connection. */</span></span><br><span class="line">	NET_INC_STATS_USER(LINUX_MIB_TCPABORTONCLOSE);</span><br><span class="line">	tcp_set_state(sk, TCP_CLOSE);</span><br><span class="line">	tcp_send_active_reset(sk, GFP_KERNEL);<span class="comment">//发送RST</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>如果linger结构体的字段<code>l_onoff</code>为1,而<code>l_linger</code>为0</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp; !sk-&gt;sk_lingertime) &#123;</span><br><span class="line">		<span class="comment">/* Check zero linger _after_ checking for unread data. */</span></span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">disconnect</span>(sk, <span class="number">0</span>); <span class="comment">//直接丢掉所有接收数据并且直接断开连接，具体也就是发送RST数据包，清空相关接收队列</span></span><br><span class="line">		NET_INC_STATS_USER(LINUX_MIB_TCPABORTONDATA);</span><br></pre></td></tr></table></figure>
-
-<p>下面就是对应正常四次挥手关闭流程，</p>
-<p>先调用函数<code>tcp_close_state()</code>切换状态，判断是否需要发送FIN数据包（eg.如果当前还处于<code>TCP_SYN_SENT</code>状态，连接尚未完全建立，自然就不用发送FIN数据包），如果需要发送FIN数据包则调用<code>tcp_send_fin()</code></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">....... </span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (tcp_close_state(sk)) &#123;</span><br><span class="line">		tcp_send_fin(sk);</span><br><span class="line">	&#125;</span><br><span class="line"> sk_stream_wait_close(sk, timeout);</span><br></pre></td></tr></table></figure>
-
-<h4 id="tcp-send-fin"><a href="#tcp-send-fin" class="headerlink" title="tcp_send_fin"></a><strong>tcp_send_fin</strong></h4><p>深入到发送fin内部来看，</p>
-<p>如果发送队列还有数据，那么直接将取出末尾数据包，设置FIN。否则分配一个新的skb,最后调用函数<code>__tcp_push_pending_frames() -&gt; tcp_write_xmit()</code>发送数据包。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tcp_send_fin</span><span class="params">(struct sock *sk)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tcp_sock</span> *<span class="title">tp</span> = <span class="title">tcp_sk</span>(<span class="title">sk</span>);</span>	</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sk_buff</span> *<span class="title">skb</span> = <span class="title">skb_peek_tail</span>(&amp;<span class="title">sk</span>-&gt;<span class="title">sk_write_queue</span>);</span> <span class="comment">//取出末尾数据包</span></span><br><span class="line">	<span class="keyword">int</span> mss_now;</span><br><span class="line">	</span><br><span class="line">	mss_now = tcp_current_mss(sk, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_send_head != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_FIN;<span class="comment">//</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq++;</span><br><span class="line">		tp-&gt;write_seq++;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">/* Socket is locked, keep trying until memory is available. */</span></span><br><span class="line">		<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">			skb = alloc_skb(MAX_TCP_HEADER, GFP_KERNEL);</span><br><span class="line">			<span class="keyword">if</span> (skb)</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="built_in">yield</span>();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Reserve space for headers and prepare control bits. */</span></span><br><span class="line">		skb_reserve(skb, MAX_TCP_HEADER);</span><br><span class="line">		skb-&gt;csum = <span class="number">0</span>;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags = (TCPCB_FLAG_ACK | TCPCB_FLAG_FIN);</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;sacked = <span class="number">0</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_segs = <span class="number">1</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_size = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* FIN eats a sequence byte, write_seq advanced by tcp_queue_skb(). */</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;seq = tp-&gt;write_seq;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq = TCP_SKB_CB(skb)-&gt;seq + <span class="number">1</span>;</span><br><span class="line">		tcp_queue_skb(sk, skb);</span><br><span class="line">	&#125;</span><br><span class="line">	__tcp_push_pending_frames(sk, tp, mss_now, TCP_NAGLE_OFF);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="sk-stream-wait-close"><a href="#sk-stream-wait-close" class="headerlink" title="sk_stream_wait_close"></a><strong>sk_stream_wait_close</strong></h4><p>这是一个阻塞等待函数，参数timeout指示了等待的时间（单位为时钟滴答）。</p>
-<p>while循环的退出点有两处</p>
-<ul>
-<li><p>当前进程收到信号或时间超时（timeout）</p>
+<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
 </li>
-<li><p>sk_wait_event()</p>
+<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
+</li>
+<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
+<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+</li>
+</ol>
+<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
+<p> 一开始作者假设</p>
+<ol>
+<li>虚拟地址空间连续存放到物理内存</li>
+<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
+</ol>
+<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
+<p>地址转化： <code>physical address = virtual address + base</code></p>
+<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
+<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
+<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
+<ul>
+<li>进程创建时，分配与地址空间对应的物理内存</li>
+<li>当进程结束时，回收内存</li>
+<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
+</ul>
+<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
+<p><strong>优点</strong></p>
+<ul>
+<li><p>在硬件支持下起来很高效快速</p>
+</li>
+<li><p>提供了进程间的保护隔离</p>
 </li>
 </ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sk_stream_wait_close</span><span class="params">(struct sock *sk, <span class="keyword">long</span> timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (timeout) &#123;</span><br><span class="line">		DEFINE_WAIT(wait);</span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			prepare_to_wait(sk-&gt;sk_sleep, &amp;wait,</span><br><span class="line">					TASK_INTERRUPTIBLE);</span><br><span class="line">			<span class="keyword">if</span> (sk_wait_event(sk, &amp;timeout, !sk_stream_closing(sk)))<span class="comment">// 退出点1</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125; <span class="keyword">while</span> (!signal_pending(current) &amp;&amp; timeout); <span class="comment">//退出点2</span></span><br><span class="line">		finish_wait(sk-&gt;sk_sleep, &amp;wait);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>缺点</strong></p>
+<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
+<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
+<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
+<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
+<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
+<p>分段机制下地址转化伪码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
 
 
 
-<p>至此我们结合源码大致搞清楚了SO_LINGER选项的设置对TCP连接关闭的影响。</p>
-<h3 id="SO-REUSEPORT-amp-amp-SO-REUSEADDR"><a href="#SO-REUSEPORT-amp-amp-SO-REUSEADDR" class="headerlink" title="SO_REUSEPORT&amp;&amp;SO_REUSEADDR"></a>SO_REUSEPORT&amp;&amp;SO_REUSEADDR</h3><p>SO_REUSEADDR和SO_REUSEPORT主要是影响socket绑定ip和port的成功与否。有几点绑定规则主要注意下<br> <strong>规则1</strong>：socket可以指定绑定到一个特定的ip和port，例如绑定到192.168.0.11:9000上；<br> <strong>规则2</strong>：同时也支持通配绑定方式，即绑定到本地”any address”（例如一个socket绑定为 0.0.0.0:21，那么它同时绑定了所有的本地地址）；<br> <strong>规则3</strong>：默认情况下，任意两个socket都无法绑定到相同的源IP地址和源端口</p>
-<h4 id="SO-REUSEADDR"><a href="#SO-REUSEADDR" class="headerlink" title="SO_REUSEADDR"></a><strong>SO_REUSEADDR</strong></h4><p><strong>1、改变了通配绑定时处理源地址冲突的处理方式</strong></p>
-<p>so_reuseaddr作用在于允许一个socket 绑定了统配地址+port， 另外一个套接字绑定具体地址+相同端口</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SO_REUSEADDR       socketA        socketB       Result</span><br><span class="line">---------------------------------------------------------------------</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21   192.168.0.1:21    Error (EADDRINUSE)</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21      10.0.0.1:21    OK</span><br><span class="line">  ON&#x2F;OFF          10.0.0.1:21   192.168.0.1:21    OK</span><br><span class="line">   OFF             0.0.0.0:21   192.168.1.0:21    Error (EADDRINUSE)</span><br><span class="line">   OFF         192.168.1.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br><span class="line">   ON              0.0.0.0:21   192.168.1.0:21    OK</span><br><span class="line">   ON          192.168.1.0:21       0.0.0.0:21    OK</span><br><span class="line">  ON&#x2F;OFF           0.0.0.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、改变了系统对处于TIME_WAIT状态的socket绑定地址的处理</strong></p>
-<p>处于time-wait 状态下的套接字需要等待2msl 才能重新使用其绑定的端口与地址，设置了so_reuseaddr没有此限制</p>
-<h4 id="SO-REUSEPORT"><a href="#SO-REUSEPORT" class="headerlink" title="SO_REUSEPORT"></a><strong>SO_REUSEPORT</strong></h4><ol>
-<li>允许将多个socket绑定到相同的地址和端口，前提每个socket绑定前都需设置</li>
-<li>linux内核在处理SO_REUSEPORT socket的集合时，进行了简单的负载均衡操作，即对于UDP socket，内核尝试平均的转发数据报，对于TCP监听socket，内核尝试将新的客户连接请求(由accept返回)平均的交给共享同一地址和端口的socket(监听socket)。</li>
-</ol>
-<p>通过设置套接字的SO_REUSEPORT能够用来解决epoll_wait存在的惊群问题，把监听描述符添加到epoll监听事件，多个子进程都epoll_wait阻塞等待，由内核来做负载均衡，这样就避免了当实践发生时同时惊醒多个工作进程，添加了SO_REUSEPORT的模型如下:</p>
-<img src="https://s1.ax1x.com/2020/08/13/azw6DU.png" alt="azw6DU.png" style="zoom:80%;" />
-
-
-
-
-<h3 id="TCP-CORK"><a href="#TCP-CORK" class="headerlink" title="TCP_CORK"></a>TCP_CORK</h3><p>tcp_cork与tcp_nodelay 以及nagle 容易搞混，这里我们结合他们的应用场景以及代码来理清楚。</p>
-<p><strong>nagle算法</strong></p>
-<p>大致思想：</p>
-<p>为了提高网络吞吐量，如果发送小数据包，那么20字节包头的负担太大，于是通过将小数据包累积到一个MSS长度再发出来。</p>
-<p>同样影响小包发送的套接字选项:<strong>TCP_NODELAY，TCP_CORK</strong></p>
-<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
-<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
-<p>（1）如果包长度达到MSS，则允许发送；</p>
-<p>（2）如果该包含有FIN，则允许发送；</p>
-<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
-<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
-<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
-<p><code>TCP_NODELAY</code>是禁用Nagle算法，即数据包立即发送出去，而选项TCP_CORK与此相反，可以认为它是Nagle算法的进一步增强，即阻塞数据包发送，具体点说就是：TCP_CORK选项的功能类似于在发送数据管道出口处插入一个“塞子”，使得发送数据全部被阻塞，直到取消TCP_CORK选项（即拔去塞子）或被阻塞数据长度已超过MSS才将其发送出去。举个对比示例，比如收到接收端的ACK确认后，Nagle算法可以让当前待发送数据包发送出去，即便它的当前长度仍然不够一个MSS，但选项TCP_CORK则会要求继续等待。</p>
-<h4 id="TCP-CORK的应用场景"><a href="#TCP-CORK的应用场景" class="headerlink" title="TCP_CORK的应用场景"></a>TCP_CORK的应用场景</h4><p>TCP_CORK选项的作用主要是阻塞小数据发送，服务器处理一个客户端请求，发送的响应数据包括响应头和响应体两部分，利用TCP_CORK选项就能让这两部分数据一起发送。</p>
-<p>按照之前的分析，设置了CORK之后，有几种可能数据会被发送</p>
+<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
+<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
 <ul>
-<li>通过setoptsock关闭TCP_CORK这个选项。</li>
-<li>socket阻塞的数据大于MSS。</li>
-<li>自从堵上塞子写入第一个字节开始，已经经过200ms。</li>
-<li>socket被关闭。</li>
+<li><p>减少了内部碎片,内存浪费</p>
+</li>
+<li><p>代码段等可以共享</p>
+</li>
 </ul>
-<p>一旦满足上面的任何一个条件，TCP就会将数据发送出去。对于Server来说，发送HTTP响应既要发送尽量少的segment，同时又要保证低延迟，那么需要在写完数据后显式取消设置<code>TCP_CORK</code>选项，让数据立即发送出去：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> state = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//开启cork</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">write</span>(http_resp_header);</span><br><span class="line">sendfile(sockfd, fd, &amp;off, len); <span class="comment">//阻塞</span></span><br><span class="line"></span><br><span class="line">state = <span class="number">0</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//关闭cork</span></span><br></pre></td></tr></table></figure>
+<p>问题：</p>
+<ul>
+<li><p>大小不一的段可能导致外部碎片</p>
+</li>
+<li><p>内存不能做到按需分配</p>
+</li>
+</ul>
+<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
+<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
 
+<blockquote>
+<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
+</blockquote>
+<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
+<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
+<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
+</blockquote>
+<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
+<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
+<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
+<p>实现页机制有几个问题</p>
+<blockquote>
+<p>1.页表存在哪里?</p>
+<p>2.每一个页表项具体有什么内容?</p>
+</blockquote>
+<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
+<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
+<ul>
+<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
+<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
+<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
+</ul>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
+<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
 
-
-
-
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://www.lenky.info/archives/2013/02/2220" target="_blank" rel="noopener">Socket选项系列之SO_LINGER</a></p>
-<p><a href="http://senlinzhan.github.io/2017/02/10/Linux的TCP-CORK/" target="_blank" rel="noopener">Nagle 算法与 TCP socket 选项 TCP_CORK</a></p>
-<p><a href="https://juejin.im/post/6844903878819840008" target="_blank" rel="noopener">https://juejin.im/post/6844903878819840008</a></p>
-<p><a href="https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html" target="_blank" rel="noopener">https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html</a></p>
+<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>固定大小内存单元，避免外部碎片</p>
+</li>
+<li><p>相对分段内存使用灵活</p>
+</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li><p>页表占用内存过大</p>
+</li>
+<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
+</li>
+</ul>
 ]]></content>
       <tags>
-        <tag>网络</tag>
+        <tag>OSTEP</tag>
+        <tag>操作系统</tag>
       </tags>
   </entry>
   <entry>
     <title>文件系统的持久化</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>《OSTEP》文件持久化部分阅读笔记</p>
 <a id="more"></a>
 
@@ -1103,26 +1103,8 @@
       </tags>
   </entry>
   <entry>
-    <title>排序二叉树转化为双向链表</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
-<a id="more"></a>
-
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
     <title>数据流算法题目小结</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
 <p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
 <a id="more"></a>
@@ -1143,7 +1125,7 @@
   </entry>
   <entry>
     <title>最长上升子序列</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
 <a id="more"></a>
 
@@ -1168,8 +1150,26 @@
       </categories>
   </entry>
   <entry>
+    <title>排序二叉树转化为双向链表</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
+<a id="more"></a>
+
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
     <title>滑动窗口小结</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。</p>
 <a id="more"></a>
 
@@ -1198,144 +1198,8 @@
       </categories>
   </entry>
   <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
-<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
-<blockquote>
-<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
-</blockquote>
-<blockquote>
-<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
-</blockquote>
-<blockquote>
-<p>如果不感到自身充满力量，就不可能有爱情。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>读书</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>系统调用open(),read(),write()具体发了什么?</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
-<a id="more"></a>
-
-
-
-<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
-<p><strong>文件系统</strong></p>
-<p>文件系统可以简单的理解为数据结构+方法</p>
-<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
-<p>方法:open(),read()等调用如何与数据结构打交道</p>
-<p>一个简单的文件系统一般有这几部分</p>
-<ul>
-<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
-<li>data block 存储实际问文件内容</li>
-<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
-<li>data bitmap 记录data blocks 分配情况</li>
-<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
-</ul>
-<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
-<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
-<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
-<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
-<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
-<p>下面的图直观的说明这一过程</p>
-<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>操作系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>许知远-罗翔访谈记录</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
-<a id="more"></a>
-<blockquote>
-<p>在人类所有美德中，勇敢是最稀缺的</p>
-</blockquote>
-<p>罗上学时候结巴，后来为了养活自己讲课， 写逐字稿，慢慢就不结巴了。</p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228153612.png" alt=""></p>
-<p>巧了我的启蒙也是赵借我看的这一套书，现在还在启蒙，永不过时。</p>
-<p>北京万圣书店</p>
-<p><a href="https://zh.m.wikisource.org/zh-hans/%E4%BF%A0%E5%AE%A2%E8%A1%8C_(%E6%9D%8E%E7%99%BD)" target="_blank" rel="noopener">李白-侠客行</a>   武侠小说中对结果正义的最求，话说罗能够完整背诵侠客行还是挺让我意外的。</p>
-<p><a href="https://book.douban.com/subject/2009914/" target="_blank" rel="noopener">为权力而斗争</a></p>
-<blockquote>
-<p>罗: 人最大的痛楚在于，无法跨越知道和做到的鸿沟</p>
-</blockquote>
-<p>罗对技术主义的转变，这里比较含糊，</p>
-<p>罗说要警惕<a href="https://www.wikiwand.com/zh-hans/%E7%9B%B8%E5%B0%8D%E4%B8%BB%E7%BE%A9" target="_blank" rel="noopener">相对主义</a></p>
-<p>罗推崇节制<a href="https://baike.baidu.com/item/%E5%BE%B7%E5%B0%94%E6%96%90%E7%A5%9E%E8%B0%95" target="_blank" rel="noopener">德尔菲神谕  </a>  ““认识你自己”、“凡事勿过度”、“承诺带来痛苦””</p>
-<p>整个访谈<strong>最精彩的部分</strong>  </p>
-<p>许: 法律学家在20世纪没有参与到整个社会的思想辩论中，如何看待？</p>
-<p>罗:专业人士的自我封闭化，害怕专业变味，法学家的技术主义，上学时以技术主义为荣，觉得没白学</p>
-<p>许: 什么时候这种观点发生了变化？</p>
-<p>罗: 高傲的观点与老百姓内心常识相抵触时候，技术主义在逻辑论证没有问题，但其实是在抵触人内心的良知。人生的经历使得自己<strong>接受人生的有限性</strong></p>
-<blockquote>
-<p>承认自己是有限的，承认你的逻辑是有限的，承认你的理性是有有限的，承认自己的阅读是有限的，承认自己的偏见，一生就是在走出偏见</p>
-</blockquote>
-<p>许: 变化的契机?</p>
-<p>罗：一些不可抗拒的力量，有些话也不好说，经历了亲人的生离死别。人最大的痛苦就是无法跨越知道和做到的鸿沟。笛卡尔说的“我思故我在”给人一种幻想-就是我思考到了，我就能做到，但其实不是这样。</p>
-<p>2010年之前教课很受学生喜欢，有强烈的骄傲，但是内心有一种冲突，自己所教的，自己做不到，骗别人，在自我欺骗，陷入一种虚无</p>
-<p>许: 如何应对那一次危机?</p>
-<p>罗: 虚伪是肯定的，做到行动在言语之前多那么一步，摆脱虚伪的自我控诉。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>适合反复看的技术入门教程</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<ol>
-<li><a href="https://zhuanlan.zhihu.com/p/339008746?utm_source=org.telegram.messenger&utm_medium=social&utm_oi=966460230863925248" target="_blank" rel="noopener">Kubernetes 入门&amp;进阶实战</a>  腾讯CSIG工程师写的，估计是内部k吧开源出来的</li>
-</ol>
-<blockquote>
-<p>笔者今年（公元 2020 年）9 月从端侧开发转到后台开发，第一个系统开发任务就强依赖了 K8S，加之项目任务重、排期紧，必须马上对 K8S 有概念上的了解。然而，很多所谓“K8S 入门\概念”的文章看的一头雾水，对于大部分新手来说并不友好。经历了几天痛苦地学习之后，回顾来看，<strong>K8S 根本不复杂。</strong>于是，决心有了这一系列的文章：一方面希望对新手同学有帮助；另一方面，以文会友，希望能够有机会交流讨论技术。</p>
-</blockquote>
-<ol start="2">
-<li><a href="https://kingsamchen.github.io/2020/02/08/how-to-learn-cmake-as-the-beginner/" target="_blank" rel="noopener">CMake 入门指南</a>  这位大哥是B站后端工程师，最早是在饭否看到他的技术分享觉得很棒，然后顺藤摸瓜找到了他的个人博客，可以看出来他对C++理解还是很深，虽然我之后可能不怎么会接触C++开发了，但是很多好的概念还是值得学习的。</li>
-</ol>
-<h4 id="0x00-起手式"><a href="#0x00-起手式" class="headerlink" title="0x00 起手式"></a>0x00 起手式</h4><p>这里假设题主以及其他想入门 CMake 的人像我一样，下面是我个人总结的比较适合的学习路径。</p>
-<p>首先默念三遍并记住口诀：</p>
-<ol>
-<li>Declare a target</li>
-<li>Declare target’s traits</li>
-<li>It’s all about targets</li>
-</ol>
-<p>然后 clone <a href="https://github.com/ttroy50/cmake-examples" target="_blank" rel="noopener">https://github.com/ttroy50/cmake-examples</a> 这个项目到本地，把里面的</p>
-<ul>
-<li>01-basic（跳过E-installing，因为和依赖有关，后面会说）</li>
-<li>02-sub-projects</li>
-</ul>
-<p>两个目录认真的学习一遍，最好自己能够动手跟着做一遍。</p>
-<p>每学习完一个小节，把前面的三句口诀复习一下</p>
-<p>每遇到一个不认识的命令，在 <a href="https://link.zhihu.com/?target=https%3A//gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1">Effective Modern CMake</a> 这个页面里搜索一下，看看这个命令是否取代了某个老命令。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>负载均衡大量TW分析</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>背景</p>
-<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
-<p>分析思路</p>
-<ul>
-<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
-<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
-<li>调整tcp_max_tw_buckets</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
     <title>网络协议栈收包过程小结</title>
-    <url>/posts/undefined/</url>
+    <url>/post/undefined.html</url>
     <content><![CDATA[<p>linux网络协议栈学习小结</p>
 <a id="more"></a>
 
@@ -1494,5 +1358,141 @@
       <tags>
         <tag>技术</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>读书</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>系统调用open(),read(),write()具体发了什么?</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
+<a id="more"></a>
+
+
+
+<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
+<p><strong>文件系统</strong></p>
+<p>文件系统可以简单的理解为数据结构+方法</p>
+<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
+<p>方法:open(),read()等调用如何与数据结构打交道</p>
+<p>一个简单的文件系统一般有这几部分</p>
+<ul>
+<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
+<li>data block 存储实际问文件内容</li>
+<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
+<li>data bitmap 记录data blocks 分配情况</li>
+<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
+</ul>
+<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
+<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
+<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
+<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
+<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
+<p>下面的图直观的说明这一过程</p>
+<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>许知远-罗翔访谈记录</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
+<a id="more"></a>
+<blockquote>
+<p>在人类所有美德中，勇敢是最稀缺的</p>
+</blockquote>
+<p>罗上学时候结巴，后来为了养活自己讲课， 写逐字稿，慢慢就不结巴了。</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228153612.png" alt=""></p>
+<p>巧了我的启蒙也是赵借我看的这一套书，现在还在启蒙，永不过时。</p>
+<p>北京万圣书店</p>
+<p><a href="https://zh.m.wikisource.org/zh-hans/%E4%BF%A0%E5%AE%A2%E8%A1%8C_(%E6%9D%8E%E7%99%BD)" target="_blank" rel="noopener">李白-侠客行</a>   武侠小说中对结果正义的最求，话说罗能够完整背诵侠客行还是挺让我意外的。</p>
+<p><a href="https://book.douban.com/subject/2009914/" target="_blank" rel="noopener">为权力而斗争</a></p>
+<blockquote>
+<p>罗: 人最大的痛楚在于，无法跨越知道和做到的鸿沟</p>
+</blockquote>
+<p>罗对技术主义的转变，这里比较含糊，</p>
+<p>罗说要警惕<a href="https://www.wikiwand.com/zh-hans/%E7%9B%B8%E5%B0%8D%E4%B8%BB%E7%BE%A9" target="_blank" rel="noopener">相对主义</a></p>
+<p>罗推崇节制<a href="https://baike.baidu.com/item/%E5%BE%B7%E5%B0%94%E6%96%90%E7%A5%9E%E8%B0%95" target="_blank" rel="noopener">德尔菲神谕  </a>  ““认识你自己”、“凡事勿过度”、“承诺带来痛苦””</p>
+<p>整个访谈<strong>最精彩的部分</strong>  </p>
+<p>许: 法律学家在20世纪没有参与到整个社会的思想辩论中，如何看待？</p>
+<p>罗:专业人士的自我封闭化，害怕专业变味，法学家的技术主义，上学时以技术主义为荣，觉得没白学</p>
+<p>许: 什么时候这种观点发生了变化？</p>
+<p>罗: 高傲的观点与老百姓内心常识相抵触时候，技术主义在逻辑论证没有问题，但其实是在抵触人内心的良知。人生的经历使得自己<strong>接受人生的有限性</strong></p>
+<blockquote>
+<p>承认自己是有限的，承认你的逻辑是有限的，承认你的理性是有有限的，承认自己的阅读是有限的，承认自己的偏见，一生就是在走出偏见</p>
+</blockquote>
+<p>许: 变化的契机?</p>
+<p>罗：一些不可抗拒的力量，有些话也不好说，经历了亲人的生离死别。人最大的痛苦就是无法跨越知道和做到的鸿沟。笛卡尔说的“我思故我在”给人一种幻想-就是我思考到了，我就能做到，但其实不是这样。</p>
+<p>2010年之前教课很受学生喜欢，有强烈的骄傲，但是内心有一种冲突，自己所教的，自己做不到，骗别人，在自我欺骗，陷入一种虚无</p>
+<p>许: 如何应对那一次危机?</p>
+<p>罗: 虚伪是肯定的，做到行动在言语之前多那么一步，摆脱虚伪的自我控诉。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>适合反复看的技术入门教程</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
+
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/339008746?utm_source=org.telegram.messenger&utm_medium=social&utm_oi=966460230863925248" target="_blank" rel="noopener">Kubernetes 入门&amp;进阶实战</a>  腾讯CSIG工程师写的，估计是内部k吧开源出来的</li>
+</ol>
+<blockquote>
+<p>笔者今年（公元 2020 年）9 月从端侧开发转到后台开发，第一个系统开发任务就强依赖了 K8S，加之项目任务重、排期紧，必须马上对 K8S 有概念上的了解。然而，很多所谓“K8S 入门\概念”的文章看的一头雾水，对于大部分新手来说并不友好。经历了几天痛苦地学习之后，回顾来看，<strong>K8S 根本不复杂。</strong>于是，决心有了这一系列的文章：一方面希望对新手同学有帮助；另一方面，以文会友，希望能够有机会交流讨论技术。</p>
+</blockquote>
+<ol start="2">
+<li><a href="https://kingsamchen.github.io/2020/02/08/how-to-learn-cmake-as-the-beginner/" target="_blank" rel="noopener">CMake 入门指南</a>  这位大哥是B站后端工程师，最早是在饭否看到他的技术分享觉得很棒，然后顺藤摸瓜找到了他的个人博客，可以看出来他对C++理解还是很深，虽然我之后可能不怎么会接触C++开发了，但是很多好的概念还是值得学习的。</li>
+</ol>
+<h4 id="0x00-起手式"><a href="#0x00-起手式" class="headerlink" title="0x00 起手式"></a>0x00 起手式</h4><p>这里假设题主以及其他想入门 CMake 的人像我一样，下面是我个人总结的比较适合的学习路径。</p>
+<p>首先默念三遍并记住口诀：</p>
+<ol>
+<li>Declare a target</li>
+<li>Declare target’s traits</li>
+<li>It’s all about targets</li>
+</ol>
+<p>然后 clone <a href="https://github.com/ttroy50/cmake-examples" target="_blank" rel="noopener">https://github.com/ttroy50/cmake-examples</a> 这个项目到本地，把里面的</p>
+<ul>
+<li>01-basic（跳过E-installing，因为和依赖有关，后面会说）</li>
+<li>02-sub-projects</li>
+</ul>
+<p>两个目录认真的学习一遍，最好自己能够动手跟着做一遍。</p>
+<p>每学习完一个小节，把前面的三句口诀复习一下</p>
+<p>每遇到一个不认识的命令，在 <a href="https://link.zhihu.com/?target=https%3A//gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1">Effective Modern CMake</a> 这个页面里搜索一下，看看这个命令是否取代了某个老命令。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>负载均衡大量TW分析</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
+
+<p>背景</p>
+<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
+<p>分析思路</p>
+<ul>
+<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
+<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
+<li>调整tcp_max_tw_buckets</li>
+</ul>
+]]></content>
   </entry>
 </search>
