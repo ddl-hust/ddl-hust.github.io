@@ -20,18 +20,18 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="JJJJJJJJJJJJJJJJJJJJJJJJJNNNNNNNNNNNNNNNNNNNNNNNNN">
+  <meta name="description" content="背景 LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。 分析思路  打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps 设置SO_LINGER ; 只有正常的四">
 <meta property="og:type" content="article">
-<meta property="og:title" content="test">
-<meta property="og:url" content="http://yoursite.com/null.html/index.html">
+<meta property="og:title" content="负载均衡大量TW分析">
+<meta property="og:url" content="http://yoursite.com/2020/08/23/ckj9htluu001l08uhc4g18473/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
-<meta property="og:description" content="JJJJJJJJJJJJJJJJJJJJJJJJJNNNNNNNNNNNNNNNNNNNNNNNNN">
-<meta property="article:published_time" content="2020-12-29T04:29:12.000Z">
-<meta property="article:modified_time" content="2020-12-29T04:29:32.715Z">
+<meta property="og:description" content="背景 LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。 分析思路  打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps 设置SO_LINGER ; 只有正常的四">
+<meta property="article:published_time" content="2020-08-23T06:59:02.000Z">
+<meta property="article:modified_time" content="2020-08-23T07:03:47.004Z">
 <meta property="article:author" content="ddl">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/null.html/">
+<link rel="canonical" href="http://yoursite.com/2020/08/23/ckj9htluu001l08uhc4g18473/">
 
 
 <script id="page-configurations">
@@ -44,7 +44,7 @@
   };
 </script>
 
-  <title>test | DDL's homepage</title>
+  <title>负载均衡大量TW分析 | DDL's homepage</title>
   
 
 
@@ -193,7 +193,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/null.html/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/23/ckj9htluu001l08uhc4g18473/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -206,7 +206,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          test
+          负载均衡大量TW分析
         </h1>
 
         <div class="post-meta">
@@ -216,7 +216,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-12-29 12:29:12" itemprop="dateCreated datePublished" datetime="2020-12-29T12:29:12+08:00">2020-12-29</time>
+              <time title="创建时间：2020-08-23 14:59:02" itemprop="dateCreated datePublished" datetime="2020-08-23T14:59:02+08:00">2020-08-23</time>
             </span>
 
           
@@ -228,8 +228,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/null.html/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/null.html/" itemprop="commentCount"></span>
+    <a title="valine" href="/2020/08/23/ckj9htluu001l08uhc4g18473/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/08/23/ckj9htluu001l08uhc4g18473/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -245,7 +245,15 @@
 
       
         <a id="more"></a>
-<p>JJJJJJJJJJJJJJJJJJJJJJJJJ<br>NNNNNNNNNNNNNNNNNNNNNNNNN</p>
+
+<p>背景</p>
+<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
+<p>分析思路</p>
+<ul>
+<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
+<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
+<li>调整tcp_max_tw_buckets</li>
+</ul>
 
     </div>
 
@@ -261,10 +269,13 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/undefined.html/" rel="prev" title="许知远-罗翔访谈记录">
-      <i class="fa fa-chevron-left"></i> 许知远-罗翔访谈记录
+    <a href="/2020/08/23/ckj9htlue000l08uh2r170old/" rel="prev" title="tcp40ms延迟问题分析">
+      <i class="fa fa-chevron-left"></i> tcp40ms延迟问题分析
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/24/ckj9htluh000v08uhe6vh50d4/" rel="next" title="套接字选项小结">
+      套接字选项小结 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
