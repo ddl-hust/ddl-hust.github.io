@@ -1,89 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>bash学习</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<a id="more"></a>
-
-<h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
-<p>bash 脚本开头一行 都有 <code>#!/bin/bash</code> 指此脚本使用<strong>/bin/sh</strong>来解释执行，<strong>#!</strong>是特殊的表示符，其后面根的是此解释此脚本的shell的路径, python脚本在开头也有类似的语句， <code>#!/bin/python2</code> or <code>#!/bin/python3</code></p>
-<p>创建完一个bash脚本之后，需要通过<code>chmod +x XXX.sh</code> 赋予bash脚本执行权限， 文件的权限可以通过<code>ls -l</code> 查看详细， 用户组，其他，用户都具有自己对文件的权限。</p>
-<p>bash 脚本执行可以 通过<code>./XXX.sh</code> 也可以直接指明<code>bash xxx.sh</code>  其中前者指定了sh 文件的路径，<a href="https://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell" target="_blank" rel="noopener">参考</a></p>
-<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>bash 变量不需要指定类型，直接赋值，解释器动态解释。</p>
-<p><strong>变量定义</strong>:</p>
-<p><code>name=&quot;DevDojo&quot;</code>  note： 赋值号左右不能又空格，如果平时编码习惯和这个不一样，需要注意下。</p>
-<p><strong>变量使用</strong></p>
-<p><code>echo ${name}</code> 括号增加可读性。同时变量也可以在表达式中使用，语法与直接使用一样。</p>
-<p>bash 语句不像c++需要显式<code>;</code>表示语句结束</p>
-<p><strong>用户输入</strong></p>
-<p>从命令行读取用户输入</p>
-<p><code>read variable</code></p>
-<p><strong>外部参数</strong></p>
-<p>bash 脚本在运行时候,可以跟可变多的参数,在脚本内部用$1, $2来指代,如下面例子</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument one is <span class="variable">$1</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument two is <span class="variable">$2</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument three is <span class="variable">$3</span>"</span></span><br><span class="line"><span class="comment"># excute</span></span><br><span class="line">./arguments.sh dog cat bird</span><br></pre></td></tr></table></figure>
-
-<p>也可以很方便的用 <code>$@</code> 来引用所有的外部参数.</p>
-<p>$0表示脚本文件名,一个用处就是在执行完脚本之后,可以用$0获取脚本名,然后做自删除.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"The name of the file is: <span class="variable">$0</span> and it is going to be self-</span></span><br><span class="line"><span class="string">deleted."</span></span><br><span class="line">rm -f <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>数组</strong></p>
-<p>语法:<code>my_array=(&quot;value 1&quot; &quot;value 2&quot; &quot;value 3&quot; &quot;value 4&quot;)</code>  元素之间用空格隔开</p>
-<p>数组引用类似C,  <code>echo ${my_array[1]}</code>  元素起始下标为0</p>
-<p>数组长度获取</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">list=(1 2 3 4)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#list[@]&#125;</span>  <span class="comment">#输出4</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h4><ul>
-<li>算数表达  语法类似, 用英文字母的缩写来表示比较属性, eg. lt(less than) ,eq(equal) …..<ul>
-<li>[[ ${arg1} -eq ${arg2} ]]    equal  如果两个变量相同返回true</li>
-</ul>
-</li>
-<li>字符串<ul>
-<li>[[ -v ${varname} ]] 变量如果被赋值返回true</li>
-<li>[[ -z ${string} ]] 字符串长度为0 为true</li>
-<li>[[ -n ${string} ]] 字符串长度不为0</li>
-</ul>
-</li>
-<li>文件表达式 在linux 下面一切都是文件,文件具有不同的类型 比如块文件,字符设备,目录等<ul>
-<li>[[ -d ${file} ]]    是否为目录</li>
-<li>[[ -x ${file} ]]  文件是否可执行</li>
-<li>[[ -L ${file} ]]  文件是否为符号链接</li>
-</ul>
-</li>
-</ul>
-<p>有了条件表达式,自然引出了条件语句</p>
-<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p><strong>if-else</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ some_test ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span> &lt;commands&gt;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>swith 语句</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$some_variable</span> <span class="keyword">in</span></span><br><span class="line">  pattern_1)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  pattern_2| pattern_3)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    default commands</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
-
-<p>注意点</p>
+    <title>Peter Thiel&#39;s Religion — David Perell</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
+<blockquote>
 <ol>
-<li>case 语句用关键字<strong>case</strong>开始,引用变量,然后加关键字<strong>in</strong></li>
-<li>匹配模式用) 结束</li>
-<li>All clauses have to be terminated by adding ;; at the end</li>
-<li>默认模式用*匹配</li>
-<li>case 语句结束用esac关键字</li>
+<li>Don’t copy your neighbors</li>
+<li>Time moves forward</li>
+<li>The future will be different from the present</li>
 </ol>
-<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p><strong>while</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_conditions</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
+<a id="more"></a>
 
-<p>条件表达式都用[] 或者[[]]括起来, <a href="https://stackoverflow.com/questions/3427872/whats-the-difference-between-and-in-bash" target="_blank" rel="noopener">区别</a></p>
-<p><strong>until</strong></p>
-<p>含义是当条件不为真时候一直运行</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">until [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_commands</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
+<blockquote>
+<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
+</blockquote>
+<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
+<blockquote>
+<p>“As Peter Thiel recounted:</p>
+<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
+</blockquote>
+<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
+<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
+<blockquote>
+<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
+</blockquote>
+<blockquote>
+<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
+<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
+<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
+</blockquote>
+<blockquote>
+<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
+</blockquote>
+<blockquote>
+<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
+</blockquote>
+<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
+<blockquote>
+<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
+<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
+</blockquote>
+<p>#好故事 人类模仿的天性导致嫉妒</p>
 ]]></content>
   </entry>
   <entry>
     <title>overload,override,overwrite小结</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
 <a id="more"></a>
 
@@ -143,101 +108,8 @@
       </tags>
   </entry>
   <entry>
-    <title>IO复用</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
-<a id="more"></a>
-<p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
-<h3 id="select"><a href="#select" class="headerlink" title="select()"></a>select()</h3><h4 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h4><p><code>int select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);</code></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//@parm1 :nfds 表示所监听的文件描述符最大值+1</span></span><br><span class="line"><span class="comment">// @parm2,3,4 所监听文件描述符事件(可读/可写/异常)</span></span><br><span class="line"><span class="comment">//@parm5:设置超时限制</span></span><br><span class="line"><span class="comment">//返回值&gt;0：监听的所有集合，总满足条件的总数;==0 超时；&lt;0 错误</span></span><br></pre></td></tr></table></figure>
-<h4 id="配套操作"><a href="#配套操作" class="headerlink" title="配套操作"></a>配套操作</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>; <span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//判断fd是否在集合中</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合对应位置为1</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合清0</span></span><br></pre></td></tr></table></figure>
-<h4 id="再看文件描述集"><a href="#再看文件描述集" class="headerlink" title="再看文件描述集"></a>再看文件描述集</h4><p>三个文件描述符参数是传入传出参数</p>
-<p>举个例子，readfds 监听了{fd1,fd2,fd3,fd4} 对应位图[1111]<br>select返回2，表明有两个文件描述符准备好了,这个时候监听集合可能就变成了[1001] ，因此我们需要轮循才能知道是哪个文件描述符状态发生了改变。</p>
-<h4 id="select-详细过程："><a href="#select-详细过程：" class="headerlink" title="select 详细过程："></a>select 详细过程：</h4><ol>
-<li><p>当用户 process 调用 select 的时候，select 会将需要监控的 readfds 集合拷贝到内核空间（假设监控的仅仅是 socket 可读），</p>
-</li>
-<li><p>内核遍历自己监控的 socket sk，挨个调用 sk 的 poll 逻辑以便检查该 sk 是否有可读事件，遍历完所有的 sk 后，如果没有任何一个 sk 可读，那 select 会调用 schedule_timeout 进入 schedule 循环，使得 process 进入睡眠。如果在 timeout 时间内某个 sk 上有数据可读了，或者等待 timeout 了，则调用 select 的 process 会被唤醒，</p>
-</li>
-<li><p>接下来 select 就是遍历监控的 sk 集合，挨个收集可读事件并返回给用户。</p>
-</li>
-</ol>
-<h4 id="select-缺点"><a href="#select-缺点" class="headerlink" title="select()缺点"></a>select()缺点</h4><ol>
-<li>监听的文件描述符上限1024</li>
-<li>需要轮循才能知道是哪个文件描述符状态发生了改变，当客户端连接数过多，但是准备就绪的又比较少时，轮循代价比较大</li>
-<li>由于监听集合是传入传出参数，因此在调用<code>select()</code>之前需要先保存之前状态</li>
-<li>fds集合需要从用户空间拷贝到内核空间的问题，我们希望不需要拷贝</li>
-</ol>
-<h4 id="select处理完整代码"><a href="#select处理完整代码" class="headerlink" title="select处理完整代码"></a>select处理完整代码</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    fd_set rfds;</span><br><span class="line">    <span class="keyword">char</span> buf[BUFSIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> listenfd = createSocket(); <span class="comment">//这里封装了，可以简单理解为将socket(),bind(),listen() 都封装了</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 保存所有的文件描述符</span></span><br><span class="line">    <span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt; fdset;</span><br><span class="line">    fdset.insert(listenfd);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        FD_ZERO(&amp;rfds);</span><br><span class="line">        <span class="comment">// 每次都要重新设置rfds.因为select返回时，rfds被内核改变，里面只保存了就绪的文件描述符</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) FD_SET(fd, &amp;rfds);</span><br><span class="line">        <span class="keyword">int</span> ret = select(*fdset.rbegin()+<span class="number">1</span>, &amp;rfds, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span> (ret &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) <span class="comment">//这里就是轮询监听的文件描述符集合，因为使用了集合，就不需要从0-fds.size()+1遍历呢</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 有新的连接</span></span><br><span class="line">                <span class="keyword">if</span> (fd == listenfd &amp;&amp; FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line"> </span><br><span class="line">                   <span class="keyword">int</span> cfd = accept();</span><br><span class="line">                    <span class="comment">// 添加到 fd_set 结构体，并记录到 set</span></span><br><span class="line">                    FD_SET(cfd, &amp;rfds);</span><br><span class="line">                    fdset.insert(cfd); </span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//有请求 读数据</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">int</span> lenrecv = <span class="number">-1</span>;</span><br><span class="line">                    <span class="built_in">memset</span>(buf, <span class="number">0</span>, BUFSIZE);</span><br><span class="line"> </span><br><span class="line">                    lenrecv = recv(fd, buf, BUFSIZE<span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">                    <span class="keyword">if</span> (lenrecv &gt; <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, buf);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == lenrecv)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 客户端退出，删除文件描述符，并关闭</span></span><br><span class="line">                        fdset.erase(fd);</span><br><span class="line">                        FD_CLR(fd, &amp;rfds);</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"delete connection fd: %d\n"</span>, fd);</span><br><span class="line">                        <span class="built_in">close</span>(fd);</span><br><span class="line">                    &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">close</span>(listenfd);</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><p><code>int poll(struct pollfd *fds, unsigned int nfds, int timeout);</code></p>
-<p>poll机制和select类似，通过轮询管理的文件描述符，根据其状态来进行处理。</p>
-<ol>
-<li>但是poll()没有最大文件描述符数量上限。</li>
-<li>fds描述方式和select()不同，使用pollfd()基于链表实现，而fd_set()基于数组<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">   <span class="keyword">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">   short events;     <span class="comment">/* requested events */</span></span><br><span class="line">   short revents;    <span class="comment">/* returned events */</span></span><br><span class="line">   &#125;;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="poll与select对比"><a href="#poll与select对比" class="headerlink" title="poll与select对比"></a>poll与select对比</h3><h4 id="功能实现上"><a href="#功能实现上" class="headerlink" title="功能实现上"></a>功能实现上</h4><ul>
-<li>select 的描述符类型使用数组实现，FD_SETSIZE 大小默认为 1024，因此默认只能监听少于 1024 个描述符。如果要监听更多描述符的话，需要修改 FD_SETSIZE 之后重新编译；而 poll 没有描述符数量的限制；</li>
-<li>select 会修改描述符，而 poll 不会(请求事件和返回事件分开)</li>
-<li>poll 提供了更多的事件类型(POLLIN,POLLOUT,POLLERR,POLLHUP)</li>
-</ul>
-<h4 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h4><p>select 和 poll 速度都比较慢，每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。</p>
-<h4 id="可移植性"><a href="#可移植性" class="headerlink" title="可移植性"></a>可移植性</h4><p>几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
-<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><p>使用场景：连接文件描述符多，但是监听的少，或者说处于就绪态的文件描述符少，使用epoll</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> <span class="built_in">size</span>)</span></span>; <span class="comment">//返回指向内核的红黑树根</span></span><br><span class="line"></span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event*event)；</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event * events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>epoll 只需要将描述符从进程缓冲区向内核缓冲区拷贝一次(处理红黑树节点时候)，并且进程不需要通过轮询来获得事件完成的描述符。</p>
-<blockquote>
-<p>为什么不在需要轮循获得准备就绪的fd?<br>因为epoll_wait() 返回的<br><code>struct epoll_event * events</code> 已经包含了就绪的文件描述符,并且该结构体含有fd,以及事件信息<br>常见的处理方式</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">activeEvs</span>[100];</span></span><br><span class="line"><span class="keyword">int</span> n = epoll_wait(efd, activeEvs, kMaxEvents, waitms);<span class="comment">//返回准备就绪的文件描述符个数</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> fd = activeEvs[i].data.fd; <span class="comment">//提取fd</span></span><br><span class="line">        <span class="keyword">int</span> events = activeEvs[i].events; <span class="comment">//提取返回事件</span></span><br><span class="line">        <span class="keyword">if</span> (events &amp; (EPOLLIN | EPOLLERR)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (fd == lfd) &#123;</span><br><span class="line">                handleAccept(efd, fd);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                handleRead(efd, fd);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="LT-amp-amp-ET"><a href="#LT-amp-amp-ET" class="headerlink" title="LT&amp;&amp;ET"></a>LT&amp;&amp;ET</h4><p>Level Triggered (LT) 水平触发</p>
-<p>socket接收缓冲区不为空 有数据可读 读事件一直触发</p>
-<p>Edge Triggered (ET) 边沿触发</p>
-<p>socket的接收缓冲区状态变化时触发读事件，即空的接收缓冲区刚接收到数据时触发读事件</p>
-<p>其实就是模拟电路中的上升沿以及水平概念，LT只要有数据就会读，ET只有当缓冲区状态发生改变才会触发。</p>
-<p>ET很大程度上减少了 epoll 事件被重复触发的次数，因此效率要比 LT 模式高。只支持 No-Blocking，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
-<h3 id="三种IO复用应用场景"><a href="#三种IO复用应用场景" class="headerlink" title="三种IO复用应用场景"></a>三种IO复用应用场景</h3><h4 id="select-1"><a href="#select-1" class="headerlink" title="select"></a>select</h4><ol>
-<li>实时性要求高;select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制</li>
-<li>可移植性好</li>
-</ol>
-<h4 id="poll-1"><a href="#poll-1" class="headerlink" title="poll"></a>poll</h4><p>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</p>
-<h4 id="epoll-1"><a href="#epoll-1" class="headerlink" title="epoll"></a>epoll</h4><p>适用于：</p>
-<ul>
-<li>只运行在linux</li>
-<li>大量的连接，但是只有少数同时处于就绪态，并且这些连接为长连接</li>
-</ul>
-<p>不适用：</p>
-<ul>
-<li>监控的描述符状态变化多，而且都是非常短暂的，因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>shared_from_this解决了什么问题</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
-<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
-]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
-  </entry>
-  <entry>
     <title>socket从创建到连接过程小结</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<p>分析了套接字创建到连接过程中，一些关键的函数调用以及数据结构，同时分析了connect()过程中tcp三次握手状态变化。</p>
 <a id="more"></a>
 
@@ -476,137 +348,249 @@
       </tags>
   </entry>
   <entry>
-    <title>内存虚拟化</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
+    <title>IO复用</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
 <a id="more"></a>
-
-<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
-<p>为什么引入了虚拟地址?</p>
-</blockquote>
-<ul>
-<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
-<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
-</ul>
-<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
-<blockquote>
-<p>设计一套虚拟内存需要满足满足那些目标?</p>
-</blockquote>
-<ol>
-<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
+<p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
+<h3 id="select"><a href="#select" class="headerlink" title="select()"></a>select()</h3><h4 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h4><p><code>int select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//@parm1 :nfds 表示所监听的文件描述符最大值+1</span></span><br><span class="line"><span class="comment">// @parm2,3,4 所监听文件描述符事件(可读/可写/异常)</span></span><br><span class="line"><span class="comment">//@parm5:设置超时限制</span></span><br><span class="line"><span class="comment">//返回值&gt;0：监听的所有集合，总满足条件的总数;==0 超时；&lt;0 错误</span></span><br></pre></td></tr></table></figure>
+<h4 id="配套操作"><a href="#配套操作" class="headerlink" title="配套操作"></a>配套操作</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>; <span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//判断fd是否在集合中</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合对应位置为1</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合清0</span></span><br></pre></td></tr></table></figure>
+<h4 id="再看文件描述集"><a href="#再看文件描述集" class="headerlink" title="再看文件描述集"></a>再看文件描述集</h4><p>三个文件描述符参数是传入传出参数</p>
+<p>举个例子，readfds 监听了{fd1,fd2,fd3,fd4} 对应位图[1111]<br>select返回2，表明有两个文件描述符准备好了,这个时候监听集合可能就变成了[1001] ，因此我们需要轮循才能知道是哪个文件描述符状态发生了改变。</p>
+<h4 id="select-详细过程："><a href="#select-详细过程：" class="headerlink" title="select 详细过程："></a>select 详细过程：</h4><ol>
+<li><p>当用户 process 调用 select 的时候，select 会将需要监控的 readfds 集合拷贝到内核空间（假设监控的仅仅是 socket 可读），</p>
 </li>
-<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
+<li><p>内核遍历自己监控的 socket sk，挨个调用 sk 的 poll 逻辑以便检查该 sk 是否有可读事件，遍历完所有的 sk 后，如果没有任何一个 sk 可读，那 select 会调用 schedule_timeout 进入 schedule 循环，使得 process 进入睡眠。如果在 timeout 时间内某个 sk 上有数据可读了，或者等待 timeout 了，则调用 select 的 process 会被唤醒，</p>
 </li>
-<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
-<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+<li><p>接下来 select 就是遍历监控的 sk 集合，挨个收集可读事件并返回给用户。</p>
 </li>
 </ol>
-<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
-<p> 一开始作者假设</p>
-<ol>
-<li>虚拟地址空间连续存放到物理内存</li>
-<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
+<h4 id="select-缺点"><a href="#select-缺点" class="headerlink" title="select()缺点"></a>select()缺点</h4><ol>
+<li>监听的文件描述符上限1024</li>
+<li>需要轮循才能知道是哪个文件描述符状态发生了改变，当客户端连接数过多，但是准备就绪的又比较少时，轮循代价比较大</li>
+<li>由于监听集合是传入传出参数，因此在调用<code>select()</code>之前需要先保存之前状态</li>
+<li>fds集合需要从用户空间拷贝到内核空间的问题，我们希望不需要拷贝</li>
 </ol>
-<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
-<p>地址转化： <code>physical address = virtual address + base</code></p>
-<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
-<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
-<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
-<ul>
-<li>进程创建时，分配与地址空间对应的物理内存</li>
-<li>当进程结束时，回收内存</li>
-<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
-</ul>
-<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
-<p><strong>优点</strong></p>
-<ul>
-<li><p>在硬件支持下起来很高效快速</p>
-</li>
-<li><p>提供了进程间的保护隔离</p>
-</li>
-</ul>
-<p><strong>缺点</strong></p>
-<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
-<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
-<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
-<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
-<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
-<p>分段机制下地址转化伪码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+<h4 id="select处理完整代码"><a href="#select处理完整代码" class="headerlink" title="select处理完整代码"></a>select处理完整代码</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    fd_set rfds;</span><br><span class="line">    <span class="keyword">char</span> buf[BUFSIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> listenfd = createSocket(); <span class="comment">//这里封装了，可以简单理解为将socket(),bind(),listen() 都封装了</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 保存所有的文件描述符</span></span><br><span class="line">    <span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt; fdset;</span><br><span class="line">    fdset.insert(listenfd);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        FD_ZERO(&amp;rfds);</span><br><span class="line">        <span class="comment">// 每次都要重新设置rfds.因为select返回时，rfds被内核改变，里面只保存了就绪的文件描述符</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) FD_SET(fd, &amp;rfds);</span><br><span class="line">        <span class="keyword">int</span> ret = select(*fdset.rbegin()+<span class="number">1</span>, &amp;rfds, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span> (ret &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) <span class="comment">//这里就是轮询监听的文件描述符集合，因为使用了集合，就不需要从0-fds.size()+1遍历呢</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 有新的连接</span></span><br><span class="line">                <span class="keyword">if</span> (fd == listenfd &amp;&amp; FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line"> </span><br><span class="line">                   <span class="keyword">int</span> cfd = accept();</span><br><span class="line">                    <span class="comment">// 添加到 fd_set 结构体，并记录到 set</span></span><br><span class="line">                    FD_SET(cfd, &amp;rfds);</span><br><span class="line">                    fdset.insert(cfd); </span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//有请求 读数据</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">int</span> lenrecv = <span class="number">-1</span>;</span><br><span class="line">                    <span class="built_in">memset</span>(buf, <span class="number">0</span>, BUFSIZE);</span><br><span class="line"> </span><br><span class="line">                    lenrecv = recv(fd, buf, BUFSIZE<span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">                    <span class="keyword">if</span> (lenrecv &gt; <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, buf);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == lenrecv)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 客户端退出，删除文件描述符，并关闭</span></span><br><span class="line">                        fdset.erase(fd);</span><br><span class="line">                        FD_CLR(fd, &amp;rfds);</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"delete connection fd: %d\n"</span>, fd);</span><br><span class="line">                        <span class="built_in">close</span>(fd);</span><br><span class="line">                    &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">close</span>(listenfd);</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><p><code>int poll(struct pollfd *fds, unsigned int nfds, int timeout);</code></p>
+<p>poll机制和select类似，通过轮询管理的文件描述符，根据其状态来进行处理。</p>
+<ol>
+<li>但是poll()没有最大文件描述符数量上限。</li>
+<li>fds描述方式和select()不同，使用pollfd()基于链表实现，而fd_set()基于数组<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">   <span class="keyword">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">   short events;     <span class="comment">/* requested events */</span></span><br><span class="line">   short revents;    <span class="comment">/* returned events */</span></span><br><span class="line">   &#125;;</span><br></pre></td></tr></table></figure>
 
-
-<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
-<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>减少了内部碎片,内存浪费</p>
 </li>
-<li><p>代码段等可以共享</p>
-</li>
+</ol>
+<h3 id="poll与select对比"><a href="#poll与select对比" class="headerlink" title="poll与select对比"></a>poll与select对比</h3><h4 id="功能实现上"><a href="#功能实现上" class="headerlink" title="功能实现上"></a>功能实现上</h4><ul>
+<li>select 的描述符类型使用数组实现，FD_SETSIZE 大小默认为 1024，因此默认只能监听少于 1024 个描述符。如果要监听更多描述符的话，需要修改 FD_SETSIZE 之后重新编译；而 poll 没有描述符数量的限制；</li>
+<li>select 会修改描述符，而 poll 不会(请求事件和返回事件分开)</li>
+<li>poll 提供了更多的事件类型(POLLIN,POLLOUT,POLLERR,POLLHUP)</li>
 </ul>
-<p>问题：</p>
-<ul>
-<li><p>大小不一的段可能导致外部碎片</p>
-</li>
-<li><p>内存不能做到按需分配</p>
-</li>
-</ul>
-<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
-<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
-
+<h4 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h4><p>select 和 poll 速度都比较慢，每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。</p>
+<h4 id="可移植性"><a href="#可移植性" class="headerlink" title="可移植性"></a>可移植性</h4><p>几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
+<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><p>使用场景：连接文件描述符多，但是监听的少，或者说处于就绪态的文件描述符少，使用epoll</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> <span class="built_in">size</span>)</span></span>; <span class="comment">//返回指向内核的红黑树根</span></span><br><span class="line"></span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event*event)；</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event * events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>epoll 只需要将描述符从进程缓冲区向内核缓冲区拷贝一次(处理红黑树节点时候)，并且进程不需要通过轮询来获得事件完成的描述符。</p>
 <blockquote>
-<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
+<p>为什么不在需要轮循获得准备就绪的fd?<br>因为epoll_wait() 返回的<br><code>struct epoll_event * events</code> 已经包含了就绪的文件描述符,并且该结构体含有fd,以及事件信息<br>常见的处理方式</p>
 </blockquote>
-<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
-<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
-<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
-</blockquote>
-<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
-<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
-<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
-<p>实现页机制有几个问题</p>
-<blockquote>
-<p>1.页表存在哪里?</p>
-<p>2.每一个页表项具体有什么内容?</p>
-</blockquote>
-<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
-<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
-<ul>
-<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
-<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
-<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
-</ul>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
-<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">activeEvs</span>[100];</span></span><br><span class="line"><span class="keyword">int</span> n = epoll_wait(efd, activeEvs, kMaxEvents, waitms);<span class="comment">//返回准备就绪的文件描述符个数</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> fd = activeEvs[i].data.fd; <span class="comment">//提取fd</span></span><br><span class="line">        <span class="keyword">int</span> events = activeEvs[i].events; <span class="comment">//提取返回事件</span></span><br><span class="line">        <span class="keyword">if</span> (events &amp; (EPOLLIN | EPOLLERR)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (fd == lfd) &#123;</span><br><span class="line">                handleAccept(efd, fd);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                handleRead(efd, fd);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<h4 id="LT-amp-amp-ET"><a href="#LT-amp-amp-ET" class="headerlink" title="LT&amp;&amp;ET"></a>LT&amp;&amp;ET</h4><p>Level Triggered (LT) 水平触发</p>
+<p>socket接收缓冲区不为空 有数据可读 读事件一直触发</p>
+<p>Edge Triggered (ET) 边沿触发</p>
+<p>socket的接收缓冲区状态变化时触发读事件，即空的接收缓冲区刚接收到数据时触发读事件</p>
+<p>其实就是模拟电路中的上升沿以及水平概念，LT只要有数据就会读，ET只有当缓冲区状态发生改变才会触发。</p>
+<p>ET很大程度上减少了 epoll 事件被重复触发的次数，因此效率要比 LT 模式高。只支持 No-Blocking，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
+<h3 id="三种IO复用应用场景"><a href="#三种IO复用应用场景" class="headerlink" title="三种IO复用应用场景"></a>三种IO复用应用场景</h3><h4 id="select-1"><a href="#select-1" class="headerlink" title="select"></a>select</h4><ol>
+<li>实时性要求高;select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制</li>
+<li>可移植性好</li>
+</ol>
+<h4 id="poll-1"><a href="#poll-1" class="headerlink" title="poll"></a>poll</h4><p>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</p>
+<h4 id="epoll-1"><a href="#epoll-1" class="headerlink" title="epoll"></a>epoll</h4><p>适用于：</p>
 <ul>
-<li><p>固定大小内存单元，避免外部碎片</p>
-</li>
-<li><p>相对分段内存使用灵活</p>
-</li>
+<li>只运行在linux</li>
+<li>大量的连接，但是只有少数同时处于就绪态，并且这些连接为长连接</li>
 </ul>
-<p>缺点</p>
+<p>不适用：</p>
 <ul>
-<li><p>页表占用内存过大</p>
-</li>
-<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
-</li>
+<li>监控的描述符状态变化多，而且都是非常短暂的，因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。</li>
 </ul>
 ]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
       <tags>
-        <tag>操作系统</tag>
-        <tag>OSTEP</tag>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
+    <title>stringstream 处理字符串</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+<a id="more"></a>
+
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>shared_from_this解决了什么问题</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
+<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
+]]></content>
+      <categories>
+        <category>C++</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>bash学习</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
+<p>bash 脚本开头一行 都有 <code>#!/bin/bash</code> 指此脚本使用<strong>/bin/sh</strong>来解释执行，<strong>#!</strong>是特殊的表示符，其后面根的是此解释此脚本的shell的路径, python脚本在开头也有类似的语句， <code>#!/bin/python2</code> or <code>#!/bin/python3</code></p>
+<p>创建完一个bash脚本之后，需要通过<code>chmod +x XXX.sh</code> 赋予bash脚本执行权限， 文件的权限可以通过<code>ls -l</code> 查看详细， 用户组，其他，用户都具有自己对文件的权限。</p>
+<p>bash 脚本执行可以 通过<code>./XXX.sh</code> 也可以直接指明<code>bash xxx.sh</code>  其中前者指定了sh 文件的路径，<a href="https://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell" target="_blank" rel="noopener">参考</a></p>
+<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>bash 变量不需要指定类型，直接赋值，解释器动态解释。</p>
+<p><strong>变量定义</strong>:</p>
+<p><code>name=&quot;DevDojo&quot;</code>  note： 赋值号左右不能又空格，如果平时编码习惯和这个不一样，需要注意下。</p>
+<p><strong>变量使用</strong></p>
+<p><code>echo ${name}</code> 括号增加可读性。同时变量也可以在表达式中使用，语法与直接使用一样。</p>
+<p>bash 语句不像c++需要显式<code>;</code>表示语句结束</p>
+<p><strong>用户输入</strong></p>
+<p>从命令行读取用户输入</p>
+<p><code>read variable</code></p>
+<p><strong>外部参数</strong></p>
+<p>bash 脚本在运行时候,可以跟可变多的参数,在脚本内部用$1, $2来指代,如下面例子</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument one is <span class="variable">$1</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument two is <span class="variable">$2</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument three is <span class="variable">$3</span>"</span></span><br><span class="line"><span class="comment"># excute</span></span><br><span class="line">./arguments.sh dog cat bird</span><br></pre></td></tr></table></figure>
+
+<p>也可以很方便的用 <code>$@</code> 来引用所有的外部参数.</p>
+<p>$0表示脚本文件名,一个用处就是在执行完脚本之后,可以用$0获取脚本名,然后做自删除.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"The name of the file is: <span class="variable">$0</span> and it is going to be self-</span></span><br><span class="line"><span class="string">deleted."</span></span><br><span class="line">rm -f <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>数组</strong></p>
+<p>语法:<code>my_array=(&quot;value 1&quot; &quot;value 2&quot; &quot;value 3&quot; &quot;value 4&quot;)</code>  元素之间用空格隔开</p>
+<p>数组引用类似C,  <code>echo ${my_array[1]}</code>  元素起始下标为0</p>
+<p>数组长度获取</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">list=(1 2 3 4)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#list[@]&#125;</span>  <span class="comment">#输出4</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h4><ul>
+<li>算数表达  语法类似, 用英文字母的缩写来表示比较属性, eg. lt(less than) ,eq(equal) …..<ul>
+<li>[[ ${arg1} -eq ${arg2} ]]    equal  如果两个变量相同返回true</li>
+</ul>
+</li>
+<li>字符串<ul>
+<li>[[ -v ${varname} ]] 变量如果被赋值返回true</li>
+<li>[[ -z ${string} ]] 字符串长度为0 为true</li>
+<li>[[ -n ${string} ]] 字符串长度不为0</li>
+</ul>
+</li>
+<li>文件表达式 在linux 下面一切都是文件,文件具有不同的类型 比如块文件,字符设备,目录等<ul>
+<li>[[ -d ${file} ]]    是否为目录</li>
+<li>[[ -x ${file} ]]  文件是否可执行</li>
+<li>[[ -L ${file} ]]  文件是否为符号链接</li>
+</ul>
+</li>
+</ul>
+<p>有了条件表达式,自然引出了条件语句</p>
+<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p><strong>if-else</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ some_test ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span> &lt;commands&gt;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>swith 语句</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$some_variable</span> <span class="keyword">in</span></span><br><span class="line">  pattern_1)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  pattern_2| pattern_3)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    default commands</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>注意点</p>
+<ol>
+<li>case 语句用关键字<strong>case</strong>开始,引用变量,然后加关键字<strong>in</strong></li>
+<li>匹配模式用) 结束</li>
+<li>All clauses have to be terminated by adding ;; at the end</li>
+<li>默认模式用*匹配</li>
+<li>case 语句结束用esac关键字</li>
+</ol>
+<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p><strong>while</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_conditions</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>条件表达式都用[] 或者[[]]括起来, <a href="https://stackoverflow.com/questions/3427872/whats-the-difference-between-and-in-bash" target="_blank" rel="noopener">区别</a></p>
+<p><strong>until</strong></p>
+<p>含义是当条件不为真时候一直运行</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">until [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_commands</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>多抓鱼采访</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<ul>
+<li>多抓鱼和咸鱼区别？</li>
+</ul>
+<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
+<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
+<p><strong>为什么做多抓鱼</strong>？</p>
+<ul>
+<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
+</li>
+<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
+</li>
+<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
+</li>
+<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
+</li>
+<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
+</li>
+<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
+</li>
+</ul>
+<blockquote>
+<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
+</blockquote>
+<p><strong>多抓鱼的定价策略</strong></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
+<ul>
+<li>确定几类书不收</li>
+<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
+<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
+</ul>
+<p><strong>shownotes</strong></p>
+<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
+<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>tcp40ms延迟问题分析</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<a id="more"></a>
 
 <p><strong>背景</strong></p>
@@ -646,121 +630,8 @@
 ]]></content>
   </entry>
   <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
-<a id="more"></a>
-
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>多抓鱼采访</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<ul>
-<li>多抓鱼和咸鱼区别？</li>
-</ul>
-<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
-<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
-<p><strong>为什么做多抓鱼</strong>？</p>
-<ul>
-<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
-</li>
-<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
-</li>
-<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
-</li>
-<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
-</li>
-<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
-</li>
-<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
-</li>
-</ul>
-<blockquote>
-<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
-</blockquote>
-<p><strong>多抓鱼的定价策略</strong></p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
-<ul>
-<li>确定几类书不收</li>
-<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
-<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
-</ul>
-<p><strong>shownotes</strong></p>
-<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
-<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Peter Thiel&#39;s Religion — David Perell</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
-<blockquote>
-<ol>
-<li>Don’t copy your neighbors</li>
-<li>Time moves forward</li>
-<li>The future will be different from the present</li>
-</ol>
-</blockquote>
-<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
-<a id="more"></a>
-
-<blockquote>
-<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
-</blockquote>
-<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
-<blockquote>
-<p>“As Peter Thiel recounted:</p>
-<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
-</blockquote>
-<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
-<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
-<blockquote>
-<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
-</blockquote>
-<blockquote>
-<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
-<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
-<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
-</blockquote>
-<blockquote>
-<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
-</blockquote>
-<blockquote>
-<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
-</blockquote>
-<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
-<blockquote>
-<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
-<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
-</blockquote>
-<p>#好故事 人类模仿的天性导致嫉妒</p>
-]]></content>
-  </entry>
-  <entry>
     <title>套接字选项小结</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<p>总结影响网络收发包的一些套接字选项，对一些概念可能理解不对，希望大家多多指教。后面会持续更新ing。</p>
 <a id="more"></a>
 
@@ -933,7 +804,7 @@
   </entry>
   <entry>
     <title>并发</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<p>《OSTEP》线程并发小结</p>
 <a id="more"></a>
 
@@ -1038,29 +909,26 @@
       </tags>
   </entry>
   <entry>
-    <title>数据流算法题目小结</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
-<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
+    <title>排序二叉树转化为双向链表</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
 <a id="more"></a>
 
-<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
-<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
-<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
-<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
-<p>当新元素val加入如何维护堆?</p>
-<ol>
-<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
-<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
-</ol>
-]]></content>
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>算法</category>
       </categories>
   </entry>
   <entry>
     <title>文件系统的持久化</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<p>《OSTEP》文件持久化部分阅读笔记</p>
 <a id="more"></a>
 
@@ -1124,26 +992,29 @@
       </tags>
   </entry>
   <entry>
-    <title>排序二叉树转化为双向链表</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
+    <title>数据流算法题目小结</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
+<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
 <a id="more"></a>
 
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
+<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
+<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
+<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
+<p>当新元素val加入如何维护堆?</p>
+<ol>
+<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
+<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
+</ol>
+]]></content>
       <categories>
         <category>算法</category>
       </categories>
   </entry>
   <entry>
     <title>最长上升子序列</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
 <a id="more"></a>
 
@@ -1168,27 +1039,38 @@
       </categories>
   </entry>
   <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
-<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
-<blockquote>
-<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
-</blockquote>
-<blockquote>
-<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
-</blockquote>
-<blockquote>
-<p>如果不感到自身充满力量，就不可能有爱情。</p>
-</blockquote>
+    <title>滑动窗口小结</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。</p>
+<a id="more"></a>
+
+<h4 id="76-最小覆盖子串"><a href="#76-最小覆盖子串" class="headerlink" title="76. 最小覆盖子串"></a>76. 最小覆盖子串</h4><p>给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字符的最小子串。</p>
+<p>思路</p>
+<ul>
+<li>先扫描一遍T，把对应的字符及其出现的次数存到 HashMap 中。</li>
+<li>然后开始遍历S，就把遍历到的字母对应的 HashMap 中的 value 减一，如果减1后仍大于等于0，cnt 自增1。</li>
+<li>如果 cnt 等于T串长度时，开始循环，纪录一个字串并更新最小字串值。然后将子窗口的左边界向右移，如果某个移除掉的字母是T串中不可缺少的字母(hash表中对应value&gt;0)，那么 cnt 自减1，表示此时T串并没有完全匹配。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">minWindow</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> t)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:t) <span class="built_in">map</span>[c]++;</span><br><span class="line">        <span class="keyword">int</span> len=t.size();</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;i&lt;s.size();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(--<span class="built_in">map</span>[s[i]]&gt;=<span class="number">0</span>) cnt++;</span><br><span class="line">            <span class="keyword">while</span>(cnt==len)&#123;</span><br><span class="line">                <span class="keyword">if</span>(res.empty()||res.size()&gt;i-j+<span class="number">1</span>) res=s.substr(j,i-j+<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span>(++<span class="built_in">map</span>[s[j++]]&gt;<span class="number">0</span>) cnt--;<span class="comment">//移动左边界</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>进一步理解</strong><br>本来我们是可以开两个哈希表，这里为了节省空间，将其合并，遍历S字符串的时候，哈希表中字符出现的次数可以理解还缺多少个，就可以满足和T字符串匹配。这样一来就能很好理解在移动左边界的判断条件<code>++hash[s[j++]]&gt;0</code> 表示左边界指针移动之后，缺的个数大于0.</p>
+<h4 id="438-找到字符串中所有字母异位词"><a href="#438-找到字符串中所有字母异位词" class="headerlink" title="438. 找到字符串中所有字母异位词"></a><a href="https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">438. 找到字符串中所有字母异位词</a></h4><p>给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。</p>
+<p>字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。</p>
+<p><strong>滑动窗口</strong>  思路非常类似上一题76.最小覆盖子串</p>
+<p>这个题目的滑动窗口大小固定，因此需要先调整大小，然后添加满足条件的答案。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">findAnagrams</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> p)</span> </span>&#123;</span><br><span class="line">       <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">auto</span> c:p) <span class="built_in">map</span>[c]++;</span><br><span class="line">       <span class="keyword">int</span> total=p.size();</span><br><span class="line">       <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;j&lt;s.size();j++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(--<span class="built_in">map</span>[s[j]]&gt;=<span class="number">0</span>) cnt++; <span class="comment">//移动右指针</span></span><br><span class="line">           <span class="comment">//移动左指针 维护窗口大小为p.size</span></span><br><span class="line">           <span class="keyword">while</span>(j-i+<span class="number">1</span>&gt;total)&#123;</span><br><span class="line">               <span class="keyword">if</span>(++<span class="built_in">map</span>[s[i++]]&gt;<span class="number">0</span>) cnt--;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">if</span>(cnt==total) res.push_back(i);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
 ]]></content>
       <categories>
-        <category>读书</category>
+        <category>算法</category>
       </categories>
   </entry>
   <entry>
     <title>系统调用open(),read(),write()具体发了什么?</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
 <a id="more"></a>
 
@@ -1223,38 +1105,27 @@
       </tags>
   </entry>
   <entry>
-    <title>滑动窗口小结</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。</p>
-<a id="more"></a>
-
-<h4 id="76-最小覆盖子串"><a href="#76-最小覆盖子串" class="headerlink" title="76. 最小覆盖子串"></a>76. 最小覆盖子串</h4><p>给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字符的最小子串。</p>
-<p>思路</p>
-<ul>
-<li>先扫描一遍T，把对应的字符及其出现的次数存到 HashMap 中。</li>
-<li>然后开始遍历S，就把遍历到的字母对应的 HashMap 中的 value 减一，如果减1后仍大于等于0，cnt 自增1。</li>
-<li>如果 cnt 等于T串长度时，开始循环，纪录一个字串并更新最小字串值。然后将子窗口的左边界向右移，如果某个移除掉的字母是T串中不可缺少的字母(hash表中对应value&gt;0)，那么 cnt 自减1，表示此时T串并没有完全匹配。</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">minWindow</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> t)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:t) <span class="built_in">map</span>[c]++;</span><br><span class="line">        <span class="keyword">int</span> len=t.size();</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;i&lt;s.size();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(--<span class="built_in">map</span>[s[i]]&gt;=<span class="number">0</span>) cnt++;</span><br><span class="line">            <span class="keyword">while</span>(cnt==len)&#123;</span><br><span class="line">                <span class="keyword">if</span>(res.empty()||res.size()&gt;i-j+<span class="number">1</span>) res=s.substr(j,i-j+<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span>(++<span class="built_in">map</span>[s[j++]]&gt;<span class="number">0</span>) cnt--;<span class="comment">//移动左边界</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>进一步理解</strong><br>本来我们是可以开两个哈希表，这里为了节省空间，将其合并，遍历S字符串的时候，哈希表中字符出现的次数可以理解还缺多少个，就可以满足和T字符串匹配。这样一来就能很好理解在移动左边界的判断条件<code>++hash[s[j++]]&gt;0</code> 表示左边界指针移动之后，缺的个数大于0.</p>
-<h4 id="438-找到字符串中所有字母异位词"><a href="#438-找到字符串中所有字母异位词" class="headerlink" title="438. 找到字符串中所有字母异位词"></a><a href="https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">438. 找到字符串中所有字母异位词</a></h4><p>给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。</p>
-<p>字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。</p>
-<p><strong>滑动窗口</strong>  思路非常类似上一题76.最小覆盖子串</p>
-<p>这个题目的滑动窗口大小固定，因此需要先调整大小，然后添加满足条件的答案。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">findAnagrams</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> p)</span> </span>&#123;</span><br><span class="line">       <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">auto</span> c:p) <span class="built_in">map</span>[c]++;</span><br><span class="line">       <span class="keyword">int</span> total=p.size();</span><br><span class="line">       <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;j&lt;s.size();j++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(--<span class="built_in">map</span>[s[j]]&gt;=<span class="number">0</span>) cnt++; <span class="comment">//移动右指针</span></span><br><span class="line">           <span class="comment">//移动左指针 维护窗口大小为p.size</span></span><br><span class="line">           <span class="keyword">while</span>(j-i+<span class="number">1</span>&gt;total)&#123;</span><br><span class="line">               <span class="keyword">if</span>(++<span class="built_in">map</span>[s[i++]]&gt;<span class="number">0</span>) cnt--;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">if</span>(cnt==total) res.push_back(i);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
 ]]></content>
       <categories>
-        <category>算法</category>
+        <category>读书</category>
       </categories>
   </entry>
   <entry>
     <title>负载均衡大量TW分析</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<a id="more"></a>
 
 <p>背景</p>
@@ -1268,8 +1139,172 @@
 ]]></content>
   </entry>
   <entry>
+    <title>许知远-罗翔访谈记录</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
+<a id="more"></a>
+<blockquote>
+<p>在人类所有美德中，勇敢是最稀缺的</p>
+</blockquote>
+<p>罗上学时候结巴，后来为了养活自己讲课， 写逐字稿，慢慢就不结巴了。</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228153612.png" alt=""></p>
+<p>巧了我的启蒙也是赵借我看的这一套书，现在还在启蒙，永不过时。</p>
+<p>北京万圣书店</p>
+<p><a href="https://zh.m.wikisource.org/zh-hans/%E4%BF%A0%E5%AE%A2%E8%A1%8C_(%E6%9D%8E%E7%99%BD)" target="_blank" rel="noopener">李白-侠客行</a>   武侠小说中对结果正义的最求，话说罗能够完整背诵侠客行还是挺让我意外的。</p>
+<p><a href="https://book.douban.com/subject/2009914/" target="_blank" rel="noopener">为权力而斗争</a></p>
+<blockquote>
+<p>罗: 人最大的痛楚在于，无法跨越知道和做到的鸿沟</p>
+</blockquote>
+<p>罗对技术主义的转变，这里比较含糊，</p>
+<p>罗说要警惕<a href="https://www.wikiwand.com/zh-hans/%E7%9B%B8%E5%B0%8D%E4%B8%BB%E7%BE%A9" target="_blank" rel="noopener">相对主义</a></p>
+<p>罗推崇节制<a href="https://baike.baidu.com/item/%E5%BE%B7%E5%B0%94%E6%96%90%E7%A5%9E%E8%B0%95" target="_blank" rel="noopener">德尔菲神谕  </a>  ““认识你自己”、“凡事勿过度”、“承诺带来痛苦””</p>
+<p>整个访谈<strong>最精彩的部分</strong>  </p>
+<p>许: 法律学家在20世纪没有参与到整个社会的思想辩论中，如何看待？</p>
+<p>罗:专业人士的自我封闭化，害怕专业变味，法学家的技术主义，上学时以技术主义为荣，觉得没白学</p>
+<p>许: 什么时候这种观点发生了变化？</p>
+<p>罗: 高傲的观点与老百姓内心常识相抵触时候，技术主义在逻辑论证没有问题，但其实是在抵触人内心的良知。人生的经历使得自己<strong>接受人生的有限性</strong></p>
+<blockquote>
+<p>承认自己是有限的，承认你的逻辑是有限的，承认你的理性是有有限的，承认自己的阅读是有限的，承认自己的偏见，一生就是在走出偏见</p>
+</blockquote>
+<p>许: 变化的契机?</p>
+<p>罗：一些不可抗拒的力量，有些话也不好说，经历了亲人的生离死别。人最大的痛苦就是无法跨越知道和做到的鸿沟。笛卡尔说的“我思故我在”给人一种幻想-就是我思考到了，我就能做到，但其实不是这样。</p>
+<p>2010年之前教课很受学生喜欢，有强烈的骄傲，但是内心有一种冲突，自己所教的，自己做不到，骗别人，在自我欺骗，陷入一种虚无</p>
+<p>许: 如何应对那一次危机?</p>
+<p>罗: 虚伪是肯定的，做到行动在言语之前多那么一步，摆脱虚伪的自我控诉。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>内存虚拟化</title>
+    <url>/undefined.html/</url>
+    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
+<a id="more"></a>
+
+<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
+<p>为什么引入了虚拟地址?</p>
+</blockquote>
+<ul>
+<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
+<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
+</ul>
+<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
+<blockquote>
+<p>设计一套虚拟内存需要满足满足那些目标?</p>
+</blockquote>
+<ol>
+<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
+</li>
+<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
+</li>
+<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
+<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+</li>
+</ol>
+<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
+<p> 一开始作者假设</p>
+<ol>
+<li>虚拟地址空间连续存放到物理内存</li>
+<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
+</ol>
+<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
+<p>地址转化： <code>physical address = virtual address + base</code></p>
+<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
+<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
+<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
+<ul>
+<li>进程创建时，分配与地址空间对应的物理内存</li>
+<li>当进程结束时，回收内存</li>
+<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
+</ul>
+<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
+<p><strong>优点</strong></p>
+<ul>
+<li><p>在硬件支持下起来很高效快速</p>
+</li>
+<li><p>提供了进程间的保护隔离</p>
+</li>
+</ul>
+<p><strong>缺点</strong></p>
+<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
+<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
+<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
+<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
+<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
+<p>分段机制下地址转化伪码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
+<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>减少了内部碎片,内存浪费</p>
+</li>
+<li><p>代码段等可以共享</p>
+</li>
+</ul>
+<p>问题：</p>
+<ul>
+<li><p>大小不一的段可能导致外部碎片</p>
+</li>
+<li><p>内存不能做到按需分配</p>
+</li>
+</ul>
+<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
+<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
+</blockquote>
+<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
+<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
+<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
+</blockquote>
+<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
+<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
+<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
+<p>实现页机制有几个问题</p>
+<blockquote>
+<p>1.页表存在哪里?</p>
+<p>2.每一个页表项具体有什么内容?</p>
+</blockquote>
+<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
+<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
+<ul>
+<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
+<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
+<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
+</ul>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
+<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>固定大小内存单元，避免外部碎片</p>
+</li>
+<li><p>相对分段内存使用灵活</p>
+</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li><p>页表占用内存过大</p>
+</li>
+<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>OSTEP</tag>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>网络协议栈收包过程小结</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<p>linux网络协议栈学习小结</p>
 <a id="more"></a>
 
@@ -1430,43 +1465,8 @@
       </tags>
   </entry>
   <entry>
-    <title>许知远-罗翔访谈记录</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
-<a id="more"></a>
-<blockquote>
-<p>在人类所有美德中，勇敢是最稀缺的</p>
-</blockquote>
-<p>罗上学时候结巴，后来为了养活自己讲课， 写逐字稿，慢慢就不结巴了。</p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228153612.png" alt=""></p>
-<p>巧了我的启蒙也是赵借我看的这一套书，现在还在启蒙，永不过时。</p>
-<p>北京万圣书店</p>
-<p><a href="https://zh.m.wikisource.org/zh-hans/%E4%BF%A0%E5%AE%A2%E8%A1%8C_(%E6%9D%8E%E7%99%BD)" target="_blank" rel="noopener">李白-侠客行</a>   武侠小说中对结果正义的最求，话说罗能够完整背诵侠客行还是挺让我意外的。</p>
-<p><a href="https://book.douban.com/subject/2009914/" target="_blank" rel="noopener">为权力而斗争</a></p>
-<blockquote>
-<p>罗: 人最大的痛楚在于，无法跨越知道和做到的鸿沟</p>
-</blockquote>
-<p>罗对技术主义的转变，这里比较含糊，</p>
-<p>罗说要警惕<a href="https://www.wikiwand.com/zh-hans/%E7%9B%B8%E5%B0%8D%E4%B8%BB%E7%BE%A9" target="_blank" rel="noopener">相对主义</a></p>
-<p>罗推崇节制<a href="https://baike.baidu.com/item/%E5%BE%B7%E5%B0%94%E6%96%90%E7%A5%9E%E8%B0%95" target="_blank" rel="noopener">德尔菲神谕  </a>  ““认识你自己”、“凡事勿过度”、“承诺带来痛苦””</p>
-<p>整个访谈<strong>最精彩的部分</strong>  </p>
-<p>许: 法律学家在20世纪没有参与到整个社会的思想辩论中，如何看待？</p>
-<p>罗:专业人士的自我封闭化，害怕专业变味，法学家的技术主义，上学时以技术主义为荣，觉得没白学</p>
-<p>许: 什么时候这种观点发生了变化？</p>
-<p>罗: 高傲的观点与老百姓内心常识相抵触时候，技术主义在逻辑论证没有问题，但其实是在抵触人内心的良知。人生的经历使得自己<strong>接受人生的有限性</strong></p>
-<blockquote>
-<p>承认自己是有限的，承认你的逻辑是有限的，承认你的理性是有有限的，承认自己的阅读是有限的，承认自己的偏见，一生就是在走出偏见</p>
-</blockquote>
-<p>许: 变化的契机?</p>
-<p>罗：一些不可抗拒的力量，有些话也不好说，经历了亲人的生离死别。人最大的痛苦就是无法跨越知道和做到的鸿沟。笛卡尔说的“我思故我在”给人一种幻想-就是我思考到了，我就能做到，但其实不是这样。</p>
-<p>2010年之前教课很受学生喜欢，有强烈的骄傲，但是内心有一种冲突，自己所教的，自己做不到，骗别人，在自我欺骗，陷入一种虚无</p>
-<p>许: 如何应对那一次危机?</p>
-<p>罗: 虚伪是肯定的，做到行动在言语之前多那么一步，摆脱虚伪的自我控诉。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>适合反复看的技术入门教程</title>
-    <url>/post/undefined.html</url>
+    <url>/undefined.html/</url>
     <content><![CDATA[<a id="more"></a>
 
 <ol>
@@ -1493,6 +1493,13 @@
 <p>两个目录认真的学习一遍，最好自己能够动手跟着做一遍。</p>
 <p>每学习完一个小节，把前面的三句口诀复习一下</p>
 <p>每遇到一个不认识的命令，在 <a href="https://link.zhihu.com/?target=https%3A//gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1">Effective Modern CMake</a> 这个页面里搜索一下，看看这个命令是否取代了某个老命令。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>test</title>
+    <url>/null.html/</url>
+    <content><![CDATA[<a id="more"></a>
+<p>JJJJJJJJJJJJJJJJJJJJJJJJJ<br>NNNNNNNNNNNNNNNNNNNNNNNNN</p>
 ]]></content>
   </entry>
 </search>
