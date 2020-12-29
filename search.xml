@@ -1,21 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>shared_from_this解决了什么问题</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
-<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
-]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
-  </entry>
-  <entry>
     <title>IO复用</title>
     <url>/posts/undefined/</url>
     <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
@@ -92,6 +77,52 @@
       <tags>
         <tag>Linux</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Peter Thiel&#39;s Religion — David Perell</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
+<blockquote>
+<ol>
+<li>Don’t copy your neighbors</li>
+<li>Time moves forward</li>
+<li>The future will be different from the present</li>
+</ol>
+</blockquote>
+<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
+<a id="more"></a>
+
+<blockquote>
+<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
+</blockquote>
+<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
+<blockquote>
+<p>“As Peter Thiel recounted:</p>
+<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
+</blockquote>
+<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
+<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
+<blockquote>
+<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
+</blockquote>
+<blockquote>
+<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
+<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
+<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
+</blockquote>
+<blockquote>
+<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
+</blockquote>
+<blockquote>
+<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
+</blockquote>
+<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
+<blockquote>
+<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
+<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
+</blockquote>
+<p>#好故事 人类模仿的天性导致嫉妒</p>
+]]></content>
   </entry>
   <entry>
     <title>bash学习</title>
@@ -175,6 +206,47 @@
 ]]></content>
   </entry>
   <entry>
+    <title>tcp40ms延迟问题分析</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<p><strong>背景</strong></p>
+<p>tcp抓包发现服务端回复ack存在40ms左右延迟</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p>
+<p><strong>问题排查过程</strong></p>
+<p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p>
+<p>先介绍下重要的概念</p>
+<p><strong>delay ack</strong></p>
+<p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p>
+<p><strong>nagle算法</strong></p>
+<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
+<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
+<p>（1）如果包长度达到MSS，则允许发送；</p>
+<p>（2）如果该包含有FIN，则允许发送；</p>
+<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
+<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
+<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
+<p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p>
+<ol>
+<li>当客户端请求数据小于mss大小</li>
+</ol>
+<p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p>
+<ol start="2">
+<li>客户端请求数据大于mss</li>
+</ol>
+<p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p>
+<p><strong>解决方案</strong></p>
+<p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p>
+<ol>
+<li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p>
+</li>
+<li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p>
+</li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
     <title>overload,override,overwrite小结</title>
     <url>/posts/undefined/</url>
     <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
@@ -236,49 +308,214 @@
       </tags>
   </entry>
   <entry>
-    <title>Peter Thiel&#39;s Religion — David Perell</title>
+    <title>shared_from_this解决了什么问题</title>
     <url>/posts/undefined/</url>
-    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
-<blockquote>
-<ol>
-<li>Don’t copy your neighbors</li>
-<li>Time moves forward</li>
-<li>The future will be different from the present</li>
-</ol>
-</blockquote>
-<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
+    <content><![CDATA[<a id="more"></a>
+
+<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
+<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
+]]></content>
+      <categories>
+        <category>C++</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>stringstream 处理字符串</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
 <a id="more"></a>
 
-<blockquote>
-<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>内存虚拟化</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
+<a id="more"></a>
+
+<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
+<p>为什么引入了虚拟地址?</p>
 </blockquote>
-<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
+<ul>
+<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
+<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
+</ul>
+<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
 <blockquote>
-<p>“As Peter Thiel recounted:</p>
-<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
+<p>设计一套虚拟内存需要满足满足那些目标?</p>
 </blockquote>
-<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
-<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
+<ol>
+<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
+</li>
+<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
+</li>
+<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
+<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+</li>
+</ol>
+<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
+<p> 一开始作者假设</p>
+<ol>
+<li>虚拟地址空间连续存放到物理内存</li>
+<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
+</ol>
+<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
+<p>地址转化： <code>physical address = virtual address + base</code></p>
+<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
+<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
+<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
+<ul>
+<li>进程创建时，分配与地址空间对应的物理内存</li>
+<li>当进程结束时，回收内存</li>
+<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
+</ul>
+<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
+<p><strong>优点</strong></p>
+<ul>
+<li><p>在硬件支持下起来很高效快速</p>
+</li>
+<li><p>提供了进程间的保护隔离</p>
+</li>
+</ul>
+<p><strong>缺点</strong></p>
+<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
+<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
+<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
+<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
+<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
+<p>分段机制下地址转化伪码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
+<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>减少了内部碎片,内存浪费</p>
+</li>
+<li><p>代码段等可以共享</p>
+</li>
+</ul>
+<p>问题：</p>
+<ul>
+<li><p>大小不一的段可能导致外部碎片</p>
+</li>
+<li><p>内存不能做到按需分配</p>
+</li>
+</ul>
+<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
+<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
+
 <blockquote>
-<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
+<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
 </blockquote>
+<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
+<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
+<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
+</blockquote>
+<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
+<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
+<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
+<p>实现页机制有几个问题</p>
 <blockquote>
-<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
-<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
-<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
+<p>1.页表存在哪里?</p>
+<p>2.每一个页表项具体有什么内容?</p>
 </blockquote>
+<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
+<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
+<ul>
+<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
+<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
+<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
+</ul>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
+<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>固定大小内存单元，避免外部碎片</p>
+</li>
+<li><p>相对分段内存使用灵活</p>
+</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li><p>页表占用内存过大</p>
+</li>
+<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>操作系统</tag>
+        <tag>OSTEP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>多抓鱼采访</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<ul>
+<li>多抓鱼和咸鱼区别？</li>
+</ul>
+<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
+<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
+<p><strong>为什么做多抓鱼</strong>？</p>
+<ul>
+<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
+</li>
+<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
+</li>
+<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
+</li>
+<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
+</li>
+<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
+</li>
+<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
+</li>
+</ul>
 <blockquote>
-<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
+<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
 </blockquote>
-<blockquote>
-<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
-</blockquote>
-<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
-<blockquote>
-<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
-<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
-</blockquote>
-<p>#好故事 人类模仿的天性导致嫉妒</p>
+<p><strong>多抓鱼的定价策略</strong></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
+<ul>
+<li>确定几类书不收</li>
+<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
+<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
+</ul>
+<p><strong>shownotes</strong></p>
+<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
+<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
 ]]></content>
   </entry>
   <entry>
@@ -522,73 +759,6 @@
       </tags>
   </entry>
   <entry>
-    <title>多抓鱼采访</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<ul>
-<li>多抓鱼和咸鱼区别？</li>
-</ul>
-<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
-<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
-<p><strong>为什么做多抓鱼</strong>？</p>
-<ul>
-<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
-</li>
-<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
-</li>
-<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
-</li>
-<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
-</li>
-<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
-</li>
-<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
-</li>
-</ul>
-<blockquote>
-<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
-</blockquote>
-<p><strong>多抓鱼的定价策略</strong></p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
-<ul>
-<li>确定几类书不收</li>
-<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
-<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
-</ul>
-<p><strong>shownotes</strong></p>
-<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
-<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
-<a id="more"></a>
-
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>并发</title>
     <url>/posts/undefined/</url>
     <content><![CDATA[<p>《OSTEP》线程并发小结</p>
@@ -692,135 +862,6 @@
       </categories>
       <tags>
         <tag>OSTEP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>内存虚拟化</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
-<a id="more"></a>
-
-<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
-<p>为什么引入了虚拟地址?</p>
-</blockquote>
-<ul>
-<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
-<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
-</ul>
-<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
-<blockquote>
-<p>设计一套虚拟内存需要满足满足那些目标?</p>
-</blockquote>
-<ol>
-<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
-</li>
-<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
-</li>
-<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
-<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
-</li>
-</ol>
-<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
-<p> 一开始作者假设</p>
-<ol>
-<li>虚拟地址空间连续存放到物理内存</li>
-<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
-</ol>
-<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
-<p>地址转化： <code>physical address = virtual address + base</code></p>
-<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
-<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
-<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
-<ul>
-<li>进程创建时，分配与地址空间对应的物理内存</li>
-<li>当进程结束时，回收内存</li>
-<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
-</ul>
-<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
-<p><strong>优点</strong></p>
-<ul>
-<li><p>在硬件支持下起来很高效快速</p>
-</li>
-<li><p>提供了进程间的保护隔离</p>
-</li>
-</ul>
-<p><strong>缺点</strong></p>
-<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
-<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
-<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
-<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
-<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
-<p>分段机制下地址转化伪码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
-<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>减少了内部碎片,内存浪费</p>
-</li>
-<li><p>代码段等可以共享</p>
-</li>
-</ul>
-<p>问题：</p>
-<ul>
-<li><p>大小不一的段可能导致外部碎片</p>
-</li>
-<li><p>内存不能做到按需分配</p>
-</li>
-</ul>
-<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
-<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
-</blockquote>
-<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
-<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
-<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
-</blockquote>
-<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
-<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
-<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
-<p>实现页机制有几个问题</p>
-<blockquote>
-<p>1.页表存在哪里?</p>
-<p>2.每一个页表项具体有什么内容?</p>
-</blockquote>
-<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
-<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
-<ul>
-<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
-<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
-<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
-</ul>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
-<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>固定大小内存单元，避免外部碎片</p>
-</li>
-<li><p>相对分段内存使用灵活</p>
-</li>
-</ul>
-<p>缺点</p>
-<ul>
-<li><p>页表占用内存过大</p>
-</li>
-<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
-</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>OSTEP</tag>
-        <tag>操作系统</tag>
       </tags>
   </entry>
   <entry>
@@ -997,121 +1038,6 @@
       </tags>
   </entry>
   <entry>
-    <title>排序二叉树转化为双向链表</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
-<a id="more"></a>
-
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>tcp40ms延迟问题分析</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p><strong>背景</strong></p>
-<p>tcp抓包发现服务端回复ack存在40ms左右延迟</p>
-<p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p>
-<p><strong>问题排查过程</strong></p>
-<p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p>
-<p>先介绍下重要的概念</p>
-<p><strong>delay ack</strong></p>
-<p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p>
-<p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p>
-<p><strong>nagle算法</strong></p>
-<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
-<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
-<p>（1）如果包长度达到MSS，则允许发送；</p>
-<p>（2）如果该包含有FIN，则允许发送；</p>
-<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
-<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
-<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
-<p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p>
-<ol>
-<li>当客户端请求数据小于mss大小</li>
-</ol>
-<p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p>
-<ol start="2">
-<li>客户端请求数据大于mss</li>
-</ol>
-<p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p>
-<p><strong>解决方案</strong></p>
-<p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p>
-<ol>
-<li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p>
-</li>
-<li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p>
-</li>
-</ol>
-]]></content>
-  </entry>
-  <entry>
-    <title>数据流算法题目小结</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
-<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
-<a id="more"></a>
-
-<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
-<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
-<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
-<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
-<p>当新元素val加入如何维护堆?</p>
-<ol>
-<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
-<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
-</ol>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>许知远-罗翔访谈记录</title>
-    <url>/posts/undefined/</url>
-    <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
-<a id="more"></a>
-<blockquote>
-<p>在人类所有美德中，勇敢是最稀缺的</p>
-</blockquote>
-<p>罗上学时候结巴，后来为了养活自己讲课， 写逐字稿，慢慢就不结巴了。</p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228153612.png" alt=""></p>
-<p>巧了我的启蒙也是赵借我看的这一套书，现在还在启蒙，永不过时。</p>
-<p>北京万圣书店</p>
-<p><a href="https://zh.m.wikisource.org/zh-hans/%E4%BF%A0%E5%AE%A2%E8%A1%8C_(%E6%9D%8E%E7%99%BD)" target="_blank" rel="noopener">李白-侠客行</a>   武侠小说中对结果正义的最求，话说罗能够完整背诵侠客行还是挺让我意外的。</p>
-<p><a href="https://book.douban.com/subject/2009914/" target="_blank" rel="noopener">为权力而斗争</a></p>
-<blockquote>
-<p>罗: 人最大的痛楚在于，无法跨越知道和做到的鸿沟</p>
-</blockquote>
-<p>罗对技术主义的转变，这里比较含糊，</p>
-<p>罗说要警惕<a href="https://www.wikiwand.com/zh-hans/%E7%9B%B8%E5%B0%8D%E4%B8%BB%E7%BE%A9" target="_blank" rel="noopener">相对主义</a></p>
-<p>罗推崇节制<a href="https://baike.baidu.com/item/%E5%BE%B7%E5%B0%94%E6%96%90%E7%A5%9E%E8%B0%95" target="_blank" rel="noopener">德尔菲神谕  </a>  ““认识你自己”、“凡事勿过度”、“承诺带来痛苦””</p>
-<p>整个访谈<strong>最精彩的部分</strong>  </p>
-<p>许: 法律学家在20世纪没有参与到整个社会的思想辩论中，如何看待？</p>
-<p>罗:专业人士的自我封闭化，害怕专业变味，法学家的技术主义，上学时以技术主义为荣，觉得没白学</p>
-<p>许: 什么时候这种观点发生了变化？</p>
-<p>罗: 高傲的观点与老百姓内心常识相抵触时候，技术主义在逻辑论证没有问题，但其实是在抵触人内心的良知。人生的经历使得自己<strong>接受人生的有限性</strong></p>
-<blockquote>
-<p>承认自己是有限的，承认你的逻辑是有限的，承认你的理性是有有限的，承认自己的阅读是有限的，承认自己的偏见，一生就是在走出偏见</p>
-</blockquote>
-<p>许: 变化的契机?</p>
-<p>罗：一些不可抗拒的力量，有些话也不好说，经历了亲人的生离死别。人最大的痛苦就是无法跨越知道和做到的鸿沟。笛卡尔说的“我思故我在”给人一种幻想-就是我思考到了，我就能做到，但其实不是这样。</p>
-<p>2010年之前教课很受学生喜欢，有强烈的骄傲，但是内心有一种冲突，自己所教的，自己做不到，骗别人，在自我欺骗，陷入一种虚无</p>
-<p>许: 如何应对那一次危机?</p>
-<p>罗: 虚伪是肯定的，做到行动在言语之前多那么一步，摆脱虚伪的自我控诉。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>文件系统的持久化</title>
     <url>/posts/undefined/</url>
     <content><![CDATA[<p>《OSTEP》文件持久化部分阅读笔记</p>
@@ -1177,40 +1103,43 @@
       </tags>
   </entry>
   <entry>
-    <title>系统调用open(),read(),write()具体发了什么?</title>
+    <title>排序二叉树转化为双向链表</title>
     <url>/posts/undefined/</url>
-    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
 <a id="more"></a>
 
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数据流算法题目小结</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
+<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
+<a id="more"></a>
 
-
-<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
-<p><strong>文件系统</strong></p>
-<p>文件系统可以简单的理解为数据结构+方法</p>
-<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
-<p>方法:open(),read()等调用如何与数据结构打交道</p>
-<p>一个简单的文件系统一般有这几部分</p>
-<ul>
-<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
-<li>data block 存储实际问文件内容</li>
-<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
-<li>data bitmap 记录data blocks 分配情况</li>
-<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
-</ul>
-<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
-<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
-<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
-<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
-<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
-<p>下面的图直观的说明这一过程</p>
-<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
+<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
+<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
+<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
+<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
+<p>当新元素val加入如何维护堆?</p>
+<ol>
+<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
+<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
+</ol>
 ]]></content>
       <categories>
-        <category>技术</category>
+        <category>算法</category>
       </categories>
-      <tags>
-        <tag>操作系统</tag>
-      </tags>
   </entry>
   <entry>
     <title>最长上升子序列</title>
@@ -1286,6 +1215,77 @@
       <categories>
         <category>读书</category>
       </categories>
+  </entry>
+  <entry>
+    <title>系统调用open(),read(),write()具体发了什么?</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
+<a id="more"></a>
+
+
+
+<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
+<p><strong>文件系统</strong></p>
+<p>文件系统可以简单的理解为数据结构+方法</p>
+<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
+<p>方法:open(),read()等调用如何与数据结构打交道</p>
+<p>一个简单的文件系统一般有这几部分</p>
+<ul>
+<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
+<li>data block 存储实际问文件内容</li>
+<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
+<li>data bitmap 记录data blocks 分配情况</li>
+<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
+</ul>
+<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
+<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
+<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
+<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
+<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
+<p>下面的图直观的说明这一过程</p>
+<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>许知远-罗翔访谈记录</title>
+    <url>/posts/undefined/</url>
+    <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
+<a id="more"></a>
+<blockquote>
+<p>在人类所有美德中，勇敢是最稀缺的</p>
+</blockquote>
+<p>罗上学时候结巴，后来为了养活自己讲课， 写逐字稿，慢慢就不结巴了。</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228153612.png" alt=""></p>
+<p>巧了我的启蒙也是赵借我看的这一套书，现在还在启蒙，永不过时。</p>
+<p>北京万圣书店</p>
+<p><a href="https://zh.m.wikisource.org/zh-hans/%E4%BF%A0%E5%AE%A2%E8%A1%8C_(%E6%9D%8E%E7%99%BD)" target="_blank" rel="noopener">李白-侠客行</a>   武侠小说中对结果正义的最求，话说罗能够完整背诵侠客行还是挺让我意外的。</p>
+<p><a href="https://book.douban.com/subject/2009914/" target="_blank" rel="noopener">为权力而斗争</a></p>
+<blockquote>
+<p>罗: 人最大的痛楚在于，无法跨越知道和做到的鸿沟</p>
+</blockquote>
+<p>罗对技术主义的转变，这里比较含糊，</p>
+<p>罗说要警惕<a href="https://www.wikiwand.com/zh-hans/%E7%9B%B8%E5%B0%8D%E4%B8%BB%E7%BE%A9" target="_blank" rel="noopener">相对主义</a></p>
+<p>罗推崇节制<a href="https://baike.baidu.com/item/%E5%BE%B7%E5%B0%94%E6%96%90%E7%A5%9E%E8%B0%95" target="_blank" rel="noopener">德尔菲神谕  </a>  ““认识你自己”、“凡事勿过度”、“承诺带来痛苦””</p>
+<p>整个访谈<strong>最精彩的部分</strong>  </p>
+<p>许: 法律学家在20世纪没有参与到整个社会的思想辩论中，如何看待？</p>
+<p>罗:专业人士的自我封闭化，害怕专业变味，法学家的技术主义，上学时以技术主义为荣，觉得没白学</p>
+<p>许: 什么时候这种观点发生了变化？</p>
+<p>罗: 高傲的观点与老百姓内心常识相抵触时候，技术主义在逻辑论证没有问题，但其实是在抵触人内心的良知。人生的经历使得自己<strong>接受人生的有限性</strong></p>
+<blockquote>
+<p>承认自己是有限的，承认你的逻辑是有限的，承认你的理性是有有限的，承认自己的阅读是有限的，承认自己的偏见，一生就是在走出偏见</p>
+</blockquote>
+<p>许: 变化的契机?</p>
+<p>罗：一些不可抗拒的力量，有些话也不好说，经历了亲人的生离死别。人最大的痛苦就是无法跨越知道和做到的鸿沟。笛卡尔说的“我思故我在”给人一种幻想-就是我思考到了，我就能做到，但其实不是这样。</p>
+<p>2010年之前教课很受学生喜欢，有强烈的骄傲，但是内心有一种冲突，自己所教的，自己做不到，骗别人，在自我欺骗，陷入一种虚无</p>
+<p>许: 如何应对那一次危机?</p>
+<p>罗: 虚伪是肯定的，做到行动在言语之前多那么一步，摆脱虚伪的自我控诉。</p>
+]]></content>
   </entry>
   <entry>
     <title>适合反复看的技术入门教程</title>
