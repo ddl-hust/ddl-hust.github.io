@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-12-29T04:29:32.715Z</updated>
+  <updated>2020-12-29T00:57:40.361Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,29 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>test</title>
-    <link href="http://yoursite.com/2020/12/29/test/"/>
-    <id>http://yoursite.com/2020/12/29/test/</id>
-    <published>2020-12-29T04:29:12.000Z</published>
-    <updated>2020-12-29T04:29:32.715Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;a
-        
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
   
   <entry>
     <title>许知远-罗翔访谈记录</title>
@@ -460,6 +437,26 @@
     <summary type="html">
     
       &lt;p&gt;给定一个无序的整数数组，找到其中最长上升子序列的长度。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="算法" scheme="http://yoursite.com/categories/%E7%AE%97%E6%B3%95/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>排序二叉树转化为双向链表</title>
+    <link href="http://yoursite.com/2020/05/24/pai-xu-er-cha-shu-zhuan-hua-wei-shuang-xiang-lian-biao/"/>
+    <id>http://yoursite.com/2020/05/24/pai-xu-er-cha-shu-zhuan-hua-wei-shuang-xiang-lian-biao/</id>
+    <published>2020-05-24T13:51:08.000Z</published>
+    <updated>2020-05-24T13:53:12.405Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;问题描述：&lt;br&gt;输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。&lt;/p&gt;
+&lt;p&gt;这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。&lt;/p&gt;
     
     </summary>
     
