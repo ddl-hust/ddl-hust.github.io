@@ -1,159 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>IO复用</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
-<a id="more"></a>
-<p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
-<h3 id="select"><a href="#select" class="headerlink" title="select()"></a>select()</h3><h4 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h4><p><code>int select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);</code></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//@parm1 :nfds 表示所监听的文件描述符最大值+1</span></span><br><span class="line"><span class="comment">// @parm2,3,4 所监听文件描述符事件(可读/可写/异常)</span></span><br><span class="line"><span class="comment">//@parm5:设置超时限制</span></span><br><span class="line"><span class="comment">//返回值&gt;0：监听的所有集合，总满足条件的总数;==0 超时；&lt;0 错误</span></span><br></pre></td></tr></table></figure>
-<h4 id="配套操作"><a href="#配套操作" class="headerlink" title="配套操作"></a>配套操作</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>; <span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//判断fd是否在集合中</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合对应位置为1</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合清0</span></span><br></pre></td></tr></table></figure>
-<h4 id="再看文件描述集"><a href="#再看文件描述集" class="headerlink" title="再看文件描述集"></a>再看文件描述集</h4><p>三个文件描述符参数是传入传出参数</p>
-<p>举个例子，readfds 监听了{fd1,fd2,fd3,fd4} 对应位图[1111]<br>select返回2，表明有两个文件描述符准备好了,这个时候监听集合可能就变成了[1001] ，因此我们需要轮循才能知道是哪个文件描述符状态发生了改变。</p>
-<h4 id="select-详细过程："><a href="#select-详细过程：" class="headerlink" title="select 详细过程："></a>select 详细过程：</h4><ol>
-<li><p>当用户 process 调用 select 的时候，select 会将需要监控的 readfds 集合拷贝到内核空间（假设监控的仅仅是 socket 可读），</p>
-</li>
-<li><p>内核遍历自己监控的 socket sk，挨个调用 sk 的 poll 逻辑以便检查该 sk 是否有可读事件，遍历完所有的 sk 后，如果没有任何一个 sk 可读，那 select 会调用 schedule_timeout 进入 schedule 循环，使得 process 进入睡眠。如果在 timeout 时间内某个 sk 上有数据可读了，或者等待 timeout 了，则调用 select 的 process 会被唤醒，</p>
-</li>
-<li><p>接下来 select 就是遍历监控的 sk 集合，挨个收集可读事件并返回给用户。</p>
-</li>
-</ol>
-<h4 id="select-缺点"><a href="#select-缺点" class="headerlink" title="select()缺点"></a>select()缺点</h4><ol>
-<li>监听的文件描述符上限1024</li>
-<li>需要轮循才能知道是哪个文件描述符状态发生了改变，当客户端连接数过多，但是准备就绪的又比较少时，轮循代价比较大</li>
-<li>由于监听集合是传入传出参数，因此在调用<code>select()</code>之前需要先保存之前状态</li>
-<li>fds集合需要从用户空间拷贝到内核空间的问题，我们希望不需要拷贝</li>
-</ol>
-<h4 id="select处理完整代码"><a href="#select处理完整代码" class="headerlink" title="select处理完整代码"></a>select处理完整代码</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    fd_set rfds;</span><br><span class="line">    <span class="keyword">char</span> buf[BUFSIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> listenfd = createSocket(); <span class="comment">//这里封装了，可以简单理解为将socket(),bind(),listen() 都封装了</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 保存所有的文件描述符</span></span><br><span class="line">    <span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt; fdset;</span><br><span class="line">    fdset.insert(listenfd);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        FD_ZERO(&amp;rfds);</span><br><span class="line">        <span class="comment">// 每次都要重新设置rfds.因为select返回时，rfds被内核改变，里面只保存了就绪的文件描述符</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) FD_SET(fd, &amp;rfds);</span><br><span class="line">        <span class="keyword">int</span> ret = select(*fdset.rbegin()+<span class="number">1</span>, &amp;rfds, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span> (ret &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) <span class="comment">//这里就是轮询监听的文件描述符集合，因为使用了集合，就不需要从0-fds.size()+1遍历呢</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 有新的连接</span></span><br><span class="line">                <span class="keyword">if</span> (fd == listenfd &amp;&amp; FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line"> </span><br><span class="line">                   <span class="keyword">int</span> cfd = accept();</span><br><span class="line">                    <span class="comment">// 添加到 fd_set 结构体，并记录到 set</span></span><br><span class="line">                    FD_SET(cfd, &amp;rfds);</span><br><span class="line">                    fdset.insert(cfd); </span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//有请求 读数据</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">int</span> lenrecv = <span class="number">-1</span>;</span><br><span class="line">                    <span class="built_in">memset</span>(buf, <span class="number">0</span>, BUFSIZE);</span><br><span class="line"> </span><br><span class="line">                    lenrecv = recv(fd, buf, BUFSIZE<span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">                    <span class="keyword">if</span> (lenrecv &gt; <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, buf);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == lenrecv)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 客户端退出，删除文件描述符，并关闭</span></span><br><span class="line">                        fdset.erase(fd);</span><br><span class="line">                        FD_CLR(fd, &amp;rfds);</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"delete connection fd: %d\n"</span>, fd);</span><br><span class="line">                        <span class="built_in">close</span>(fd);</span><br><span class="line">                    &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">close</span>(listenfd);</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><p><code>int poll(struct pollfd *fds, unsigned int nfds, int timeout);</code></p>
-<p>poll机制和select类似，通过轮询管理的文件描述符，根据其状态来进行处理。</p>
-<ol>
-<li>但是poll()没有最大文件描述符数量上限。</li>
-<li>fds描述方式和select()不同，使用pollfd()基于链表实现，而fd_set()基于数组<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">   <span class="keyword">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">   short events;     <span class="comment">/* requested events */</span></span><br><span class="line">   short revents;    <span class="comment">/* returned events */</span></span><br><span class="line">   &#125;;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="poll与select对比"><a href="#poll与select对比" class="headerlink" title="poll与select对比"></a>poll与select对比</h3><h4 id="功能实现上"><a href="#功能实现上" class="headerlink" title="功能实现上"></a>功能实现上</h4><ul>
-<li>select 的描述符类型使用数组实现，FD_SETSIZE 大小默认为 1024，因此默认只能监听少于 1024 个描述符。如果要监听更多描述符的话，需要修改 FD_SETSIZE 之后重新编译；而 poll 没有描述符数量的限制；</li>
-<li>select 会修改描述符，而 poll 不会(请求事件和返回事件分开)</li>
-<li>poll 提供了更多的事件类型(POLLIN,POLLOUT,POLLERR,POLLHUP)</li>
-</ul>
-<h4 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h4><p>select 和 poll 速度都比较慢，每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。</p>
-<h4 id="可移植性"><a href="#可移植性" class="headerlink" title="可移植性"></a>可移植性</h4><p>几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
-<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><p>使用场景：连接文件描述符多，但是监听的少，或者说处于就绪态的文件描述符少，使用epoll</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> <span class="built_in">size</span>)</span></span>; <span class="comment">//返回指向内核的红黑树根</span></span><br><span class="line"></span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event*event)；</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event * events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>epoll 只需要将描述符从进程缓冲区向内核缓冲区拷贝一次(处理红黑树节点时候)，并且进程不需要通过轮询来获得事件完成的描述符。</p>
-<blockquote>
-<p>为什么不在需要轮循获得准备就绪的fd?<br>因为epoll_wait() 返回的<br><code>struct epoll_event * events</code> 已经包含了就绪的文件描述符,并且该结构体含有fd,以及事件信息<br>常见的处理方式</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">activeEvs</span>[100];</span></span><br><span class="line"><span class="keyword">int</span> n = epoll_wait(efd, activeEvs, kMaxEvents, waitms);<span class="comment">//返回准备就绪的文件描述符个数</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> fd = activeEvs[i].data.fd; <span class="comment">//提取fd</span></span><br><span class="line">        <span class="keyword">int</span> events = activeEvs[i].events; <span class="comment">//提取返回事件</span></span><br><span class="line">        <span class="keyword">if</span> (events &amp; (EPOLLIN | EPOLLERR)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (fd == lfd) &#123;</span><br><span class="line">                handleAccept(efd, fd);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                handleRead(efd, fd);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="LT-amp-amp-ET"><a href="#LT-amp-amp-ET" class="headerlink" title="LT&amp;&amp;ET"></a>LT&amp;&amp;ET</h4><p>Level Triggered (LT) 水平触发</p>
-<p>socket接收缓冲区不为空 有数据可读 读事件一直触发</p>
-<p>Edge Triggered (ET) 边沿触发</p>
-<p>socket的接收缓冲区状态变化时触发读事件，即空的接收缓冲区刚接收到数据时触发读事件</p>
-<p>其实就是模拟电路中的上升沿以及水平概念，LT只要有数据就会读，ET只有当缓冲区状态发生改变才会触发。</p>
-<p>ET很大程度上减少了 epoll 事件被重复触发的次数，因此效率要比 LT 模式高。只支持 No-Blocking，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
-<h3 id="三种IO复用应用场景"><a href="#三种IO复用应用场景" class="headerlink" title="三种IO复用应用场景"></a>三种IO复用应用场景</h3><h4 id="select-1"><a href="#select-1" class="headerlink" title="select"></a>select</h4><ol>
-<li>实时性要求高;select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制</li>
-<li>可移植性好</li>
-</ol>
-<h4 id="poll-1"><a href="#poll-1" class="headerlink" title="poll"></a>poll</h4><p>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</p>
-<h4 id="epoll-1"><a href="#epoll-1" class="headerlink" title="epoll"></a>epoll</h4><p>适用于：</p>
-<ul>
-<li>只运行在linux</li>
-<li>大量的连接，但是只有少数同时处于就绪态，并且这些连接为长连接</li>
-</ul>
-<p>不适用：</p>
-<ul>
-<li>监控的描述符状态变化多，而且都是非常短暂的，因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Peter Thiel&#39;s Religion — David Perell</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
-<blockquote>
-<ol>
-<li>Don’t copy your neighbors</li>
-<li>Time moves forward</li>
-<li>The future will be different from the present</li>
-</ol>
-</blockquote>
-<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
-<a id="more"></a>
-
-<blockquote>
-<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
-</blockquote>
-<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
-<blockquote>
-<p>“As Peter Thiel recounted:</p>
-<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
-</blockquote>
-<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
-<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
-<blockquote>
-<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
-</blockquote>
-<blockquote>
-<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
-<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
-<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
-</blockquote>
-<blockquote>
-<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
-</blockquote>
-<blockquote>
-<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
-</blockquote>
-<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
-<blockquote>
-<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
-<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
-</blockquote>
-<p>#好故事 人类模仿的天性导致嫉妒</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
-<a id="more"></a>
-
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>bash学习</title>
     <url>/post/undefined.html</url>
     <content><![CDATA[<a id="more"></a>
@@ -235,85 +82,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>tcp40ms延迟问题分析</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p><strong>背景</strong></p>
-<p>tcp抓包发现服务端回复ack存在40ms左右延迟</p>
-<p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p>
-<p><strong>问题排查过程</strong></p>
-<p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p>
-<p>先介绍下重要的概念</p>
-<p><strong>delay ack</strong></p>
-<p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p>
-<p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p>
-<p><strong>nagle算法</strong></p>
-<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
-<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
-<p>（1）如果包长度达到MSS，则允许发送；</p>
-<p>（2）如果该包含有FIN，则允许发送；</p>
-<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
-<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
-<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
-<p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p>
-<ol>
-<li>当客户端请求数据小于mss大小</li>
-</ol>
-<p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p>
-<ol start="2">
-<li>客户端请求数据大于mss</li>
-</ol>
-<p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p>
-<p><strong>解决方案</strong></p>
-<p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p>
-<ol>
-<li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p>
-</li>
-<li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p>
-</li>
-</ol>
-]]></content>
-  </entry>
-  <entry>
-    <title>多抓鱼采访</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<ul>
-<li>多抓鱼和咸鱼区别？</li>
-</ul>
-<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
-<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
-<p><strong>为什么做多抓鱼</strong>？</p>
-<ul>
-<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
-</li>
-<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
-</li>
-<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
-</li>
-<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
-</li>
-<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
-</li>
-<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
-</li>
-</ul>
-<blockquote>
-<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
-</blockquote>
-<p><strong>多抓鱼的定价策略</strong></p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
-<ul>
-<li>确定几类书不收</li>
-<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
-<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
-</ul>
-<p><strong>shownotes</strong></p>
-<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
-<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>overload,override,overwrite小结</title>
     <url>/post/undefined.html</url>
     <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
@@ -375,6 +143,84 @@
       </tags>
   </entry>
   <entry>
+    <title>IO复用</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
+<a id="more"></a>
+<p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
+<h3 id="select"><a href="#select" class="headerlink" title="select()"></a>select()</h3><h4 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h4><p><code>int select(int nfds, fd_set *readfds, fd_set *writefds,fd_set *exceptfds, struct timeval *timeout);</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//@parm1 :nfds 表示所监听的文件描述符最大值+1</span></span><br><span class="line"><span class="comment">// @parm2,3,4 所监听文件描述符事件(可读/可写/异常)</span></span><br><span class="line"><span class="comment">//@parm5:设置超时限制</span></span><br><span class="line"><span class="comment">//返回值&gt;0：监听的所有集合，总满足条件的总数;==0 超时；&lt;0 错误</span></span><br></pre></td></tr></table></figure>
+<h4 id="配套操作"><a href="#配套操作" class="headerlink" title="配套操作"></a>配套操作</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>; <span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//判断fd是否在集合中</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合对应位置为1</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;<span class="comment">//将集合清0</span></span><br></pre></td></tr></table></figure>
+<h4 id="再看文件描述集"><a href="#再看文件描述集" class="headerlink" title="再看文件描述集"></a>再看文件描述集</h4><p>三个文件描述符参数是传入传出参数</p>
+<p>举个例子，readfds 监听了{fd1,fd2,fd3,fd4} 对应位图[1111]<br>select返回2，表明有两个文件描述符准备好了,这个时候监听集合可能就变成了[1001] ，因此我们需要轮循才能知道是哪个文件描述符状态发生了改变。</p>
+<h4 id="select-详细过程："><a href="#select-详细过程：" class="headerlink" title="select 详细过程："></a>select 详细过程：</h4><ol>
+<li><p>当用户 process 调用 select 的时候，select 会将需要监控的 readfds 集合拷贝到内核空间（假设监控的仅仅是 socket 可读），</p>
+</li>
+<li><p>内核遍历自己监控的 socket sk，挨个调用 sk 的 poll 逻辑以便检查该 sk 是否有可读事件，遍历完所有的 sk 后，如果没有任何一个 sk 可读，那 select 会调用 schedule_timeout 进入 schedule 循环，使得 process 进入睡眠。如果在 timeout 时间内某个 sk 上有数据可读了，或者等待 timeout 了，则调用 select 的 process 会被唤醒，</p>
+</li>
+<li><p>接下来 select 就是遍历监控的 sk 集合，挨个收集可读事件并返回给用户。</p>
+</li>
+</ol>
+<h4 id="select-缺点"><a href="#select-缺点" class="headerlink" title="select()缺点"></a>select()缺点</h4><ol>
+<li>监听的文件描述符上限1024</li>
+<li>需要轮循才能知道是哪个文件描述符状态发生了改变，当客户端连接数过多，但是准备就绪的又比较少时，轮循代价比较大</li>
+<li>由于监听集合是传入传出参数，因此在调用<code>select()</code>之前需要先保存之前状态</li>
+<li>fds集合需要从用户空间拷贝到内核空间的问题，我们希望不需要拷贝</li>
+</ol>
+<h4 id="select处理完整代码"><a href="#select处理完整代码" class="headerlink" title="select处理完整代码"></a>select处理完整代码</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    fd_set rfds;</span><br><span class="line">    <span class="keyword">char</span> buf[BUFSIZE] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">int</span> listenfd = createSocket(); <span class="comment">//这里封装了，可以简单理解为将socket(),bind(),listen() 都封装了</span></span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 保存所有的文件描述符</span></span><br><span class="line">    <span class="built_in">set</span>&lt;<span class="keyword">int</span>&gt; fdset;</span><br><span class="line">    fdset.insert(listenfd);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        FD_ZERO(&amp;rfds);</span><br><span class="line">        <span class="comment">// 每次都要重新设置rfds.因为select返回时，rfds被内核改变，里面只保存了就绪的文件描述符</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) FD_SET(fd, &amp;rfds);</span><br><span class="line">        <span class="keyword">int</span> ret = select(*fdset.rbegin()+<span class="number">1</span>, &amp;rfds, <span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="keyword">if</span> (ret &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> fd : fdset) <span class="comment">//这里就是轮询监听的文件描述符集合，因为使用了集合，就不需要从0-fds.size()+1遍历呢</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 有新的连接</span></span><br><span class="line">                <span class="keyword">if</span> (fd == listenfd &amp;&amp; FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line"> </span><br><span class="line">                   <span class="keyword">int</span> cfd = accept();</span><br><span class="line">                    <span class="comment">// 添加到 fd_set 结构体，并记录到 set</span></span><br><span class="line">                    FD_SET(cfd, &amp;rfds);</span><br><span class="line">                    fdset.insert(cfd); </span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//有请求 读数据</span></span><br><span class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (FD_ISSET(fd, &amp;rfds))</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">int</span> lenrecv = <span class="number">-1</span>;</span><br><span class="line">                    <span class="built_in">memset</span>(buf, <span class="number">0</span>, BUFSIZE);</span><br><span class="line"> </span><br><span class="line">                    lenrecv = recv(fd, buf, BUFSIZE<span class="number">-1</span>, <span class="number">0</span>);</span><br><span class="line">                    <span class="keyword">if</span> (lenrecv &gt; <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, buf);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="number">0</span> == lenrecv)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 客户端退出，删除文件描述符，并关闭</span></span><br><span class="line">                        fdset.erase(fd);</span><br><span class="line">                        FD_CLR(fd, &amp;rfds);</span><br><span class="line">                        <span class="built_in">printf</span>(<span class="string">"delete connection fd: %d\n"</span>, fd);</span><br><span class="line">                        <span class="built_in">close</span>(fd);</span><br><span class="line">                    &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">close</span>(listenfd);</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><p><code>int poll(struct pollfd *fds, unsigned int nfds, int timeout);</code></p>
+<p>poll机制和select类似，通过轮询管理的文件描述符，根据其状态来进行处理。</p>
+<ol>
+<li>但是poll()没有最大文件描述符数量上限。</li>
+<li>fds描述方式和select()不同，使用pollfd()基于链表实现，而fd_set()基于数组<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">   <span class="keyword">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">   short events;     <span class="comment">/* requested events */</span></span><br><span class="line">   short revents;    <span class="comment">/* returned events */</span></span><br><span class="line">   &#125;;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="poll与select对比"><a href="#poll与select对比" class="headerlink" title="poll与select对比"></a>poll与select对比</h3><h4 id="功能实现上"><a href="#功能实现上" class="headerlink" title="功能实现上"></a>功能实现上</h4><ul>
+<li>select 的描述符类型使用数组实现，FD_SETSIZE 大小默认为 1024，因此默认只能监听少于 1024 个描述符。如果要监听更多描述符的话，需要修改 FD_SETSIZE 之后重新编译；而 poll 没有描述符数量的限制；</li>
+<li>select 会修改描述符，而 poll 不会(请求事件和返回事件分开)</li>
+<li>poll 提供了更多的事件类型(POLLIN,POLLOUT,POLLERR,POLLHUP)</li>
+</ul>
+<h4 id="速度"><a href="#速度" class="headerlink" title="速度"></a>速度</h4><p>select 和 poll 速度都比较慢，每次调用都需要将全部描述符从应用进程缓冲区复制到内核缓冲区。</p>
+<h4 id="可移植性"><a href="#可移植性" class="headerlink" title="可移植性"></a>可移植性</h4><p>几乎所有的系统都支持 select，但是只有比较新的系统支持 poll。</p>
+<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><p>使用场景：连接文件描述符多，但是监听的少，或者说处于就绪态的文件描述符少，使用epoll</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> <span class="built_in">size</span>)</span></span>; <span class="comment">//返回指向内核的红黑树根</span></span><br><span class="line"></span><br><span class="line">int epoll_ctl(int epfd, int op, int fd, struct epoll_event*event)；</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event * events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>epoll 只需要将描述符从进程缓冲区向内核缓冲区拷贝一次(处理红黑树节点时候)，并且进程不需要通过轮询来获得事件完成的描述符。</p>
+<blockquote>
+<p>为什么不在需要轮循获得准备就绪的fd?<br>因为epoll_wait() 返回的<br><code>struct epoll_event * events</code> 已经包含了就绪的文件描述符,并且该结构体含有fd,以及事件信息<br>常见的处理方式</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">activeEvs</span>[100];</span></span><br><span class="line"><span class="keyword">int</span> n = epoll_wait(efd, activeEvs, kMaxEvents, waitms);<span class="comment">//返回准备就绪的文件描述符个数</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">int</span> fd = activeEvs[i].data.fd; <span class="comment">//提取fd</span></span><br><span class="line">        <span class="keyword">int</span> events = activeEvs[i].events; <span class="comment">//提取返回事件</span></span><br><span class="line">        <span class="keyword">if</span> (events &amp; (EPOLLIN | EPOLLERR)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (fd == lfd) &#123;</span><br><span class="line">                handleAccept(efd, fd);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                handleRead(efd, fd);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="LT-amp-amp-ET"><a href="#LT-amp-amp-ET" class="headerlink" title="LT&amp;&amp;ET"></a>LT&amp;&amp;ET</h4><p>Level Triggered (LT) 水平触发</p>
+<p>socket接收缓冲区不为空 有数据可读 读事件一直触发</p>
+<p>Edge Triggered (ET) 边沿触发</p>
+<p>socket的接收缓冲区状态变化时触发读事件，即空的接收缓冲区刚接收到数据时触发读事件</p>
+<p>其实就是模拟电路中的上升沿以及水平概念，LT只要有数据就会读，ET只有当缓冲区状态发生改变才会触发。</p>
+<p>ET很大程度上减少了 epoll 事件被重复触发的次数，因此效率要比 LT 模式高。只支持 No-Blocking，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
+<h3 id="三种IO复用应用场景"><a href="#三种IO复用应用场景" class="headerlink" title="三种IO复用应用场景"></a>三种IO复用应用场景</h3><h4 id="select-1"><a href="#select-1" class="headerlink" title="select"></a>select</h4><ol>
+<li>实时性要求高;select 的 timeout 参数精度为微秒，而 poll 和 epoll 为毫秒，因此 select 更加适用于实时性要求比较高的场景，比如核反应堆的控制</li>
+<li>可移植性好</li>
+</ol>
+<h4 id="poll-1"><a href="#poll-1" class="headerlink" title="poll"></a>poll</h4><p>poll 没有最大描述符数量的限制，如果平台支持并且对实时性要求不高，应该使用 poll 而不是 select。</p>
+<h4 id="epoll-1"><a href="#epoll-1" class="headerlink" title="epoll"></a>epoll</h4><p>适用于：</p>
+<ul>
+<li>只运行在linux</li>
+<li>大量的连接，但是只有少数同时处于就绪态，并且这些连接为长连接</li>
+</ul>
+<p>不适用：</p>
+<ul>
+<li>监控的描述符状态变化多，而且都是非常短暂的，因为 epoll 中的所有描述符都存储在内核中，造成每次需要对描述符的状态改变都需要通过 epoll_ctl() 进行系统调用，频繁系统调用降低效率。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>shared_from_this解决了什么问题</title>
     <url>/post/undefined.html</url>
     <content><![CDATA[<a id="more"></a>
@@ -388,179 +234,6 @@
       <categories>
         <category>C++</category>
       </categories>
-  </entry>
-  <entry>
-    <title>套接字选项小结</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>总结影响网络收发包的一些套接字选项，对一些概念可能理解不对，希望大家多多指教。后面会持续更新ing。</p>
-<a id="more"></a>
-
-<p>[TOC]</p>
-<h3 id="套接字属性设置"><a href="#套接字属性设置" class="headerlink" title="套接字属性设置"></a><strong>套接字属性设置</strong></h3><hr>
-<p>通过setsockopt我们可以设置套接字的一些属性，函数原型如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,<span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>其中<code>level</code> 参数设定的套接字属性使用范围，<code>SOL_SOCKET</code>表示用于通用套接字，<code>IPPROTO_TCP</code> 用于tcp协议，<code>IPPROTO_IP</code> 用于IP协议。</p>
-<p>下表是《APUE》中给出的一些通用套接字设置选项</p>
-<p><img src="https://s1.ax1x.com/2020/08/07/ahtjHI.png" alt="ahtjHI.png"></p>
-<h3 id="SO-KEEPALIVE"><a href="#SO-KEEPALIVE" class="headerlink" title="SO_KEEPALIVE"></a>SO_KEEPALIVE</h3><blockquote>
-<p>为什么需要保活?</p>
-</blockquote>
-<p>在tcp连接双方，建立连接之后，很长时间没有交换数据，在这种长时间没有数据交换情况下，双方不知道对方状态，交互双方都有可能出现掉电、死机、异常重启等各种意外，当这些意外发生之后，这些TCP连接并未来得及正常释放，那么，连接的另一方并不知道对端的情况，它会一直维护这个连接，长时间的积累会导致非常多的半打开连接，造成端系统资源的消耗和浪费，为了解决这个问题，在传输层可以利用TCP的保活报文来实现。</p>
-<ol>
-<li>探测连接的对端是否存活</li>
-</ol>
-<p>在应用交互的过程中，可能存在以下几种情况：</p>
-<ol>
-<li><p>客户主机依然正常运行，并从服务器可达。客户的TCP响应正常，而服务器也知道对方是正常工作的。服务器在两小时以后将保活定时器复位。如果在两个小时定时器到时间之前有应用程序的通信量通过此连接，则定时器在交换数据后的未来 2小时再复位。</p>
-</li>
-<li><p>客户主机已经崩溃，并且关闭或者正在重新启动。在任何一种情况下，客户的TCP没有响应。服务器将不能够收到对探查的响应，并在<strong>75s</strong>后超时。服务器总共发送<strong>10个</strong>这样的探查，每个间隔75秒。如果服务器没有收到一个响应，它就认为客户主机已经关闭并终止连接。</p>
-</li>
-<li><p><strong>客户主机崩溃并已经重新启动</strong>。这时服务器将收到一个对其保活探查的响应，但是这个响应是一个复位，使得服务器终止这个连接。</p>
-</li>
-<li><p>客户主机正常运行，但是从服务器不可达。这与状态2相同，因为TCP不能够区分状态4与状态2之间的区别，它所能发现的就是没有收到探查的响应。</p>
-</li>
-</ol>
-<p>​     利用保活探测功能，可以探知这种对端的意外情况，从而保证在意外发生时，可以释放半打开的TCP连接。</p>
-<ol start="2">
-<li><p><strong>防止中间设备因超时删除连接相关的连接表</strong></p>
-<p>中间设备如防火墙等，会为经过它的数据报文建立相关的连接信息表，并为其设置一个超时时间的定时器，如果超出预定时间，某连接无任何报文交互的中间设备会将该连接信息从表中删除，在删除后，再有应用报文过来时，中间设备将丢弃该报文，从而导致应用出现异常，这个交互的过程大致如下图所示：</p>
-</li>
-</ol>
-<p>默认情况下tcp的保活是关闭的,需要我们自己打开。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">optval = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, &amp;optval, optlen);</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>全局修改探测活参数</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">echo <span class="number">600</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_time <span class="comment">//超时时间</span></span><br><span class="line">echo <span class="number">60</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_intvl <span class="comment">//探测报文发送间隔</span></span><br><span class="line">echo <span class="number">20</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_probes <span class="comment">//探测报文发送次数</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>通过系统调用对单个进程修改</strong></p>
-<p>对应到的几个套接字选项如下</p>
-<p><strong>TCP_KEEPCNT</strong>: 对应到探测报文发送次数；</p>
-<p><strong>TCP_KEEPINTVL</strong>: 探测报文发送间隔</p>
-<p><strong>TCP_KEEPIDLE</strong>: 超时时间</p>
-<blockquote>
-<p>TCP层的保活和应用层保活对比</p>
-</blockquote>
-<p><code>KeepAlive</code>通过定时发送探测包来探测连接的对端是否存活， 但通常也会许多在业务层面处理的，他们之间的特点：</p>
-<ul>
-<li>TCP自带的<code>KeepAlive</code>使用简单，发送的数据包相比应用层心跳检测包更小，仅提供检测连接功能</li>
-<li>应用层心跳包不依赖于传输层协议，无论传输层协议是TCP还是UDP都可以用</li>
-<li>应用层心跳包可以定制，可以应对更复杂的情况或传输一些额外信息</li>
-<li><code>KeepAlive</code>仅代表连接保持着，而心跳包往往还代表客户端可正常工作</li>
-</ul>
-<h3 id="SO-LINGER"><a href="#SO-LINGER" class="headerlink" title="SO_LINGER"></a><strong>SO_LINGER</strong></h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,</span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p>对应的<code>val</code>是一个结构体</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> &#123;</span></span><br><span class="line">　　<span class="keyword">int</span> l_onoff; <span class="comment">//开关 0:关闭</span></span><br><span class="line">　　<span class="keyword">int</span> l_linger;<span class="comment">//延迟关闭时间</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>一个简单的使用例子</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> <span class="title">lin</span>&#123;</span><span class="number">0</span>,<span class="number">1</span>&#125;;</span><br><span class="line">setsockopt(fd,SOL_SOCKET,SO_SOCKET,&amp;lin);</span><br></pre></td></tr></table></figure>
-
-<p>linger打开与否，以及不同时间的设置，可能导致不同的关闭结果。</p>
-<p>三种断开方式：</p>
-<ol>
-<li>l_onoff = 0; l_linger忽略</li>
-</ol>
-<p>close()立刻返回，底层会将未发送完的数据发送完成后再释放资源，即优雅退出。</p>
-<ol start="2">
-<li>l_onoff != 0; l_linger = 0;</li>
-</ol>
-<p>close()立刻返回，但不会发送未发送完成的数据，而是通过一个RST包强制的关闭socket描述符，即强制退出。</p>
-<ol start="3">
-<li>l_onoff != 0; l_linger &gt; 0;</li>
-</ol>
-<p>close()不会立刻返回，内核会延迟一段时间，这个时间就由l_linger的值来决定。如果超时时间到达之前，发送完未发送的数据(包括FIN包)并得到另一端的确认，close()会返回正确，socket描述符优雅性退出。否则，close()会直接返回错误值，未发送数据丢失，socket描述符被强制性退出</p>
-<h4 id="SO-LINGER实现原理"><a href="#SO-LINGER实现原理" class="headerlink" title="SO_LINGER实现原理"></a>SO_LINGER实现原理</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> SO_LINGER:</span><br><span class="line">			<span class="keyword">if</span>(optlen&lt;<span class="keyword">sizeof</span>(ling)) &#123;</span><br><span class="line">				ret = -EINVAL;	<span class="comment">/* 1003.1g */</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">...</span><br><span class="line">			<span class="keyword">if</span> (!ling.l_onoff)<span class="comment">//没有打开linger</span></span><br><span class="line">				sock_reset_flag(sk, SOCK_LINGER);</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">#<span class="keyword">if</span> (BITS_PER_LONG == <span class="number">32</span>)</span><br><span class="line">				<span class="keyword">if</span> (ling.l_linger &gt;= MAX_SCHEDULE_TIMEOUT/HZ)</span><br><span class="line">					sk-&gt;sk_lingertime = MAX_SCHEDULE_TIMEOUT;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">#endif</span><br><span class="line">					sk-&gt;sk_lingertime = ling.l_linger * HZ;<span class="comment">//设置linger时间</span></span><br><span class="line">				sock_set_flag(sk, SOCK_LINGER);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>程序调用函数close()关闭套接口时，与此相关的函数调用路径如下：<code>sys_close() -&gt; filp_close() -&gt; fput() -&gt; __fput() -&gt; sock_close() -&gt; sock_release() -&gt; inet_release() -&gt; tcp_close()</code></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_release</span><span class="params">(struct socket *sock)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">sk</span> = <span class="title">sock</span>-&gt;<span class="title">sk</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk) &#123;</span><br><span class="line">		<span class="keyword">long</span> timeout;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Applications forget to leave groups before exiting */</span></span><br><span class="line">		ip_mc_drop_socket(sk);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* If linger is set, we don't return until the close</span></span><br><span class="line"><span class="comment">		 * is complete.  Otherwise we return immediately. The</span></span><br><span class="line"><span class="comment">		 * actually closing is done the same either way.</span></span><br><span class="line"><span class="comment">		 *</span></span><br><span class="line"><span class="comment">		 * If the close is due to the process exiting, we never</span></span><br><span class="line"><span class="comment">		 * linger..</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		timeout = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp;</span><br><span class="line">		    !(current-&gt;flags &amp; PF_EXITING))</span><br><span class="line">			timeout = sk-&gt;sk_lingertime;</span><br><span class="line">		sock-&gt;sk = <span class="literal">NULL</span>;</span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">close</span>(sk, timeout);<span class="comment">//对应到tcp_close</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="tcp-close"><a href="#tcp-close" class="headerlink" title="tcp_close()"></a><code>tcp_close()</code></h4><p>当一个套接口正在或已经被关闭，如果在其接收队列有未读数据（不管是在关闭前就已收到的，或者还是在关闭后新到达的），那么此时就需给对端发送一个RST数据包,对应到下面一段代码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (data_was_unread) &#123;<span class="comment">//接受区还有数据没有被读完</span></span><br><span class="line">	<span class="comment">/* Unread data was tossed, zap the connection. */</span></span><br><span class="line">	NET_INC_STATS_USER(LINUX_MIB_TCPABORTONCLOSE);</span><br><span class="line">	tcp_set_state(sk, TCP_CLOSE);</span><br><span class="line">	tcp_send_active_reset(sk, GFP_KERNEL);<span class="comment">//发送RST</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>如果linger结构体的字段<code>l_onoff</code>为1,而<code>l_linger</code>为0</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp; !sk-&gt;sk_lingertime) &#123;</span><br><span class="line">		<span class="comment">/* Check zero linger _after_ checking for unread data. */</span></span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">disconnect</span>(sk, <span class="number">0</span>); <span class="comment">//直接丢掉所有接收数据并且直接断开连接，具体也就是发送RST数据包，清空相关接收队列</span></span><br><span class="line">		NET_INC_STATS_USER(LINUX_MIB_TCPABORTONDATA);</span><br></pre></td></tr></table></figure>
-
-<p>下面就是对应正常四次挥手关闭流程，</p>
-<p>先调用函数<code>tcp_close_state()</code>切换状态，判断是否需要发送FIN数据包（eg.如果当前还处于<code>TCP_SYN_SENT</code>状态，连接尚未完全建立，自然就不用发送FIN数据包），如果需要发送FIN数据包则调用<code>tcp_send_fin()</code></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">....... </span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (tcp_close_state(sk)) &#123;</span><br><span class="line">		tcp_send_fin(sk);</span><br><span class="line">	&#125;</span><br><span class="line"> sk_stream_wait_close(sk, timeout);</span><br></pre></td></tr></table></figure>
-
-<h4 id="tcp-send-fin"><a href="#tcp-send-fin" class="headerlink" title="tcp_send_fin"></a><strong>tcp_send_fin</strong></h4><p>深入到发送fin内部来看，</p>
-<p>如果发送队列还有数据，那么直接将取出末尾数据包，设置FIN。否则分配一个新的skb,最后调用函数<code>__tcp_push_pending_frames() -&gt; tcp_write_xmit()</code>发送数据包。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tcp_send_fin</span><span class="params">(struct sock *sk)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tcp_sock</span> *<span class="title">tp</span> = <span class="title">tcp_sk</span>(<span class="title">sk</span>);</span>	</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sk_buff</span> *<span class="title">skb</span> = <span class="title">skb_peek_tail</span>(&amp;<span class="title">sk</span>-&gt;<span class="title">sk_write_queue</span>);</span> <span class="comment">//取出末尾数据包</span></span><br><span class="line">	<span class="keyword">int</span> mss_now;</span><br><span class="line">	</span><br><span class="line">	mss_now = tcp_current_mss(sk, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_send_head != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_FIN;<span class="comment">//</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq++;</span><br><span class="line">		tp-&gt;write_seq++;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">/* Socket is locked, keep trying until memory is available. */</span></span><br><span class="line">		<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">			skb = alloc_skb(MAX_TCP_HEADER, GFP_KERNEL);</span><br><span class="line">			<span class="keyword">if</span> (skb)</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="built_in">yield</span>();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Reserve space for headers and prepare control bits. */</span></span><br><span class="line">		skb_reserve(skb, MAX_TCP_HEADER);</span><br><span class="line">		skb-&gt;csum = <span class="number">0</span>;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags = (TCPCB_FLAG_ACK | TCPCB_FLAG_FIN);</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;sacked = <span class="number">0</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_segs = <span class="number">1</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_size = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* FIN eats a sequence byte, write_seq advanced by tcp_queue_skb(). */</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;seq = tp-&gt;write_seq;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq = TCP_SKB_CB(skb)-&gt;seq + <span class="number">1</span>;</span><br><span class="line">		tcp_queue_skb(sk, skb);</span><br><span class="line">	&#125;</span><br><span class="line">	__tcp_push_pending_frames(sk, tp, mss_now, TCP_NAGLE_OFF);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="sk-stream-wait-close"><a href="#sk-stream-wait-close" class="headerlink" title="sk_stream_wait_close"></a><strong>sk_stream_wait_close</strong></h4><p>这是一个阻塞等待函数，参数timeout指示了等待的时间（单位为时钟滴答）。</p>
-<p>while循环的退出点有两处</p>
-<ul>
-<li><p>当前进程收到信号或时间超时（timeout）</p>
-</li>
-<li><p>sk_wait_event()</p>
-</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sk_stream_wait_close</span><span class="params">(struct sock *sk, <span class="keyword">long</span> timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (timeout) &#123;</span><br><span class="line">		DEFINE_WAIT(wait);</span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			prepare_to_wait(sk-&gt;sk_sleep, &amp;wait,</span><br><span class="line">					TASK_INTERRUPTIBLE);</span><br><span class="line">			<span class="keyword">if</span> (sk_wait_event(sk, &amp;timeout, !sk_stream_closing(sk)))<span class="comment">// 退出点1</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125; <span class="keyword">while</span> (!signal_pending(current) &amp;&amp; timeout); <span class="comment">//退出点2</span></span><br><span class="line">		finish_wait(sk-&gt;sk_sleep, &amp;wait);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>至此我们结合源码大致搞清楚了SO_LINGER选项的设置对TCP连接关闭的影响。</p>
-<h3 id="SO-REUSEPORT-amp-amp-SO-REUSEADDR"><a href="#SO-REUSEPORT-amp-amp-SO-REUSEADDR" class="headerlink" title="SO_REUSEPORT&amp;&amp;SO_REUSEADDR"></a>SO_REUSEPORT&amp;&amp;SO_REUSEADDR</h3><p>SO_REUSEADDR和SO_REUSEPORT主要是影响socket绑定ip和port的成功与否。有几点绑定规则主要注意下<br> <strong>规则1</strong>：socket可以指定绑定到一个特定的ip和port，例如绑定到192.168.0.11:9000上；<br> <strong>规则2</strong>：同时也支持通配绑定方式，即绑定到本地”any address”（例如一个socket绑定为 0.0.0.0:21，那么它同时绑定了所有的本地地址）；<br> <strong>规则3</strong>：默认情况下，任意两个socket都无法绑定到相同的源IP地址和源端口</p>
-<h4 id="SO-REUSEADDR"><a href="#SO-REUSEADDR" class="headerlink" title="SO_REUSEADDR"></a><strong>SO_REUSEADDR</strong></h4><p><strong>1、改变了通配绑定时处理源地址冲突的处理方式</strong></p>
-<p>so_reuseaddr作用在于允许一个socket 绑定了统配地址+port， 另外一个套接字绑定具体地址+相同端口</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SO_REUSEADDR       socketA        socketB       Result</span><br><span class="line">---------------------------------------------------------------------</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21   192.168.0.1:21    Error (EADDRINUSE)</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21      10.0.0.1:21    OK</span><br><span class="line">  ON&#x2F;OFF          10.0.0.1:21   192.168.0.1:21    OK</span><br><span class="line">   OFF             0.0.0.0:21   192.168.1.0:21    Error (EADDRINUSE)</span><br><span class="line">   OFF         192.168.1.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br><span class="line">   ON              0.0.0.0:21   192.168.1.0:21    OK</span><br><span class="line">   ON          192.168.1.0:21       0.0.0.0:21    OK</span><br><span class="line">  ON&#x2F;OFF           0.0.0.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、改变了系统对处于TIME_WAIT状态的socket绑定地址的处理</strong></p>
-<p>处于time-wait 状态下的套接字需要等待2msl 才能重新使用其绑定的端口与地址，设置了so_reuseaddr没有此限制</p>
-<h4 id="SO-REUSEPORT"><a href="#SO-REUSEPORT" class="headerlink" title="SO_REUSEPORT"></a><strong>SO_REUSEPORT</strong></h4><ol>
-<li>允许将多个socket绑定到相同的地址和端口，前提每个socket绑定前都需设置</li>
-<li>linux内核在处理SO_REUSEPORT socket的集合时，进行了简单的负载均衡操作，即对于UDP socket，内核尝试平均的转发数据报，对于TCP监听socket，内核尝试将新的客户连接请求(由accept返回)平均的交给共享同一地址和端口的socket(监听socket)。</li>
-</ol>
-<p>通过设置套接字的SO_REUSEPORT能够用来解决epoll_wait存在的惊群问题，把监听描述符添加到epoll监听事件，多个子进程都epoll_wait阻塞等待，由内核来做负载均衡，这样就避免了当实践发生时同时惊醒多个工作进程，添加了SO_REUSEPORT的模型如下:</p>
-<img src="https://s1.ax1x.com/2020/08/13/azw6DU.png" alt="azw6DU.png" style="zoom:80%;" />
-
-
-
-
-<h3 id="TCP-CORK"><a href="#TCP-CORK" class="headerlink" title="TCP_CORK"></a>TCP_CORK</h3><p>tcp_cork与tcp_nodelay 以及nagle 容易搞混，这里我们结合他们的应用场景以及代码来理清楚。</p>
-<p><strong>nagle算法</strong></p>
-<p>大致思想：</p>
-<p>为了提高网络吞吐量，如果发送小数据包，那么20字节包头的负担太大，于是通过将小数据包累积到一个MSS长度再发出来。</p>
-<p>同样影响小包发送的套接字选项:<strong>TCP_NODELAY，TCP_CORK</strong></p>
-<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
-<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
-<p>（1）如果包长度达到MSS，则允许发送；</p>
-<p>（2）如果该包含有FIN，则允许发送；</p>
-<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
-<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
-<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
-<p><code>TCP_NODELAY</code>是禁用Nagle算法，即数据包立即发送出去，而选项TCP_CORK与此相反，可以认为它是Nagle算法的进一步增强，即阻塞数据包发送，具体点说就是：TCP_CORK选项的功能类似于在发送数据管道出口处插入一个“塞子”，使得发送数据全部被阻塞，直到取消TCP_CORK选项（即拔去塞子）或被阻塞数据长度已超过MSS才将其发送出去。举个对比示例，比如收到接收端的ACK确认后，Nagle算法可以让当前待发送数据包发送出去，即便它的当前长度仍然不够一个MSS，但选项TCP_CORK则会要求继续等待。</p>
-<h4 id="TCP-CORK的应用场景"><a href="#TCP-CORK的应用场景" class="headerlink" title="TCP_CORK的应用场景"></a>TCP_CORK的应用场景</h4><p>TCP_CORK选项的作用主要是阻塞小数据发送，服务器处理一个客户端请求，发送的响应数据包括响应头和响应体两部分，利用TCP_CORK选项就能让这两部分数据一起发送。</p>
-<p>按照之前的分析，设置了CORK之后，有几种可能数据会被发送</p>
-<ul>
-<li>通过setoptsock关闭TCP_CORK这个选项。</li>
-<li>socket阻塞的数据大于MSS。</li>
-<li>自从堵上塞子写入第一个字节开始，已经经过200ms。</li>
-<li>socket被关闭。</li>
-</ul>
-<p>一旦满足上面的任何一个条件，TCP就会将数据发送出去。对于Server来说，发送HTTP响应既要发送尽量少的segment，同时又要保证低延迟，那么需要在写完数据后显式取消设置<code>TCP_CORK</code>选项，让数据立即发送出去：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> state = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//开启cork</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">write</span>(http_resp_header);</span><br><span class="line">sendfile(sockfd, fd, &amp;off, len); <span class="comment">//阻塞</span></span><br><span class="line"></span><br><span class="line">state = <span class="number">0</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//关闭cork</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://www.lenky.info/archives/2013/02/2220" target="_blank" rel="noopener">Socket选项系列之SO_LINGER</a></p>
-<p><a href="http://senlinzhan.github.io/2017/02/10/Linux的TCP-CORK/" target="_blank" rel="noopener">Nagle 算法与 TCP socket 选项 TCP_CORK</a></p>
-<p><a href="https://juejin.im/post/6844903878819840008" target="_blank" rel="noopener">https://juejin.im/post/6844903878819840008</a></p>
-<p><a href="https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html" target="_blank" rel="noopener">https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html</a></p>
-]]></content>
-      <tags>
-        <tag>网络</tag>
-      </tags>
   </entry>
   <entry>
     <title>socket从创建到连接过程小结</title>
@@ -803,112 +476,6 @@
       </tags>
   </entry>
   <entry>
-    <title>并发</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>《OSTEP》线程并发小结</p>
-<a id="more"></a>
-
-<h4 id="理解多线程为什么会有竞争状态问题"><a href="#理解多线程为什么会有竞争状态问题" class="headerlink" title="理解多线程为什么会有竞争状态问题"></a>理解多线程为什么会有竞争状态问题</h4><p>多线程对共享资源访问，可能不是原子操作，导致不确定结果。</p>
-<h4 id="条件量使用"><a href="#条件量使用" class="headerlink" title="条件量使用"></a>条件量使用</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_wait</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond, <span class="keyword">pthread_mutex_t</span> *mutex)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_signal</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>wait 操作传入参数除了条件变量还有锁，这样做的目的是为了把进程休眠同时释放锁。否则其他线程就没法获得锁，唤醒休眠线程。</p>
-<p>下面代码做线程之间同步存在什么问题</p>
-<ol>
-<li>spin 忙等待浪费cpu</li>
-</ol>
-<p>但是这个能够实现线程之间同步操作么?</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局标志变量</span></span><br><span class="line"><span class="keyword">int</span> flag=<span class="number">0</span>;</span><br><span class="line"><span class="comment">//thread A</span></span><br><span class="line"><span class="keyword">while</span>(flag==<span class="number">0</span>); <span class="comment">//spin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//thread B singal</span></span><br><span class="line">flag=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="锁的设计"><a href="#锁的设计" class="headerlink" title="锁的设计"></a>锁的设计</h4><p>在设计锁之前，有几个指标能够来衡量设计方案的好坏。</p>
-<ol>
-<li><p>能否实现互斥</p>
-</li>
-<li><p>公平性(防止饥饿）</p>
-</li>
-<li><p>实现锁带来的额外负担</p>
-</li>
-</ol>
-<p>最直接的想法是通过关闭中断来实现互斥，竞态条件下执行结果的不稳定，就是因为线程执行过程中被打断，调度。我们通过关闭中断，就能够实现对资源的互斥访问，但是这个在实际情况不太可能实现(多CPU,以及关闭中断带来的巨大风险)。</p>
-<h5 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h5><p>通过硬件支持的同步原语来实现互斥，首先我们看一个没有原子操作的互斥锁方案</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span> <span class="keyword">int</span> flag; &#125; <span class="keyword">lock_t</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 0 -&gt; lock is available, 1 -&gt; held</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (mutex-&gt;flag == <span class="number">1</span>);<span class="comment">// TEST the flag spin-wait (do nothing)</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">1</span>;<span class="comment">// now SET it!</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">    mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述方案的问题在于检查flag和设置flag不是原子操作，可能存在一种情况线程A执行完while()然后被调度，导致两个线程都获得锁。</p>
-<p>改进方案如下</p>
-<p>CAS（compare and swap）一种原子操作，</p>
-<p>bool CAS(V, A,B) // 检查现有V 是否与A== 如果== 将V设置为B 同时返回true</p>
-<p><strong>自旋锁伪码实现</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">CAS（compare <span class="keyword">and</span> swap）一种原子操作，</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">CAS</span><span class="params">(V, A,B)</span> <span class="comment">// 检查现有V 是否与A== 如果==  将V设置为B 同时返回true</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line">自旋锁伪码实现</span><br><span class="line"><span class="keyword">bool</span> flag =<span class="literal">false</span>; <span class="comment">//锁为true 表示被占用</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>));</span><br><span class="line"><span class="comment">//do-something</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//release lock</span></span><br><span class="line">flag=<span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>自旋锁虽然能够实现对临界区的互斥访问，但是带来了性能问题，spin通过忙等待形式去获取锁，导致了CPU资源的浪费。</p>
-<p>比如场景：单核cpu运行多个线程</p>
-<p>线程1获得lock进入临界区,然后被打断，线程2被调度，一直自旋等待锁被释放。</p>
-<h5 id="yield"><a href="#yield" class="headerlink" title="yield"></a>yield</h5><p>针对上述问题，一种解决方法是通过主动放弃CPU，当线程发现锁被占用，主动将自己的状态由RUNNING-&gt;READY， 避免了自旋等待占用CPU。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>)) <span class="built_in">yield</span>();</span><br></pre></td></tr></table></figure>
-
-<p>yield 带来的问题</p>
-<ol>
-<li><p>大量的上下文切换操作</p>
-</li>
-<li><p>仍然没有解决饥饿问题</p>
-</li>
-</ol>
-<h5 id="sleep队列"><a href="#sleep队列" class="headerlink" title="sleep队列"></a>sleep队列</h5><p>无论自旋，还是yield， 调度器的选择很多，导致了资源的浪费。如果线程发现自己暂时不能获取锁，将自己休眠，就带来了效率提升。</p>
-<p>下面实现代码还是很巧妙的</p>
-<ul>
-<li>guard作用: 用于自旋等待变量</li>
-</ul>
-<p>相比于自旋等待整个临界区，gaurd的获取和释放间隔很短；eg.多核CPU, 当一个进程A拿到gaurd,然后另一个进程B被调度，此时B就拿不到gaurd，自旋等待，但是由于A临界区代码很短，很快A就会释放gaurd.</p>
-<ul>
-<li>unlock()中， 唤醒线程之后，没有将flag设置为0</li>
-</ul>
-<p>这么做的原因是线程被唤醒之后，可以看作是从park（）返回，此时线程没有拿到guard,锁没有释放就直接传递给了被唤醒线程。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> flag;</span><br><span class="line">	<span class="keyword">int</span> guard;</span><br><span class="line">	<span class="keyword">queue_t</span> *q;</span><br><span class="line">	&#125; <span class="keyword">lock_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock_init</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	m-&gt;flag= <span class="number">0</span>;</span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">	queue_init(m-&gt;q);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (m-&gt;flag == <span class="number">0</span>) &#123;</span><br><span class="line">		m-&gt;flag = <span class="number">1</span>; <span class="comment">// lock is acquired</span></span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">		queue_add(m-&gt;q, gettid());</span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">		park(); <span class="comment">//线程休眠</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (queue_empty(m-&gt;q))</span><br><span class="line">		m-&gt;flag = <span class="number">0</span>; <span class="comment">// let go of lock; no one wants it</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		unpark(queue_remove(m-&gt;q)); <span class="comment">// hold lock (for next thread!)</span></span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="基于锁的数据结构"><a href="#基于锁的数据结构" class="headerlink" title="基于锁的数据结构"></a>基于锁的数据结构</h4><h5 id="并发链表设计"><a href="#并发链表设计" class="headerlink" title="并发链表设计"></a>并发链表设计</h5><p>关键在于数据结构的定义，节点如何定义(int, node*) ，链表怎么定义(锁+链表头)</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// basic node structure</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> key;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; <span class="keyword">node_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// basic list structure (one used per list)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">list_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">node_t</span> * head;</span><br><span class="line">    <span class="keyword">pthread_mutex_t</span> lock;</span><br><span class="line">&#125; <span class="keyword">list_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">List_Init</span><span class="params">(<span class="keyword">list_t</span> * L)</span> </span>&#123;</span><br><span class="line">    L-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">    pthread_mutex_init(&amp;L-&gt;lock, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Insert</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">node_t</span> * <span class="keyword">new</span> = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">node_t</span>)); <span class="comment">//先分配节点，只有在更新全局资源时候加锁，而不是一上来就全部加锁</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">new</span> == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        perror(<span class="string">"malloc"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>; <span class="comment">// fail</span></span><br><span class="line">    &#125;</span><br><span class="line">	pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">new</span>-&gt;key = key;</span><br><span class="line">    <span class="keyword">new</span>-&gt;next = L-&gt;head;</span><br><span class="line">    L-&gt;head = <span class="keyword">new</span>;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// success</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//链表查找需要加锁么? 不涉及到全局变量的修改，但是如果不加锁，一个线程在修改正在查找的链表，也会导致race condition</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Lookup</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">node_t</span> * curr = L-&gt;head;</span><br><span class="line">    <span class="keyword">int</span> rv=<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">while</span> (curr) &#123;</span><br><span class="line">        <span class="keyword">if</span> (curr-&gt;key == key) &#123;</span><br><span class="line">            rv=<span class="number">0</span>;<span class="comment">//返回0 表示找到</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> rv;  <span class="comment">// faulure</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="并发哈希表"><a href="#并发哈希表" class="headerlink" title="并发哈希表"></a>并发哈希表</h5><p>有了这个基础，设计并发哈希表就很简单，通过拉链方法来避免哈希冲突</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUCKETS (101)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">hash_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">list_t</span> lists[BUCKETS];</span><br><span class="line">&#125; <span class="keyword">hash_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Hash_Init</span><span class="params">(<span class="keyword">hash_t</span> * H)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BUCKETS; i++) &#123;</span><br><span class="line">        List_Init(&amp;H-&gt;lists[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Insert</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Insert(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Lookup</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Lookup(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><blockquote>
-<p>什么是信号量?</p>
-<p>信号量和条件变量区别</p>
-</blockquote>
-<p>信号量用来做lock,也能够用来做条件变量，关键在于信号量的初始化。</p>
-<p>信号量=变量+操作</p>
-<p><strong>信号量操作伪码</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_wait</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	decrement the value of semaphore s by one</span><br><span class="line">	wait <span class="keyword">if</span> value of semaphore s is negative</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_post</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	increment the value of semaphore s by one</span><br><span class="line">	<span class="keyword">if</span> there are one <span class="keyword">or</span> more threads waiting, wake one</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>信号量做二元锁</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> m;</span><br><span class="line">sem_init(&amp;m, <span class="number">0</span>, <span class="number">1</span>); <span class="comment">// initialize semaphore to 1</span></span><br><span class="line">sem_wait(&amp;m);</span><br><span class="line"><span class="comment">// critical section here</span></span><br><span class="line">sem_post(&amp;m);</span><br></pre></td></tr></table></figure>
-
-<p><strong>信号量做条件变量</strong></p>
-<p>下面代码目的是同步父子进程，父进程等待子进程结束。</p>
-<p>注意条件变量被初始化为0，分两个情况考虑，如果子进程被创建之后先执行，sem_post将信号量+1,父进程执行sem_wait正常返回；如果父进程先执行，sem-1小于0，父进程被挂起，子进程执行，将sem+1，然后唤醒父进程。 所以符合我们预定执行顺序。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> s</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">child</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"child\n"</span>);</span><br><span class="line">sem_post(&amp;s); <span class="comment">// signal here: child is done</span></span><br><span class="line"><span class="keyword">return</span> <span class="literal">NULL</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">	sem_init(&amp;s, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">// </span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: begin\n"</span>);</span><br><span class="line">	<span class="keyword">pthread_t</span> c;</span><br><span class="line">	Pthread_create(c, <span class="literal">NULL</span>, child, <span class="literal">NULL</span>);</span><br><span class="line">	sem_wait(&amp;s); <span class="comment">// wait here for child</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: end\n"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h5 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h5><p>允许多个读，一个写，第一个读者自动获得写锁，最后一个读锁释放，写锁也释放。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span>&#123;</span></span><br><span class="line">    <span class="keyword">sem_t</span> lock;</span><br><span class="line">    <span class="keyword">sem_t</span> <span class="built_in">write</span>;</span><br><span class="line">    <span class="keyword">int</span> readers;</span><br><span class="line">&#125; rw_lock;</span><br><span class="line"></span><br><span class="line">init(rw_lock*m)&#123;</span><br><span class="line">    sem_init(m-&gt;lock,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    sem_init(m-&gt;<span class="built_in">write</span>,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    m-&gt;readers=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers++;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">1</span>) sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_release_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers--;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">0</span>) sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>OSTEP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>内存虚拟化</title>
     <url>/post/undefined.html</url>
     <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
@@ -1033,9 +600,463 @@
 </ul>
 ]]></content>
       <tags>
-        <tag>OSTEP</tag>
         <tag>操作系统</tag>
+        <tag>OSTEP</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>tcp40ms延迟问题分析</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
+
+<p><strong>背景</strong></p>
+<p>tcp抓包发现服务端回复ack存在40ms左右延迟</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p>
+<p><strong>问题排查过程</strong></p>
+<p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p>
+<p>先介绍下重要的概念</p>
+<p><strong>delay ack</strong></p>
+<p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p>
+<p><strong>nagle算法</strong></p>
+<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
+<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
+<p>（1）如果包长度达到MSS，则允许发送；</p>
+<p>（2）如果该包含有FIN，则允许发送；</p>
+<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
+<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
+<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
+<p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p>
+<ol>
+<li>当客户端请求数据小于mss大小</li>
+</ol>
+<p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p>
+<ol start="2">
+<li>客户端请求数据大于mss</li>
+</ol>
+<p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p>
+<p><strong>解决方案</strong></p>
+<p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p>
+<ol>
+<li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p>
+</li>
+<li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p>
+</li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
+    <title>stringstream 处理字符串</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+<a id="more"></a>
+
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>多抓鱼采访</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<ul>
+<li>多抓鱼和咸鱼区别？</li>
+</ul>
+<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
+<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
+<p><strong>为什么做多抓鱼</strong>？</p>
+<ul>
+<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
+</li>
+<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
+</li>
+<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
+</li>
+<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
+</li>
+<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
+</li>
+<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
+</li>
+</ul>
+<blockquote>
+<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
+</blockquote>
+<p><strong>多抓鱼的定价策略</strong></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
+<ul>
+<li>确定几类书不收</li>
+<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
+<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
+</ul>
+<p><strong>shownotes</strong></p>
+<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
+<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Peter Thiel&#39;s Religion — David Perell</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
+<blockquote>
+<ol>
+<li>Don’t copy your neighbors</li>
+<li>Time moves forward</li>
+<li>The future will be different from the present</li>
+</ol>
+</blockquote>
+<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
+<a id="more"></a>
+
+<blockquote>
+<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
+</blockquote>
+<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
+<blockquote>
+<p>“As Peter Thiel recounted:</p>
+<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
+</blockquote>
+<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
+<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
+<blockquote>
+<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
+</blockquote>
+<blockquote>
+<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
+<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
+<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
+</blockquote>
+<blockquote>
+<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
+</blockquote>
+<blockquote>
+<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
+</blockquote>
+<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
+<blockquote>
+<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
+<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
+</blockquote>
+<p>#好故事 人类模仿的天性导致嫉妒</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>套接字选项小结</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>总结影响网络收发包的一些套接字选项，对一些概念可能理解不对，希望大家多多指教。后面会持续更新ing。</p>
+<a id="more"></a>
+
+<p>[TOC]</p>
+<h3 id="套接字属性设置"><a href="#套接字属性设置" class="headerlink" title="套接字属性设置"></a><strong>套接字属性设置</strong></h3><hr>
+<p>通过setsockopt我们可以设置套接字的一些属性，函数原型如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,<span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>level</code> 参数设定的套接字属性使用范围，<code>SOL_SOCKET</code>表示用于通用套接字，<code>IPPROTO_TCP</code> 用于tcp协议，<code>IPPROTO_IP</code> 用于IP协议。</p>
+<p>下表是《APUE》中给出的一些通用套接字设置选项</p>
+<p><img src="https://s1.ax1x.com/2020/08/07/ahtjHI.png" alt="ahtjHI.png"></p>
+<h3 id="SO-KEEPALIVE"><a href="#SO-KEEPALIVE" class="headerlink" title="SO_KEEPALIVE"></a>SO_KEEPALIVE</h3><blockquote>
+<p>为什么需要保活?</p>
+</blockquote>
+<p>在tcp连接双方，建立连接之后，很长时间没有交换数据，在这种长时间没有数据交换情况下，双方不知道对方状态，交互双方都有可能出现掉电、死机、异常重启等各种意外，当这些意外发生之后，这些TCP连接并未来得及正常释放，那么，连接的另一方并不知道对端的情况，它会一直维护这个连接，长时间的积累会导致非常多的半打开连接，造成端系统资源的消耗和浪费，为了解决这个问题，在传输层可以利用TCP的保活报文来实现。</p>
+<ol>
+<li>探测连接的对端是否存活</li>
+</ol>
+<p>在应用交互的过程中，可能存在以下几种情况：</p>
+<ol>
+<li><p>客户主机依然正常运行，并从服务器可达。客户的TCP响应正常，而服务器也知道对方是正常工作的。服务器在两小时以后将保活定时器复位。如果在两个小时定时器到时间之前有应用程序的通信量通过此连接，则定时器在交换数据后的未来 2小时再复位。</p>
+</li>
+<li><p>客户主机已经崩溃，并且关闭或者正在重新启动。在任何一种情况下，客户的TCP没有响应。服务器将不能够收到对探查的响应，并在<strong>75s</strong>后超时。服务器总共发送<strong>10个</strong>这样的探查，每个间隔75秒。如果服务器没有收到一个响应，它就认为客户主机已经关闭并终止连接。</p>
+</li>
+<li><p><strong>客户主机崩溃并已经重新启动</strong>。这时服务器将收到一个对其保活探查的响应，但是这个响应是一个复位，使得服务器终止这个连接。</p>
+</li>
+<li><p>客户主机正常运行，但是从服务器不可达。这与状态2相同，因为TCP不能够区分状态4与状态2之间的区别，它所能发现的就是没有收到探查的响应。</p>
+</li>
+</ol>
+<p>​     利用保活探测功能，可以探知这种对端的意外情况，从而保证在意外发生时，可以释放半打开的TCP连接。</p>
+<ol start="2">
+<li><p><strong>防止中间设备因超时删除连接相关的连接表</strong></p>
+<p>中间设备如防火墙等，会为经过它的数据报文建立相关的连接信息表，并为其设置一个超时时间的定时器，如果超出预定时间，某连接无任何报文交互的中间设备会将该连接信息从表中删除，在删除后，再有应用报文过来时，中间设备将丢弃该报文，从而导致应用出现异常，这个交互的过程大致如下图所示：</p>
+</li>
+</ol>
+<p>默认情况下tcp的保活是关闭的,需要我们自己打开。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">optval = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, &amp;optval, optlen);</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>全局修改探测活参数</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">echo <span class="number">600</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_time <span class="comment">//超时时间</span></span><br><span class="line">echo <span class="number">60</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_intvl <span class="comment">//探测报文发送间隔</span></span><br><span class="line">echo <span class="number">20</span> &gt; /proc/sys/net/ipv4/tcp_keepalive_probes <span class="comment">//探测报文发送次数</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>通过系统调用对单个进程修改</strong></p>
+<p>对应到的几个套接字选项如下</p>
+<p><strong>TCP_KEEPCNT</strong>: 对应到探测报文发送次数；</p>
+<p><strong>TCP_KEEPINTVL</strong>: 探测报文发送间隔</p>
+<p><strong>TCP_KEEPIDLE</strong>: 超时时间</p>
+<blockquote>
+<p>TCP层的保活和应用层保活对比</p>
+</blockquote>
+<p><code>KeepAlive</code>通过定时发送探测包来探测连接的对端是否存活， 但通常也会许多在业务层面处理的，他们之间的特点：</p>
+<ul>
+<li>TCP自带的<code>KeepAlive</code>使用简单，发送的数据包相比应用层心跳检测包更小，仅提供检测连接功能</li>
+<li>应用层心跳包不依赖于传输层协议，无论传输层协议是TCP还是UDP都可以用</li>
+<li>应用层心跳包可以定制，可以应对更复杂的情况或传输一些额外信息</li>
+<li><code>KeepAlive</code>仅代表连接保持着，而心跳包往往还代表客户端可正常工作</li>
+</ul>
+<h3 id="SO-LINGER"><a href="#SO-LINGER" class="headerlink" title="SO_LINGER"></a><strong>SO_LINGER</strong></h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setsockopt</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> level, <span class="keyword">int</span> option, <span class="keyword">const</span> <span class="keyword">void</span> *val,</span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">socklen_t</span> len)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p>对应的<code>val</code>是一个结构体</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> &#123;</span></span><br><span class="line">　　<span class="keyword">int</span> l_onoff; <span class="comment">//开关 0:关闭</span></span><br><span class="line">　　<span class="keyword">int</span> l_linger;<span class="comment">//延迟关闭时间</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一个简单的使用例子</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">linger</span> <span class="title">lin</span>&#123;</span><span class="number">0</span>,<span class="number">1</span>&#125;;</span><br><span class="line">setsockopt(fd,SOL_SOCKET,SO_SOCKET,&amp;lin);</span><br></pre></td></tr></table></figure>
+
+<p>linger打开与否，以及不同时间的设置，可能导致不同的关闭结果。</p>
+<p>三种断开方式：</p>
+<ol>
+<li>l_onoff = 0; l_linger忽略</li>
+</ol>
+<p>close()立刻返回，底层会将未发送完的数据发送完成后再释放资源，即优雅退出。</p>
+<ol start="2">
+<li>l_onoff != 0; l_linger = 0;</li>
+</ol>
+<p>close()立刻返回，但不会发送未发送完成的数据，而是通过一个RST包强制的关闭socket描述符，即强制退出。</p>
+<ol start="3">
+<li>l_onoff != 0; l_linger &gt; 0;</li>
+</ol>
+<p>close()不会立刻返回，内核会延迟一段时间，这个时间就由l_linger的值来决定。如果超时时间到达之前，发送完未发送的数据(包括FIN包)并得到另一端的确认，close()会返回正确，socket描述符优雅性退出。否则，close()会直接返回错误值，未发送数据丢失，socket描述符被强制性退出</p>
+<h4 id="SO-LINGER实现原理"><a href="#SO-LINGER实现原理" class="headerlink" title="SO_LINGER实现原理"></a>SO_LINGER实现原理</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> SO_LINGER:</span><br><span class="line">			<span class="keyword">if</span>(optlen&lt;<span class="keyword">sizeof</span>(ling)) &#123;</span><br><span class="line">				ret = -EINVAL;	<span class="comment">/* 1003.1g */</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">...</span><br><span class="line">			<span class="keyword">if</span> (!ling.l_onoff)<span class="comment">//没有打开linger</span></span><br><span class="line">				sock_reset_flag(sk, SOCK_LINGER);</span><br><span class="line">			<span class="keyword">else</span> &#123;</span><br><span class="line">#<span class="keyword">if</span> (BITS_PER_LONG == <span class="number">32</span>)</span><br><span class="line">				<span class="keyword">if</span> (ling.l_linger &gt;= MAX_SCHEDULE_TIMEOUT/HZ)</span><br><span class="line">					sk-&gt;sk_lingertime = MAX_SCHEDULE_TIMEOUT;</span><br><span class="line">				<span class="keyword">else</span></span><br><span class="line">#endif</span><br><span class="line">					sk-&gt;sk_lingertime = ling.l_linger * HZ;<span class="comment">//设置linger时间</span></span><br><span class="line">				sock_set_flag(sk, SOCK_LINGER);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>程序调用函数close()关闭套接口时，与此相关的函数调用路径如下：<code>sys_close() -&gt; filp_close() -&gt; fput() -&gt; __fput() -&gt; sock_close() -&gt; sock_release() -&gt; inet_release() -&gt; tcp_close()</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_release</span><span class="params">(struct socket *sock)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">sk</span> = <span class="title">sock</span>-&gt;<span class="title">sk</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk) &#123;</span><br><span class="line">		<span class="keyword">long</span> timeout;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Applications forget to leave groups before exiting */</span></span><br><span class="line">		ip_mc_drop_socket(sk);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* If linger is set, we don't return until the close</span></span><br><span class="line"><span class="comment">		 * is complete.  Otherwise we return immediately. The</span></span><br><span class="line"><span class="comment">		 * actually closing is done the same either way.</span></span><br><span class="line"><span class="comment">		 *</span></span><br><span class="line"><span class="comment">		 * If the close is due to the process exiting, we never</span></span><br><span class="line"><span class="comment">		 * linger..</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		timeout = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp;</span><br><span class="line">		    !(current-&gt;flags &amp; PF_EXITING))</span><br><span class="line">			timeout = sk-&gt;sk_lingertime;</span><br><span class="line">		sock-&gt;sk = <span class="literal">NULL</span>;</span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">close</span>(sk, timeout);<span class="comment">//对应到tcp_close</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="tcp-close"><a href="#tcp-close" class="headerlink" title="tcp_close()"></a><code>tcp_close()</code></h4><p>当一个套接口正在或已经被关闭，如果在其接收队列有未读数据（不管是在关闭前就已收到的，或者还是在关闭后新到达的），那么此时就需给对端发送一个RST数据包,对应到下面一段代码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (data_was_unread) &#123;<span class="comment">//接受区还有数据没有被读完</span></span><br><span class="line">	<span class="comment">/* Unread data was tossed, zap the connection. */</span></span><br><span class="line">	NET_INC_STATS_USER(LINUX_MIB_TCPABORTONCLOSE);</span><br><span class="line">	tcp_set_state(sk, TCP_CLOSE);</span><br><span class="line">	tcp_send_active_reset(sk, GFP_KERNEL);<span class="comment">//发送RST</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果linger结构体的字段<code>l_onoff</code>为1,而<code>l_linger</code>为0</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (sock_flag(sk, SOCK_LINGER) &amp;&amp; !sk-&gt;sk_lingertime) &#123;</span><br><span class="line">		<span class="comment">/* Check zero linger _after_ checking for unread data. */</span></span><br><span class="line">		sk-&gt;sk_prot-&gt;<span class="built_in">disconnect</span>(sk, <span class="number">0</span>); <span class="comment">//直接丢掉所有接收数据并且直接断开连接，具体也就是发送RST数据包，清空相关接收队列</span></span><br><span class="line">		NET_INC_STATS_USER(LINUX_MIB_TCPABORTONDATA);</span><br></pre></td></tr></table></figure>
+
+<p>下面就是对应正常四次挥手关闭流程，</p>
+<p>先调用函数<code>tcp_close_state()</code>切换状态，判断是否需要发送FIN数据包（eg.如果当前还处于<code>TCP_SYN_SENT</code>状态，连接尚未完全建立，自然就不用发送FIN数据包），如果需要发送FIN数据包则调用<code>tcp_send_fin()</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">....... </span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (tcp_close_state(sk)) &#123;</span><br><span class="line">		tcp_send_fin(sk);</span><br><span class="line">	&#125;</span><br><span class="line"> sk_stream_wait_close(sk, timeout);</span><br></pre></td></tr></table></figure>
+
+<h4 id="tcp-send-fin"><a href="#tcp-send-fin" class="headerlink" title="tcp_send_fin"></a><strong>tcp_send_fin</strong></h4><p>深入到发送fin内部来看，</p>
+<p>如果发送队列还有数据，那么直接将取出末尾数据包，设置FIN。否则分配一个新的skb,最后调用函数<code>__tcp_push_pending_frames() -&gt; tcp_write_xmit()</code>发送数据包。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">tcp_send_fin</span><span class="params">(struct sock *sk)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tcp_sock</span> *<span class="title">tp</span> = <span class="title">tcp_sk</span>(<span class="title">sk</span>);</span>	</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sk_buff</span> *<span class="title">skb</span> = <span class="title">skb_peek_tail</span>(&amp;<span class="title">sk</span>-&gt;<span class="title">sk_write_queue</span>);</span> <span class="comment">//取出末尾数据包</span></span><br><span class="line">	<span class="keyword">int</span> mss_now;</span><br><span class="line">	</span><br><span class="line">	mss_now = tcp_current_mss(sk, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_send_head != <span class="literal">NULL</span>) &#123;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags |= TCPCB_FLAG_FIN;<span class="comment">//</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq++;</span><br><span class="line">		tp-&gt;write_seq++;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">/* Socket is locked, keep trying until memory is available. */</span></span><br><span class="line">		<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">			skb = alloc_skb(MAX_TCP_HEADER, GFP_KERNEL);</span><br><span class="line">			<span class="keyword">if</span> (skb)</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="built_in">yield</span>();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Reserve space for headers and prepare control bits. */</span></span><br><span class="line">		skb_reserve(skb, MAX_TCP_HEADER);</span><br><span class="line">		skb-&gt;csum = <span class="number">0</span>;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;flags = (TCPCB_FLAG_ACK | TCPCB_FLAG_FIN);</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;sacked = <span class="number">0</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_segs = <span class="number">1</span>;</span><br><span class="line">		skb_shinfo(skb)-&gt;tso_size = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* FIN eats a sequence byte, write_seq advanced by tcp_queue_skb(). */</span></span><br><span class="line">		TCP_SKB_CB(skb)-&gt;seq = tp-&gt;write_seq;</span><br><span class="line">		TCP_SKB_CB(skb)-&gt;end_seq = TCP_SKB_CB(skb)-&gt;seq + <span class="number">1</span>;</span><br><span class="line">		tcp_queue_skb(sk, skb);</span><br><span class="line">	&#125;</span><br><span class="line">	__tcp_push_pending_frames(sk, tp, mss_now, TCP_NAGLE_OFF);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="sk-stream-wait-close"><a href="#sk-stream-wait-close" class="headerlink" title="sk_stream_wait_close"></a><strong>sk_stream_wait_close</strong></h4><p>这是一个阻塞等待函数，参数timeout指示了等待的时间（单位为时钟滴答）。</p>
+<p>while循环的退出点有两处</p>
+<ul>
+<li><p>当前进程收到信号或时间超时（timeout）</p>
+</li>
+<li><p>sk_wait_event()</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sk_stream_wait_close</span><span class="params">(struct sock *sk, <span class="keyword">long</span> timeout)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (timeout) &#123;</span><br><span class="line">		DEFINE_WAIT(wait);</span><br><span class="line">		<span class="keyword">do</span> &#123;</span><br><span class="line">			prepare_to_wait(sk-&gt;sk_sleep, &amp;wait,</span><br><span class="line">					TASK_INTERRUPTIBLE);</span><br><span class="line">			<span class="keyword">if</span> (sk_wait_event(sk, &amp;timeout, !sk_stream_closing(sk)))<span class="comment">// 退出点1</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125; <span class="keyword">while</span> (!signal_pending(current) &amp;&amp; timeout); <span class="comment">//退出点2</span></span><br><span class="line">		finish_wait(sk-&gt;sk_sleep, &amp;wait);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>至此我们结合源码大致搞清楚了SO_LINGER选项的设置对TCP连接关闭的影响。</p>
+<h3 id="SO-REUSEPORT-amp-amp-SO-REUSEADDR"><a href="#SO-REUSEPORT-amp-amp-SO-REUSEADDR" class="headerlink" title="SO_REUSEPORT&amp;&amp;SO_REUSEADDR"></a>SO_REUSEPORT&amp;&amp;SO_REUSEADDR</h3><p>SO_REUSEADDR和SO_REUSEPORT主要是影响socket绑定ip和port的成功与否。有几点绑定规则主要注意下<br> <strong>规则1</strong>：socket可以指定绑定到一个特定的ip和port，例如绑定到192.168.0.11:9000上；<br> <strong>规则2</strong>：同时也支持通配绑定方式，即绑定到本地”any address”（例如一个socket绑定为 0.0.0.0:21，那么它同时绑定了所有的本地地址）；<br> <strong>规则3</strong>：默认情况下，任意两个socket都无法绑定到相同的源IP地址和源端口</p>
+<h4 id="SO-REUSEADDR"><a href="#SO-REUSEADDR" class="headerlink" title="SO_REUSEADDR"></a><strong>SO_REUSEADDR</strong></h4><p><strong>1、改变了通配绑定时处理源地址冲突的处理方式</strong></p>
+<p>so_reuseaddr作用在于允许一个socket 绑定了统配地址+port， 另外一个套接字绑定具体地址+相同端口</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SO_REUSEADDR       socketA        socketB       Result</span><br><span class="line">---------------------------------------------------------------------</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21   192.168.0.1:21    Error (EADDRINUSE)</span><br><span class="line">  ON&#x2F;OFF       192.168.0.1:21      10.0.0.1:21    OK</span><br><span class="line">  ON&#x2F;OFF          10.0.0.1:21   192.168.0.1:21    OK</span><br><span class="line">   OFF             0.0.0.0:21   192.168.1.0:21    Error (EADDRINUSE)</span><br><span class="line">   OFF         192.168.1.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br><span class="line">   ON              0.0.0.0:21   192.168.1.0:21    OK</span><br><span class="line">   ON          192.168.1.0:21       0.0.0.0:21    OK</span><br><span class="line">  ON&#x2F;OFF           0.0.0.0:21       0.0.0.0:21    Error (EADDRINUSE)</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、改变了系统对处于TIME_WAIT状态的socket绑定地址的处理</strong></p>
+<p>处于time-wait 状态下的套接字需要等待2msl 才能重新使用其绑定的端口与地址，设置了so_reuseaddr没有此限制</p>
+<h4 id="SO-REUSEPORT"><a href="#SO-REUSEPORT" class="headerlink" title="SO_REUSEPORT"></a><strong>SO_REUSEPORT</strong></h4><ol>
+<li>允许将多个socket绑定到相同的地址和端口，前提每个socket绑定前都需设置</li>
+<li>linux内核在处理SO_REUSEPORT socket的集合时，进行了简单的负载均衡操作，即对于UDP socket，内核尝试平均的转发数据报，对于TCP监听socket，内核尝试将新的客户连接请求(由accept返回)平均的交给共享同一地址和端口的socket(监听socket)。</li>
+</ol>
+<p>通过设置套接字的SO_REUSEPORT能够用来解决epoll_wait存在的惊群问题，把监听描述符添加到epoll监听事件，多个子进程都epoll_wait阻塞等待，由内核来做负载均衡，这样就避免了当实践发生时同时惊醒多个工作进程，添加了SO_REUSEPORT的模型如下:</p>
+<img src="https://s1.ax1x.com/2020/08/13/azw6DU.png" alt="azw6DU.png" style="zoom:80%;" />
+
+
+
+
+<h3 id="TCP-CORK"><a href="#TCP-CORK" class="headerlink" title="TCP_CORK"></a>TCP_CORK</h3><p>tcp_cork与tcp_nodelay 以及nagle 容易搞混，这里我们结合他们的应用场景以及代码来理清楚。</p>
+<p><strong>nagle算法</strong></p>
+<p>大致思想：</p>
+<p>为了提高网络吞吐量，如果发送小数据包，那么20字节包头的负担太大，于是通过将小数据包累积到一个MSS长度再发出来。</p>
+<p>同样影响小包发送的套接字选项:<strong>TCP_NODELAY，TCP_CORK</strong></p>
+<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
+<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
+<p>（1）如果包长度达到MSS，则允许发送；</p>
+<p>（2）如果该包含有FIN，则允许发送；</p>
+<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
+<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
+<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
+<p><code>TCP_NODELAY</code>是禁用Nagle算法，即数据包立即发送出去，而选项TCP_CORK与此相反，可以认为它是Nagle算法的进一步增强，即阻塞数据包发送，具体点说就是：TCP_CORK选项的功能类似于在发送数据管道出口处插入一个“塞子”，使得发送数据全部被阻塞，直到取消TCP_CORK选项（即拔去塞子）或被阻塞数据长度已超过MSS才将其发送出去。举个对比示例，比如收到接收端的ACK确认后，Nagle算法可以让当前待发送数据包发送出去，即便它的当前长度仍然不够一个MSS，但选项TCP_CORK则会要求继续等待。</p>
+<h4 id="TCP-CORK的应用场景"><a href="#TCP-CORK的应用场景" class="headerlink" title="TCP_CORK的应用场景"></a>TCP_CORK的应用场景</h4><p>TCP_CORK选项的作用主要是阻塞小数据发送，服务器处理一个客户端请求，发送的响应数据包括响应头和响应体两部分，利用TCP_CORK选项就能让这两部分数据一起发送。</p>
+<p>按照之前的分析，设置了CORK之后，有几种可能数据会被发送</p>
+<ul>
+<li>通过setoptsock关闭TCP_CORK这个选项。</li>
+<li>socket阻塞的数据大于MSS。</li>
+<li>自从堵上塞子写入第一个字节开始，已经经过200ms。</li>
+<li>socket被关闭。</li>
+</ul>
+<p>一旦满足上面的任何一个条件，TCP就会将数据发送出去。对于Server来说，发送HTTP响应既要发送尽量少的segment，同时又要保证低延迟，那么需要在写完数据后显式取消设置<code>TCP_CORK</code>选项，让数据立即发送出去：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> state = <span class="number">1</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//开启cork</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">write</span>(http_resp_header);</span><br><span class="line">sendfile(sockfd, fd, &amp;off, len); <span class="comment">//阻塞</span></span><br><span class="line"></span><br><span class="line">state = <span class="number">0</span>;</span><br><span class="line">setsockopt(sockfd, IPPROTO_TCP, TCP_CORK, &amp;state, <span class="keyword">sizeof</span>(state)); <span class="comment">//关闭cork</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://www.lenky.info/archives/2013/02/2220" target="_blank" rel="noopener">Socket选项系列之SO_LINGER</a></p>
+<p><a href="http://senlinzhan.github.io/2017/02/10/Linux的TCP-CORK/" target="_blank" rel="noopener">Nagle 算法与 TCP socket 选项 TCP_CORK</a></p>
+<p><a href="https://juejin.im/post/6844903878819840008" target="_blank" rel="noopener">https://juejin.im/post/6844903878819840008</a></p>
+<p><a href="https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html" target="_blank" rel="noopener">https://blog.biezhi.me/2017/08/talk-tcp-keepalive.html</a></p>
+]]></content>
+      <tags>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>并发</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>《OSTEP》线程并发小结</p>
+<a id="more"></a>
+
+<h4 id="理解多线程为什么会有竞争状态问题"><a href="#理解多线程为什么会有竞争状态问题" class="headerlink" title="理解多线程为什么会有竞争状态问题"></a>理解多线程为什么会有竞争状态问题</h4><p>多线程对共享资源访问，可能不是原子操作，导致不确定结果。</p>
+<h4 id="条件量使用"><a href="#条件量使用" class="headerlink" title="条件量使用"></a>条件量使用</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_wait</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond, <span class="keyword">pthread_mutex_t</span> *mutex)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_signal</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>wait 操作传入参数除了条件变量还有锁，这样做的目的是为了把进程休眠同时释放锁。否则其他线程就没法获得锁，唤醒休眠线程。</p>
+<p>下面代码做线程之间同步存在什么问题</p>
+<ol>
+<li>spin 忙等待浪费cpu</li>
+</ol>
+<p>但是这个能够实现线程之间同步操作么?</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局标志变量</span></span><br><span class="line"><span class="keyword">int</span> flag=<span class="number">0</span>;</span><br><span class="line"><span class="comment">//thread A</span></span><br><span class="line"><span class="keyword">while</span>(flag==<span class="number">0</span>); <span class="comment">//spin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//thread B singal</span></span><br><span class="line">flag=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="锁的设计"><a href="#锁的设计" class="headerlink" title="锁的设计"></a>锁的设计</h4><p>在设计锁之前，有几个指标能够来衡量设计方案的好坏。</p>
+<ol>
+<li><p>能否实现互斥</p>
+</li>
+<li><p>公平性(防止饥饿）</p>
+</li>
+<li><p>实现锁带来的额外负担</p>
+</li>
+</ol>
+<p>最直接的想法是通过关闭中断来实现互斥，竞态条件下执行结果的不稳定，就是因为线程执行过程中被打断，调度。我们通过关闭中断，就能够实现对资源的互斥访问，但是这个在实际情况不太可能实现(多CPU,以及关闭中断带来的巨大风险)。</p>
+<h5 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h5><p>通过硬件支持的同步原语来实现互斥，首先我们看一个没有原子操作的互斥锁方案</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span> <span class="keyword">int</span> flag; &#125; <span class="keyword">lock_t</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 0 -&gt; lock is available, 1 -&gt; held</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (mutex-&gt;flag == <span class="number">1</span>);<span class="comment">// TEST the flag spin-wait (do nothing)</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">1</span>;<span class="comment">// now SET it!</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">    mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述方案的问题在于检查flag和设置flag不是原子操作，可能存在一种情况线程A执行完while()然后被调度，导致两个线程都获得锁。</p>
+<p>改进方案如下</p>
+<p>CAS（compare and swap）一种原子操作，</p>
+<p>bool CAS(V, A,B) // 检查现有V 是否与A== 如果== 将V设置为B 同时返回true</p>
+<p><strong>自旋锁伪码实现</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">CAS（compare <span class="keyword">and</span> swap）一种原子操作，</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">CAS</span><span class="params">(V, A,B)</span> <span class="comment">// 检查现有V 是否与A== 如果==  将V设置为B 同时返回true</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line">自旋锁伪码实现</span><br><span class="line"><span class="keyword">bool</span> flag =<span class="literal">false</span>; <span class="comment">//锁为true 表示被占用</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>));</span><br><span class="line"><span class="comment">//do-something</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//release lock</span></span><br><span class="line">flag=<span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自旋锁虽然能够实现对临界区的互斥访问，但是带来了性能问题，spin通过忙等待形式去获取锁，导致了CPU资源的浪费。</p>
+<p>比如场景：单核cpu运行多个线程</p>
+<p>线程1获得lock进入临界区,然后被打断，线程2被调度，一直自旋等待锁被释放。</p>
+<h5 id="yield"><a href="#yield" class="headerlink" title="yield"></a>yield</h5><p>针对上述问题，一种解决方法是通过主动放弃CPU，当线程发现锁被占用，主动将自己的状态由RUNNING-&gt;READY， 避免了自旋等待占用CPU。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>)) <span class="built_in">yield</span>();</span><br></pre></td></tr></table></figure>
+
+<p>yield 带来的问题</p>
+<ol>
+<li><p>大量的上下文切换操作</p>
+</li>
+<li><p>仍然没有解决饥饿问题</p>
+</li>
+</ol>
+<h5 id="sleep队列"><a href="#sleep队列" class="headerlink" title="sleep队列"></a>sleep队列</h5><p>无论自旋，还是yield， 调度器的选择很多，导致了资源的浪费。如果线程发现自己暂时不能获取锁，将自己休眠，就带来了效率提升。</p>
+<p>下面实现代码还是很巧妙的</p>
+<ul>
+<li>guard作用: 用于自旋等待变量</li>
+</ul>
+<p>相比于自旋等待整个临界区，gaurd的获取和释放间隔很短；eg.多核CPU, 当一个进程A拿到gaurd,然后另一个进程B被调度，此时B就拿不到gaurd，自旋等待，但是由于A临界区代码很短，很快A就会释放gaurd.</p>
+<ul>
+<li>unlock()中， 唤醒线程之后，没有将flag设置为0</li>
+</ul>
+<p>这么做的原因是线程被唤醒之后，可以看作是从park（）返回，此时线程没有拿到guard,锁没有释放就直接传递给了被唤醒线程。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> flag;</span><br><span class="line">	<span class="keyword">int</span> guard;</span><br><span class="line">	<span class="keyword">queue_t</span> *q;</span><br><span class="line">	&#125; <span class="keyword">lock_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock_init</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	m-&gt;flag= <span class="number">0</span>;</span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">	queue_init(m-&gt;q);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (m-&gt;flag == <span class="number">0</span>) &#123;</span><br><span class="line">		m-&gt;flag = <span class="number">1</span>; <span class="comment">// lock is acquired</span></span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">		queue_add(m-&gt;q, gettid());</span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">		park(); <span class="comment">//线程休眠</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (queue_empty(m-&gt;q))</span><br><span class="line">		m-&gt;flag = <span class="number">0</span>; <span class="comment">// let go of lock; no one wants it</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		unpark(queue_remove(m-&gt;q)); <span class="comment">// hold lock (for next thread!)</span></span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="基于锁的数据结构"><a href="#基于锁的数据结构" class="headerlink" title="基于锁的数据结构"></a>基于锁的数据结构</h4><h5 id="并发链表设计"><a href="#并发链表设计" class="headerlink" title="并发链表设计"></a>并发链表设计</h5><p>关键在于数据结构的定义，节点如何定义(int, node*) ，链表怎么定义(锁+链表头)</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// basic node structure</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> key;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; <span class="keyword">node_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// basic list structure (one used per list)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">list_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">node_t</span> * head;</span><br><span class="line">    <span class="keyword">pthread_mutex_t</span> lock;</span><br><span class="line">&#125; <span class="keyword">list_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">List_Init</span><span class="params">(<span class="keyword">list_t</span> * L)</span> </span>&#123;</span><br><span class="line">    L-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">    pthread_mutex_init(&amp;L-&gt;lock, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Insert</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">node_t</span> * <span class="keyword">new</span> = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">node_t</span>)); <span class="comment">//先分配节点，只有在更新全局资源时候加锁，而不是一上来就全部加锁</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">new</span> == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        perror(<span class="string">"malloc"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>; <span class="comment">// fail</span></span><br><span class="line">    &#125;</span><br><span class="line">	pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">new</span>-&gt;key = key;</span><br><span class="line">    <span class="keyword">new</span>-&gt;next = L-&gt;head;</span><br><span class="line">    L-&gt;head = <span class="keyword">new</span>;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// success</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//链表查找需要加锁么? 不涉及到全局变量的修改，但是如果不加锁，一个线程在修改正在查找的链表，也会导致race condition</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Lookup</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">node_t</span> * curr = L-&gt;head;</span><br><span class="line">    <span class="keyword">int</span> rv=<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">while</span> (curr) &#123;</span><br><span class="line">        <span class="keyword">if</span> (curr-&gt;key == key) &#123;</span><br><span class="line">            rv=<span class="number">0</span>;<span class="comment">//返回0 表示找到</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> rv;  <span class="comment">// faulure</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="并发哈希表"><a href="#并发哈希表" class="headerlink" title="并发哈希表"></a>并发哈希表</h5><p>有了这个基础，设计并发哈希表就很简单，通过拉链方法来避免哈希冲突</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUCKETS (101)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">hash_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">list_t</span> lists[BUCKETS];</span><br><span class="line">&#125; <span class="keyword">hash_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Hash_Init</span><span class="params">(<span class="keyword">hash_t</span> * H)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BUCKETS; i++) &#123;</span><br><span class="line">        List_Init(&amp;H-&gt;lists[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Insert</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Insert(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Lookup</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Lookup(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><blockquote>
+<p>什么是信号量?</p>
+<p>信号量和条件变量区别</p>
+</blockquote>
+<p>信号量用来做lock,也能够用来做条件变量，关键在于信号量的初始化。</p>
+<p>信号量=变量+操作</p>
+<p><strong>信号量操作伪码</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_wait</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	decrement the value of semaphore s by one</span><br><span class="line">	wait <span class="keyword">if</span> value of semaphore s is negative</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_post</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	increment the value of semaphore s by one</span><br><span class="line">	<span class="keyword">if</span> there are one <span class="keyword">or</span> more threads waiting, wake one</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>信号量做二元锁</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> m;</span><br><span class="line">sem_init(&amp;m, <span class="number">0</span>, <span class="number">1</span>); <span class="comment">// initialize semaphore to 1</span></span><br><span class="line">sem_wait(&amp;m);</span><br><span class="line"><span class="comment">// critical section here</span></span><br><span class="line">sem_post(&amp;m);</span><br></pre></td></tr></table></figure>
+
+<p><strong>信号量做条件变量</strong></p>
+<p>下面代码目的是同步父子进程，父进程等待子进程结束。</p>
+<p>注意条件变量被初始化为0，分两个情况考虑，如果子进程被创建之后先执行，sem_post将信号量+1,父进程执行sem_wait正常返回；如果父进程先执行，sem-1小于0，父进程被挂起，子进程执行，将sem+1，然后唤醒父进程。 所以符合我们预定执行顺序。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> s</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">child</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"child\n"</span>);</span><br><span class="line">sem_post(&amp;s); <span class="comment">// signal here: child is done</span></span><br><span class="line"><span class="keyword">return</span> <span class="literal">NULL</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">	sem_init(&amp;s, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">// </span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: begin\n"</span>);</span><br><span class="line">	<span class="keyword">pthread_t</span> c;</span><br><span class="line">	Pthread_create(c, <span class="literal">NULL</span>, child, <span class="literal">NULL</span>);</span><br><span class="line">	sem_wait(&amp;s); <span class="comment">// wait here for child</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: end\n"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h5><p>允许多个读，一个写，第一个读者自动获得写锁，最后一个读锁释放，写锁也释放。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span>&#123;</span></span><br><span class="line">    <span class="keyword">sem_t</span> lock;</span><br><span class="line">    <span class="keyword">sem_t</span> <span class="built_in">write</span>;</span><br><span class="line">    <span class="keyword">int</span> readers;</span><br><span class="line">&#125; rw_lock;</span><br><span class="line"></span><br><span class="line">init(rw_lock*m)&#123;</span><br><span class="line">    sem_init(m-&gt;lock,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    sem_init(m-&gt;<span class="built_in">write</span>,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    m-&gt;readers=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers++;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">1</span>) sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_release_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers--;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">0</span>) sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>OSTEP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据流算法题目小结</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
+<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
+<a id="more"></a>
+
+<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
+<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
+<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
+<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
+<p>当新元素val加入如何维护堆?</p>
+<ol>
+<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
+<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
+</ol>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
   </entry>
   <entry>
     <title>文件系统的持久化</title>
@@ -1103,22 +1124,19 @@
       </tags>
   </entry>
   <entry>
-    <title>数据流算法题目小结</title>
+    <title>排序二叉树转化为双向链表</title>
     <url>/post/undefined.html</url>
-    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
-<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
 <a id="more"></a>
 
-<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
-<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
-<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
-<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
-<p>当新元素val加入如何维护堆?</p>
-<ol>
-<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
-<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
-</ol>
-]]></content>
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
         <category>算法</category>
       </categories>
@@ -1150,22 +1168,59 @@
       </categories>
   </entry>
   <entry>
-    <title>排序二叉树转化为双向链表</title>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
     <url>/post/undefined.html</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>读书</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>系统调用open(),read(),write()具体发了什么?</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
 <a id="more"></a>
 
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+
+
+<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
+<p><strong>文件系统</strong></p>
+<p>文件系统可以简单的理解为数据结构+方法</p>
+<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
+<p>方法:open(),read()等调用如何与数据结构打交道</p>
+<p>一个简单的文件系统一般有这几部分</p>
+<ul>
+<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
+<li>data block 存储实际问文件内容</li>
+<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
+<li>data bitmap 记录data blocks 分配情况</li>
+<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
+</ul>
+<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
+<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
+<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
+<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
+<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
+<p>下面的图直观的说明这一过程</p>
+<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
+]]></content>
       <categories>
-        <category>算法</category>
+        <category>技术</category>
       </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
   </entry>
   <entry>
     <title>滑动窗口小结</title>
@@ -1196,6 +1251,21 @@
       <categories>
         <category>算法</category>
       </categories>
+  </entry>
+  <entry>
+    <title>负载均衡大量TW分析</title>
+    <url>/post/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
+
+<p>背景</p>
+<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
+<p>分析思路</p>
+<ul>
+<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
+<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
+<li>调整tcp_max_tw_buckets</li>
+</ul>
+]]></content>
   </entry>
   <entry>
     <title>网络协议栈收包过程小结</title>
@@ -1360,61 +1430,6 @@
       </tags>
   </entry>
   <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
-<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
-<blockquote>
-<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
-</blockquote>
-<blockquote>
-<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
-</blockquote>
-<blockquote>
-<p>如果不感到自身充满力量，就不可能有爱情。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>读书</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>系统调用open(),read(),write()具体发了什么?</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
-<a id="more"></a>
-
-
-
-<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
-<p><strong>文件系统</strong></p>
-<p>文件系统可以简单的理解为数据结构+方法</p>
-<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
-<p>方法:open(),read()等调用如何与数据结构打交道</p>
-<p>一个简单的文件系统一般有这几部分</p>
-<ul>
-<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
-<li>data block 存储实际问文件内容</li>
-<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
-<li>data bitmap 记录data blocks 分配情况</li>
-<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
-</ul>
-<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
-<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
-<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
-<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
-<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
-<p>下面的图直观的说明这一过程</p>
-<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>操作系统</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>许知远-罗翔访谈记录</title>
     <url>/post/undefined.html</url>
     <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
@@ -1478,21 +1493,6 @@
 <p>两个目录认真的学习一遍，最好自己能够动手跟着做一遍。</p>
 <p>每学习完一个小节，把前面的三句口诀复习一下</p>
 <p>每遇到一个不认识的命令，在 <a href="https://link.zhihu.com/?target=https%3A//gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1">Effective Modern CMake</a> 这个页面里搜索一下，看看这个命令是否取代了某个老命令。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>负载均衡大量TW分析</title>
-    <url>/post/undefined.html</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>背景</p>
-<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
-<p>分析思路</p>
-<ul>
-<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
-<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
-<li>调整tcp_max_tw_buckets</li>
-</ul>
 ]]></content>
   </entry>
 </search>
