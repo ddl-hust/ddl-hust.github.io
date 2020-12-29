@@ -1,69 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>overload,override,overwrite小结</title>
-    <url>/2020/05/23/overload-override-overwrite%E5%B0%8F%E7%BB%93/</url>
-    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
-<a id="more"></a>
+    <title>shared_from_this解决了什么问题</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
 
-<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
-<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
-<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
-<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
-<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
+<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-<p>什么函数不能够被重载?</p>
-<ol>
-<li>仅仅返回类型不同，不能够做函数重载</li>
-<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
-<li>函数参数差别仅在于有无顶层const或volatile</li>
-</ol>
-<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
-<p>这里就引入什么是top-level const/volatile</p>
-<blockquote>
-<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
-</blockquote>
-<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
-<p>override 可能存在二义性</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
-<ul>
-<li><p>范围不同(作用域不同)</p>
-</li>
-<li><p>函数签名完全一样(名字，常数列表)</p>
-</li>
-<li><p>基类函数必须带有virtual 关键字</p>
-<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
-</li>
-</ul>
-<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
-<ul>
-<li>派生类函数参数与基类不同，不管基类有无virtual</li>
-<li>派生类函数参数与基类相同，但是基类没有virtual</li>
-</ul>
-<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
-<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
-<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
+<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
 ]]></content>
       <categories>
-        <category>技术</category>
+        <category>C++</category>
       </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
   </entry>
   <entry>
     <title>IO复用</title>
-    <url>/2020/05/19/IO%E5%A4%8D%E7%94%A8/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
 <a id="more"></a>
 <p>其核心思想时服务器通过内核作为媒介来监听客户端的连接请求，内核阻塞去监听客户端状态，一旦其状态变化，内核就通知<br>服务器去处理</p>
@@ -140,8 +94,196 @@
       </tags>
   </entry>
   <entry>
+    <title>bash学习</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
+
+<h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
+<p>bash 脚本开头一行 都有 <code>#!/bin/bash</code> 指此脚本使用<strong>/bin/sh</strong>来解释执行，<strong>#!</strong>是特殊的表示符，其后面根的是此解释此脚本的shell的路径, python脚本在开头也有类似的语句， <code>#!/bin/python2</code> or <code>#!/bin/python3</code></p>
+<p>创建完一个bash脚本之后，需要通过<code>chmod +x XXX.sh</code> 赋予bash脚本执行权限， 文件的权限可以通过<code>ls -l</code> 查看详细， 用户组，其他，用户都具有自己对文件的权限。</p>
+<p>bash 脚本执行可以 通过<code>./XXX.sh</code> 也可以直接指明<code>bash xxx.sh</code>  其中前者指定了sh 文件的路径，<a href="https://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell" target="_blank" rel="noopener">参考</a></p>
+<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>bash 变量不需要指定类型，直接赋值，解释器动态解释。</p>
+<p><strong>变量定义</strong>:</p>
+<p><code>name=&quot;DevDojo&quot;</code>  note： 赋值号左右不能又空格，如果平时编码习惯和这个不一样，需要注意下。</p>
+<p><strong>变量使用</strong></p>
+<p><code>echo ${name}</code> 括号增加可读性。同时变量也可以在表达式中使用，语法与直接使用一样。</p>
+<p>bash 语句不像c++需要显式<code>;</code>表示语句结束</p>
+<p><strong>用户输入</strong></p>
+<p>从命令行读取用户输入</p>
+<p><code>read variable</code></p>
+<p><strong>外部参数</strong></p>
+<p>bash 脚本在运行时候,可以跟可变多的参数,在脚本内部用$1, $2来指代,如下面例子</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument one is <span class="variable">$1</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument two is <span class="variable">$2</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument three is <span class="variable">$3</span>"</span></span><br><span class="line"><span class="comment"># excute</span></span><br><span class="line">./arguments.sh dog cat bird</span><br></pre></td></tr></table></figure>
+
+<p>也可以很方便的用 <code>$@</code> 来引用所有的外部参数.</p>
+<p>$0表示脚本文件名,一个用处就是在执行完脚本之后,可以用$0获取脚本名,然后做自删除.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"The name of the file is: <span class="variable">$0</span> and it is going to be self-</span></span><br><span class="line"><span class="string">deleted."</span></span><br><span class="line">rm -f <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>数组</strong></p>
+<p>语法:<code>my_array=(&quot;value 1&quot; &quot;value 2&quot; &quot;value 3&quot; &quot;value 4&quot;)</code>  元素之间用空格隔开</p>
+<p>数组引用类似C,  <code>echo ${my_array[1]}</code>  元素起始下标为0</p>
+<p>数组长度获取</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">list=(1 2 3 4)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#list[@]&#125;</span>  <span class="comment">#输出4</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h4><ul>
+<li>算数表达  语法类似, 用英文字母的缩写来表示比较属性, eg. lt(less than) ,eq(equal) …..<ul>
+<li>[[ ${arg1} -eq ${arg2} ]]    equal  如果两个变量相同返回true</li>
+</ul>
+</li>
+<li>字符串<ul>
+<li>[[ -v ${varname} ]] 变量如果被赋值返回true</li>
+<li>[[ -z ${string} ]] 字符串长度为0 为true</li>
+<li>[[ -n ${string} ]] 字符串长度不为0</li>
+</ul>
+</li>
+<li>文件表达式 在linux 下面一切都是文件,文件具有不同的类型 比如块文件,字符设备,目录等<ul>
+<li>[[ -d ${file} ]]    是否为目录</li>
+<li>[[ -x ${file} ]]  文件是否可执行</li>
+<li>[[ -L ${file} ]]  文件是否为符号链接</li>
+</ul>
+</li>
+</ul>
+<p>有了条件表达式,自然引出了条件语句</p>
+<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p><strong>if-else</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ some_test ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span> &lt;commands&gt;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>swith 语句</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$some_variable</span> <span class="keyword">in</span></span><br><span class="line">  pattern_1)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  pattern_2| pattern_3)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    default commands</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>注意点</p>
+<ol>
+<li>case 语句用关键字<strong>case</strong>开始,引用变量,然后加关键字<strong>in</strong></li>
+<li>匹配模式用) 结束</li>
+<li>All clauses have to be terminated by adding ;; at the end</li>
+<li>默认模式用*匹配</li>
+<li>case 语句结束用esac关键字</li>
+</ol>
+<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p><strong>while</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_conditions</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>条件表达式都用[] 或者[[]]括起来, <a href="https://stackoverflow.com/questions/3427872/whats-the-difference-between-and-in-bash" target="_blank" rel="noopener">区别</a></p>
+<p><strong>until</strong></p>
+<p>含义是当条件不为真时候一直运行</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">until [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_commands</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+]]></content>
+  </entry>
+  <entry>
+    <title>overload,override,overwrite小结</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
+<a id="more"></a>
+
+<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
+<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
+<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
+<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
+<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>什么函数不能够被重载?</p>
+<ol>
+<li>仅仅返回类型不同，不能够做函数重载</li>
+<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
+<li>函数参数差别仅在于有无顶层const或volatile</li>
+</ol>
+<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
+<p>这里就引入什么是top-level const/volatile</p>
+<blockquote>
+<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
+</blockquote>
+<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
+<p>override 可能存在二义性</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
+<ul>
+<li><p>范围不同(作用域不同)</p>
+</li>
+<li><p>函数签名完全一样(名字，常数列表)</p>
+</li>
+<li><p>基类函数必须带有virtual 关键字</p>
+<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
+</li>
+</ul>
+<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
+<ul>
+<li>派生类函数参数与基类不同，不管基类有无virtual</li>
+<li>派生类函数参数与基类相同，但是基类没有virtual</li>
+</ul>
+<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
+<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Peter Thiel&#39;s Religion — David Perell</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
+<blockquote>
+<ol>
+<li>Don’t copy your neighbors</li>
+<li>Time moves forward</li>
+<li>The future will be different from the present</li>
+</ol>
+</blockquote>
+<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
+<a id="more"></a>
+
+<blockquote>
+<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
+</blockquote>
+<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
+<blockquote>
+<p>“As Peter Thiel recounted:</p>
+<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
+</blockquote>
+<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
+<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
+<blockquote>
+<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
+</blockquote>
+<blockquote>
+<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
+<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
+<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
+</blockquote>
+<blockquote>
+<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
+</blockquote>
+<blockquote>
+<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
+</blockquote>
+<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
+<blockquote>
+<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
+<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
+</blockquote>
+<p>#好故事 人类模仿的天性导致嫉妒</p>
+]]></content>
+  </entry>
+  <entry>
     <title>socket从创建到连接过程小结</title>
-    <url>/2020/08/08/socket%E4%BB%8E%E5%88%9B%E5%BB%BA%E5%88%B0%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>分析了套接字创建到连接过程中，一些关键的函数调用以及数据结构，同时分析了connect()过程中tcp三次握手状态变化。</p>
 <a id="more"></a>
 
@@ -380,64 +522,310 @@
       </tags>
   </entry>
   <entry>
-    <title>shared_from_this解决了什么问题</title>
-    <url>/2020/06/02/shared-from-this%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
-<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
+    <title>多抓鱼采访</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<ul>
+<li>多抓鱼和咸鱼区别？</li>
+</ul>
+<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
+<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
+<p><strong>为什么做多抓鱼</strong>？</p>
+<ul>
+<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
+</li>
+<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
+</li>
+<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
+</li>
+<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
+</li>
+<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
+</li>
+<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
+</li>
+</ul>
+<blockquote>
+<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
+</blockquote>
+<p><strong>多抓鱼的定价策略</strong></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
+<ul>
+<li>确定几类书不收</li>
+<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
+<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
+</ul>
+<p><strong>shownotes</strong></p>
+<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
+<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
 ]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
   </entry>
   <entry>
-    <title>tcp40ms延迟问题分析</title>
-    <url>/2020/08/23/%E2%80%9Ctcp40ms%E5%BB%B6%E8%BF%9F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%E2%80%9D/</url>
-    <content><![CDATA[<a id="more"></a>
+    <title>stringstream 处理字符串</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+<a id="more"></a>
 
-<p><strong>背景</strong></p>
-<p>tcp抓包发现服务端回复ack存在40ms左右延迟</p>
-<p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p>
-<p><strong>问题排查过程</strong></p>
-<p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p>
-<p>先介绍下重要的概念</p>
-<p><strong>delay ack</strong></p>
-<p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p>
-<p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p>
-<p><strong>nagle算法</strong></p>
-<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
-<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
-<p>（1）如果包长度达到MSS，则允许发送；</p>
-<p>（2）如果该包含有FIN，则允许发送；</p>
-<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
-<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
-<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
-<p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p>
-<ol>
-<li>当客户端请求数据小于mss大小</li>
-</ol>
-<p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p>
-<ol start="2">
-<li>客户端请求数据大于mss</li>
-</ol>
-<p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p>
-<p><strong>解决方案</strong></p>
-<p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p>
-<ol>
-<li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p>
-</li>
-<li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p>
-</li>
-</ol>
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
 ]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>并发</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<p>《OSTEP》线程并发小结</p>
+<a id="more"></a>
+
+<h4 id="理解多线程为什么会有竞争状态问题"><a href="#理解多线程为什么会有竞争状态问题" class="headerlink" title="理解多线程为什么会有竞争状态问题"></a>理解多线程为什么会有竞争状态问题</h4><p>多线程对共享资源访问，可能不是原子操作，导致不确定结果。</p>
+<h4 id="条件量使用"><a href="#条件量使用" class="headerlink" title="条件量使用"></a>条件量使用</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_wait</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond, <span class="keyword">pthread_mutex_t</span> *mutex)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_signal</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>wait 操作传入参数除了条件变量还有锁，这样做的目的是为了把进程休眠同时释放锁。否则其他线程就没法获得锁，唤醒休眠线程。</p>
+<p>下面代码做线程之间同步存在什么问题</p>
+<ol>
+<li>spin 忙等待浪费cpu</li>
+</ol>
+<p>但是这个能够实现线程之间同步操作么?</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局标志变量</span></span><br><span class="line"><span class="keyword">int</span> flag=<span class="number">0</span>;</span><br><span class="line"><span class="comment">//thread A</span></span><br><span class="line"><span class="keyword">while</span>(flag==<span class="number">0</span>); <span class="comment">//spin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//thread B singal</span></span><br><span class="line">flag=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="锁的设计"><a href="#锁的设计" class="headerlink" title="锁的设计"></a>锁的设计</h4><p>在设计锁之前，有几个指标能够来衡量设计方案的好坏。</p>
+<ol>
+<li><p>能否实现互斥</p>
+</li>
+<li><p>公平性(防止饥饿）</p>
+</li>
+<li><p>实现锁带来的额外负担</p>
+</li>
+</ol>
+<p>最直接的想法是通过关闭中断来实现互斥，竞态条件下执行结果的不稳定，就是因为线程执行过程中被打断，调度。我们通过关闭中断，就能够实现对资源的互斥访问，但是这个在实际情况不太可能实现(多CPU,以及关闭中断带来的巨大风险)。</p>
+<h5 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h5><p>通过硬件支持的同步原语来实现互斥，首先我们看一个没有原子操作的互斥锁方案</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span> <span class="keyword">int</span> flag; &#125; <span class="keyword">lock_t</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 0 -&gt; lock is available, 1 -&gt; held</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (mutex-&gt;flag == <span class="number">1</span>);<span class="comment">// TEST the flag spin-wait (do nothing)</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">1</span>;<span class="comment">// now SET it!</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">    mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述方案的问题在于检查flag和设置flag不是原子操作，可能存在一种情况线程A执行完while()然后被调度，导致两个线程都获得锁。</p>
+<p>改进方案如下</p>
+<p>CAS（compare and swap）一种原子操作，</p>
+<p>bool CAS(V, A,B) // 检查现有V 是否与A== 如果== 将V设置为B 同时返回true</p>
+<p><strong>自旋锁伪码实现</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">CAS（compare <span class="keyword">and</span> swap）一种原子操作，</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">CAS</span><span class="params">(V, A,B)</span> <span class="comment">// 检查现有V 是否与A== 如果==  将V设置为B 同时返回true</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line">自旋锁伪码实现</span><br><span class="line"><span class="keyword">bool</span> flag =<span class="literal">false</span>; <span class="comment">//锁为true 表示被占用</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>));</span><br><span class="line"><span class="comment">//do-something</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//release lock</span></span><br><span class="line">flag=<span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自旋锁虽然能够实现对临界区的互斥访问，但是带来了性能问题，spin通过忙等待形式去获取锁，导致了CPU资源的浪费。</p>
+<p>比如场景：单核cpu运行多个线程</p>
+<p>线程1获得lock进入临界区,然后被打断，线程2被调度，一直自旋等待锁被释放。</p>
+<h5 id="yield"><a href="#yield" class="headerlink" title="yield"></a>yield</h5><p>针对上述问题，一种解决方法是通过主动放弃CPU，当线程发现锁被占用，主动将自己的状态由RUNNING-&gt;READY， 避免了自旋等待占用CPU。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>)) <span class="built_in">yield</span>();</span><br></pre></td></tr></table></figure>
+
+<p>yield 带来的问题</p>
+<ol>
+<li><p>大量的上下文切换操作</p>
+</li>
+<li><p>仍然没有解决饥饿问题</p>
+</li>
+</ol>
+<h5 id="sleep队列"><a href="#sleep队列" class="headerlink" title="sleep队列"></a>sleep队列</h5><p>无论自旋，还是yield， 调度器的选择很多，导致了资源的浪费。如果线程发现自己暂时不能获取锁，将自己休眠，就带来了效率提升。</p>
+<p>下面实现代码还是很巧妙的</p>
+<ul>
+<li>guard作用: 用于自旋等待变量</li>
+</ul>
+<p>相比于自旋等待整个临界区，gaurd的获取和释放间隔很短；eg.多核CPU, 当一个进程A拿到gaurd,然后另一个进程B被调度，此时B就拿不到gaurd，自旋等待，但是由于A临界区代码很短，很快A就会释放gaurd.</p>
+<ul>
+<li>unlock()中， 唤醒线程之后，没有将flag设置为0</li>
+</ul>
+<p>这么做的原因是线程被唤醒之后，可以看作是从park（）返回，此时线程没有拿到guard,锁没有释放就直接传递给了被唤醒线程。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> flag;</span><br><span class="line">	<span class="keyword">int</span> guard;</span><br><span class="line">	<span class="keyword">queue_t</span> *q;</span><br><span class="line">	&#125; <span class="keyword">lock_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock_init</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	m-&gt;flag= <span class="number">0</span>;</span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">	queue_init(m-&gt;q);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (m-&gt;flag == <span class="number">0</span>) &#123;</span><br><span class="line">		m-&gt;flag = <span class="number">1</span>; <span class="comment">// lock is acquired</span></span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">		queue_add(m-&gt;q, gettid());</span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">		park(); <span class="comment">//线程休眠</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (queue_empty(m-&gt;q))</span><br><span class="line">		m-&gt;flag = <span class="number">0</span>; <span class="comment">// let go of lock; no one wants it</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		unpark(queue_remove(m-&gt;q)); <span class="comment">// hold lock (for next thread!)</span></span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="基于锁的数据结构"><a href="#基于锁的数据结构" class="headerlink" title="基于锁的数据结构"></a>基于锁的数据结构</h4><h5 id="并发链表设计"><a href="#并发链表设计" class="headerlink" title="并发链表设计"></a>并发链表设计</h5><p>关键在于数据结构的定义，节点如何定义(int, node*) ，链表怎么定义(锁+链表头)</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// basic node structure</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> key;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; <span class="keyword">node_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// basic list structure (one used per list)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">list_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">node_t</span> * head;</span><br><span class="line">    <span class="keyword">pthread_mutex_t</span> lock;</span><br><span class="line">&#125; <span class="keyword">list_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">List_Init</span><span class="params">(<span class="keyword">list_t</span> * L)</span> </span>&#123;</span><br><span class="line">    L-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">    pthread_mutex_init(&amp;L-&gt;lock, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Insert</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">node_t</span> * <span class="keyword">new</span> = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">node_t</span>)); <span class="comment">//先分配节点，只有在更新全局资源时候加锁，而不是一上来就全部加锁</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">new</span> == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        perror(<span class="string">"malloc"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>; <span class="comment">// fail</span></span><br><span class="line">    &#125;</span><br><span class="line">	pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">new</span>-&gt;key = key;</span><br><span class="line">    <span class="keyword">new</span>-&gt;next = L-&gt;head;</span><br><span class="line">    L-&gt;head = <span class="keyword">new</span>;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// success</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//链表查找需要加锁么? 不涉及到全局变量的修改，但是如果不加锁，一个线程在修改正在查找的链表，也会导致race condition</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Lookup</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">node_t</span> * curr = L-&gt;head;</span><br><span class="line">    <span class="keyword">int</span> rv=<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">while</span> (curr) &#123;</span><br><span class="line">        <span class="keyword">if</span> (curr-&gt;key == key) &#123;</span><br><span class="line">            rv=<span class="number">0</span>;<span class="comment">//返回0 表示找到</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> rv;  <span class="comment">// faulure</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="并发哈希表"><a href="#并发哈希表" class="headerlink" title="并发哈希表"></a>并发哈希表</h5><p>有了这个基础，设计并发哈希表就很简单，通过拉链方法来避免哈希冲突</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUCKETS (101)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">hash_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">list_t</span> lists[BUCKETS];</span><br><span class="line">&#125; <span class="keyword">hash_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Hash_Init</span><span class="params">(<span class="keyword">hash_t</span> * H)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BUCKETS; i++) &#123;</span><br><span class="line">        List_Init(&amp;H-&gt;lists[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Insert</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Insert(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Lookup</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Lookup(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><blockquote>
+<p>什么是信号量?</p>
+<p>信号量和条件变量区别</p>
+</blockquote>
+<p>信号量用来做lock,也能够用来做条件变量，关键在于信号量的初始化。</p>
+<p>信号量=变量+操作</p>
+<p><strong>信号量操作伪码</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_wait</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	decrement the value of semaphore s by one</span><br><span class="line">	wait <span class="keyword">if</span> value of semaphore s is negative</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_post</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	increment the value of semaphore s by one</span><br><span class="line">	<span class="keyword">if</span> there are one <span class="keyword">or</span> more threads waiting, wake one</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>信号量做二元锁</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> m;</span><br><span class="line">sem_init(&amp;m, <span class="number">0</span>, <span class="number">1</span>); <span class="comment">// initialize semaphore to 1</span></span><br><span class="line">sem_wait(&amp;m);</span><br><span class="line"><span class="comment">// critical section here</span></span><br><span class="line">sem_post(&amp;m);</span><br></pre></td></tr></table></figure>
+
+<p><strong>信号量做条件变量</strong></p>
+<p>下面代码目的是同步父子进程，父进程等待子进程结束。</p>
+<p>注意条件变量被初始化为0，分两个情况考虑，如果子进程被创建之后先执行，sem_post将信号量+1,父进程执行sem_wait正常返回；如果父进程先执行，sem-1小于0，父进程被挂起，子进程执行，将sem+1，然后唤醒父进程。 所以符合我们预定执行顺序。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> s</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">child</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"child\n"</span>);</span><br><span class="line">sem_post(&amp;s); <span class="comment">// signal here: child is done</span></span><br><span class="line"><span class="keyword">return</span> <span class="literal">NULL</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">	sem_init(&amp;s, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">// </span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: begin\n"</span>);</span><br><span class="line">	<span class="keyword">pthread_t</span> c;</span><br><span class="line">	Pthread_create(c, <span class="literal">NULL</span>, child, <span class="literal">NULL</span>);</span><br><span class="line">	sem_wait(&amp;s); <span class="comment">// wait here for child</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: end\n"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h5><p>允许多个读，一个写，第一个读者自动获得写锁，最后一个读锁释放，写锁也释放。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span>&#123;</span></span><br><span class="line">    <span class="keyword">sem_t</span> lock;</span><br><span class="line">    <span class="keyword">sem_t</span> <span class="built_in">write</span>;</span><br><span class="line">    <span class="keyword">int</span> readers;</span><br><span class="line">&#125; rw_lock;</span><br><span class="line"></span><br><span class="line">init(rw_lock*m)&#123;</span><br><span class="line">    sem_init(m-&gt;lock,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    sem_init(m-&gt;<span class="built_in">write</span>,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    m-&gt;readers=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers++;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">1</span>) sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_release_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers--;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">0</span>) sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>OSTEP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>内存虚拟化</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
+<a id="more"></a>
+
+<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
+<p>为什么引入了虚拟地址?</p>
+</blockquote>
+<ul>
+<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
+<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
+</ul>
+<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
+<blockquote>
+<p>设计一套虚拟内存需要满足满足那些目标?</p>
+</blockquote>
+<ol>
+<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
+</li>
+<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
+</li>
+<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
+<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+</li>
+</ol>
+<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
+<p> 一开始作者假设</p>
+<ol>
+<li>虚拟地址空间连续存放到物理内存</li>
+<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
+</ol>
+<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
+<p>地址转化： <code>physical address = virtual address + base</code></p>
+<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
+<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
+<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
+<ul>
+<li>进程创建时，分配与地址空间对应的物理内存</li>
+<li>当进程结束时，回收内存</li>
+<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
+</ul>
+<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
+<p><strong>优点</strong></p>
+<ul>
+<li><p>在硬件支持下起来很高效快速</p>
+</li>
+<li><p>提供了进程间的保护隔离</p>
+</li>
+</ul>
+<p><strong>缺点</strong></p>
+<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
+<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
+<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
+<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
+<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
+<p>分段机制下地址转化伪码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
+<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>减少了内部碎片,内存浪费</p>
+</li>
+<li><p>代码段等可以共享</p>
+</li>
+</ul>
+<p>问题：</p>
+<ul>
+<li><p>大小不一的段可能导致外部碎片</p>
+</li>
+<li><p>内存不能做到按需分配</p>
+</li>
+</ul>
+<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
+<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
+</blockquote>
+<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
+<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
+<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
+</blockquote>
+<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
+<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
+<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
+<p>实现页机制有几个问题</p>
+<blockquote>
+<p>1.页表存在哪里?</p>
+<p>2.每一个页表项具体有什么内容?</p>
+</blockquote>
+<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
+<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
+<ul>
+<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
+<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
+<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
+</ul>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
+<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>固定大小内存单元，避免外部碎片</p>
+</li>
+<li><p>相对分段内存使用灵活</p>
+</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li><p>页表占用内存过大</p>
+</li>
+<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>OSTEP</tag>
+        <tag>操作系统</tag>
+      </tags>
   </entry>
   <entry>
     <title>套接字选项小结</title>
-    <url>/2020/08/24/%E5%A5%97%E6%8E%A5%E5%AD%97%E9%80%89%E9%A1%B9%E5%B0%8F%E7%BB%93/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>总结影响网络收发包的一些套接字选项，对一些概念可能理解不对，希望大家多多指教。后面会持续更新ing。</p>
 <a id="more"></a>
 
@@ -609,272 +997,67 @@
       </tags>
   </entry>
   <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/2020/05/20/stringstream-%E5%A4%84%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2/</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+    <title>排序二叉树转化为双向链表</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
 <a id="more"></a>
 
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
-]]></content>
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
       <categories>
-        <category>技术</category>
+        <category>算法</category>
       </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
   </entry>
   <entry>
-    <title>内存虚拟化</title>
-    <url>/2020/08/01/%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96/</url>
-    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
-<a id="more"></a>
+    <title>tcp40ms延迟问题分析</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
 
-<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
-<p>为什么引入了虚拟地址?</p>
-</blockquote>
-<ul>
-<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
-<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
-</ul>
-<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
-<blockquote>
-<p>设计一套虚拟内存需要满足满足那些目标?</p>
-</blockquote>
+<p><strong>背景</strong></p>
+<p>tcp抓包发现服务端回复ack存在40ms左右延迟</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqEqK.png" alt="dmqEqK.png"></p>
+<p><strong>问题排查过程</strong></p>
+<p>通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：<strong>客户端开启nagle算法+服务端延迟ack</strong>，延迟ack的超时时间为40ms。</p>
+<p>先介绍下重要的概念</p>
+<p><strong>delay ack</strong></p>
+<p>在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互过程中，服务端仍然执行快速ack,服务端然后往对端发送交互数据，此时系统探测到了这样一种交互行为，于是开启ping pong mode。服务端开启了ping pong mode之后，收到数据不会立马回复对端ack,而是在回复响应数据时候带上ack,这样减少了网络中的包量。但是如果服务端在延时ack时间都没有响应客户端的请求就可能出现短暂的响应延迟。</p>
+<p><img src="https://s1.ax1x.com/2020/08/17/dmqAr6.png" alt="dmqAr6.png"></p>
+<p><strong>nagle算法</strong></p>
+<p>Nagle算法的<strong>基本定义</strong>是任意时刻，最多只能有一个未被确认的小段。 所谓“小段”，指的是小于MSS尺寸的数据块，所谓“未被确认”，是指一个数据块发送出去后，没有收到对方发送的ACK确认该数据已收到。</p>
+<p>Nagle算法的规则（tcp_output.c文件里tcp_nagle_check函数注释）：</p>
+<p>（1）如果包长度达到MSS，则允许发送；</p>
+<p>（2）如果该包含有FIN，则允许发送；</p>
+<p>（3）设置了TCP_NODELAY选项，则允许发送；</p>
+<p>（4）未设置TCP_CORK选项时，若所有发出去的小数据包（包长度小于MSS）均被确认，则允许发送；</p>
+<p>（5）上述条件都未满足，但发生了超时（一般为200ms），则立即发送。</p>
+<p>有了上面的知识铺垫，我们具体分析下客户端开启nagle,服务端处于delay ack 状态下，客户端不同大小数据请求下延时情况。</p>
 <ol>
-<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
+<li>当客户端请求数据小于mss大小</li>
+</ol>
+<p>假设客户端之前的数据已经全部被ack了，此时发送一个新的数据请求，小于mss,对端服务器在收到数据之后，不会立马回复ack,但是在delay ack超时之前能够回复响应数据，顺带就把ack发过去了，所以不会出现我们说的40ms延迟。</p>
+<ol start="2">
+<li>客户端请求数据大于mss</li>
+</ol>
+<p>由于请求数据大于mss,一个包装不下这么多数据，tcp会将数据分成小包发送，在发送第一个小包之后，服务端延迟ack,同时由于数据不全，服务端不能立即响应，于是就在等待延迟ack超时，同时客户端这边开启了nagle，之前发送的数据包还没有被ack,待发送的数据包小于mss，于是也进入等待，这样一来双方都处于等待，进入了短暂的”死锁“。</p>
+<p><strong>解决方案</strong></p>
+<p>有了上面的分析，我们可以从两个方向来考虑如何解决40ms延迟。</p>
+<ol>
+<li><p>服务端关闭延迟ack ；<code>echo 1 &gt; /proc/sys/net/ipv4/tcp_no_delay_ack</code></p>
 </li>
-<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
-</li>
-<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
-<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+<li><p>客户端关闭nagle；通过设置<code>TCP_NODELAY</code>来实现</p>
 </li>
 </ol>
-<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
-<p> 一开始作者假设</p>
-<ol>
-<li>虚拟地址空间连续存放到物理内存</li>
-<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
-</ol>
-<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
-<p>地址转化： <code>physical address = virtual address + base</code></p>
-<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
-<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
-<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
-<ul>
-<li>进程创建时，分配与地址空间对应的物理内存</li>
-<li>当进程结束时，回收内存</li>
-<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
-</ul>
-<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
-<p><strong>优点</strong></p>
-<ul>
-<li><p>在硬件支持下起来很高效快速</p>
-</li>
-<li><p>提供了进程间的保护隔离</p>
-</li>
-</ul>
-<p><strong>缺点</strong></p>
-<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
-<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
-<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
-<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
-<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
-<p>分段机制下地址转化伪码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
-<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>减少了内部碎片,内存浪费</p>
-</li>
-<li><p>代码段等可以共享</p>
-</li>
-</ul>
-<p>问题：</p>
-<ul>
-<li><p>大小不一的段可能导致外部碎片</p>
-</li>
-<li><p>内存不能做到按需分配</p>
-</li>
-</ul>
-<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
-<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
-</blockquote>
-<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
-<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
-<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
-</blockquote>
-<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
-<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
-<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
-<p>实现页机制有几个问题</p>
-<blockquote>
-<p>1.页表存在哪里?</p>
-<p>2.每一个页表项具体有什么内容?</p>
-</blockquote>
-<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
-<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
-<ul>
-<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
-<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
-<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
-</ul>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
-<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>固定大小内存单元，避免外部碎片</p>
-</li>
-<li><p>相对分段内存使用灵活</p>
-</li>
-</ul>
-<p>缺点</p>
-<ul>
-<li><p>页表占用内存过大</p>
-</li>
-<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
-</li>
-</ul>
 ]]></content>
-      <tags>
-        <tag>操作系统</tag>
-        <tag>OSTEP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>并发</title>
-    <url>/2020/08/05/%E5%B9%B6%E5%8F%91/</url>
-    <content><![CDATA[<p>《OSTEP》线程并发小结</p>
-<a id="more"></a>
-
-<h4 id="理解多线程为什么会有竞争状态问题"><a href="#理解多线程为什么会有竞争状态问题" class="headerlink" title="理解多线程为什么会有竞争状态问题"></a>理解多线程为什么会有竞争状态问题</h4><p>多线程对共享资源访问，可能不是原子操作，导致不确定结果。</p>
-<h4 id="条件量使用"><a href="#条件量使用" class="headerlink" title="条件量使用"></a>条件量使用</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_wait</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond, <span class="keyword">pthread_mutex_t</span> *mutex)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_signal</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>wait 操作传入参数除了条件变量还有锁，这样做的目的是为了把进程休眠同时释放锁。否则其他线程就没法获得锁，唤醒休眠线程。</p>
-<p>下面代码做线程之间同步存在什么问题</p>
-<ol>
-<li>spin 忙等待浪费cpu</li>
-</ol>
-<p>但是这个能够实现线程之间同步操作么?</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局标志变量</span></span><br><span class="line"><span class="keyword">int</span> flag=<span class="number">0</span>;</span><br><span class="line"><span class="comment">//thread A</span></span><br><span class="line"><span class="keyword">while</span>(flag==<span class="number">0</span>); <span class="comment">//spin</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//thread B singal</span></span><br><span class="line">flag=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="锁的设计"><a href="#锁的设计" class="headerlink" title="锁的设计"></a>锁的设计</h4><p>在设计锁之前，有几个指标能够来衡量设计方案的好坏。</p>
-<ol>
-<li><p>能否实现互斥</p>
-</li>
-<li><p>公平性(防止饥饿）</p>
-</li>
-<li><p>实现锁带来的额外负担</p>
-</li>
-</ol>
-<p>最直接的想法是通过关闭中断来实现互斥，竞态条件下执行结果的不稳定，就是因为线程执行过程中被打断，调度。我们通过关闭中断，就能够实现对资源的互斥访问，但是这个在实际情况不太可能实现(多CPU,以及关闭中断带来的巨大风险)。</p>
-<h5 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h5><p>通过硬件支持的同步原语来实现互斥，首先我们看一个没有原子操作的互斥锁方案</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span> <span class="keyword">int</span> flag; &#125; <span class="keyword">lock_t</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 0 -&gt; lock is available, 1 -&gt; held</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (mutex-&gt;flag == <span class="number">1</span>);<span class="comment">// TEST the flag spin-wait (do nothing)</span></span><br><span class="line">	mutex-&gt;flag = <span class="number">1</span>;<span class="comment">// now SET it!</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *mutex)</span> </span>&#123;</span><br><span class="line">    mutex-&gt;flag = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述方案的问题在于检查flag和设置flag不是原子操作，可能存在一种情况线程A执行完while()然后被调度，导致两个线程都获得锁。</p>
-<p>改进方案如下</p>
-<p>CAS（compare and swap）一种原子操作，</p>
-<p>bool CAS(V, A,B) // 检查现有V 是否与A== 如果== 将V设置为B 同时返回true</p>
-<p><strong>自旋锁伪码实现</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">CAS（compare <span class="keyword">and</span> swap）一种原子操作，</span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">CAS</span><span class="params">(V, A,B)</span> <span class="comment">// 检查现有V 是否与A== 如果==  将V设置为B 同时返回true</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line">自旋锁伪码实现</span><br><span class="line"><span class="keyword">bool</span> flag =<span class="literal">false</span>; <span class="comment">//锁为true 表示被占用</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>));</span><br><span class="line"><span class="comment">//do-something</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//release lock</span></span><br><span class="line">flag=<span class="literal">false</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>自旋锁虽然能够实现对临界区的互斥访问，但是带来了性能问题，spin通过忙等待形式去获取锁，导致了CPU资源的浪费。</p>
-<p>比如场景：单核cpu运行多个线程</p>
-<p>线程1获得lock进入临界区,然后被打断，线程2被调度，一直自旋等待锁被释放。</p>
-<h5 id="yield"><a href="#yield" class="headerlink" title="yield"></a>yield</h5><p>针对上述问题，一种解决方法是通过主动放弃CPU，当线程发现锁被占用，主动将自己的状态由RUNNING-&gt;READY， 避免了自旋等待占用CPU。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(!CAS(flag,<span class="literal">false</span>,<span class="literal">true</span>)) <span class="built_in">yield</span>();</span><br></pre></td></tr></table></figure>
-
-<p>yield 带来的问题</p>
-<ol>
-<li><p>大量的上下文切换操作</p>
-</li>
-<li><p>仍然没有解决饥饿问题</p>
-</li>
-</ol>
-<h5 id="sleep队列"><a href="#sleep队列" class="headerlink" title="sleep队列"></a>sleep队列</h5><p>无论自旋，还是yield， 调度器的选择很多，导致了资源的浪费。如果线程发现自己暂时不能获取锁，将自己休眠，就带来了效率提升。</p>
-<p>下面实现代码还是很巧妙的</p>
-<ul>
-<li>guard作用: 用于自旋等待变量</li>
-</ul>
-<p>相比于自旋等待整个临界区，gaurd的获取和释放间隔很短；eg.多核CPU, 当一个进程A拿到gaurd,然后另一个进程B被调度，此时B就拿不到gaurd，自旋等待，但是由于A临界区代码很短，很快A就会释放gaurd.</p>
-<ul>
-<li>unlock()中， 唤醒线程之后，没有将flag设置为0</li>
-</ul>
-<p>这么做的原因是线程被唤醒之后，可以看作是从park（）返回，此时线程没有拿到guard,锁没有释放就直接传递给了被唤醒线程。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> flag;</span><br><span class="line">	<span class="keyword">int</span> guard;</span><br><span class="line">	<span class="keyword">queue_t</span> *q;</span><br><span class="line">	&#125; <span class="keyword">lock_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock_init</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	m-&gt;flag= <span class="number">0</span>;</span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">	queue_init(m-&gt;q);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (m-&gt;flag == <span class="number">0</span>) &#123;</span><br><span class="line">		m-&gt;flag = <span class="number">1</span>; <span class="comment">// lock is acquired</span></span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;&#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">		queue_add(m-&gt;q, gettid());</span><br><span class="line">		m-&gt;guard = <span class="number">0</span>;</span><br><span class="line">		park(); <span class="comment">//线程休眠</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">(<span class="keyword">lock_t</span> *m)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (TestAndSet(&amp;m-&gt;guard, <span class="number">1</span>) == <span class="number">1</span>); <span class="comment">//acquire guard lock by spinning</span></span><br><span class="line">	<span class="keyword">if</span> (queue_empty(m-&gt;q))</span><br><span class="line">		m-&gt;flag = <span class="number">0</span>; <span class="comment">// let go of lock; no one wants it</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		unpark(queue_remove(m-&gt;q)); <span class="comment">// hold lock (for next thread!)</span></span><br><span class="line">	m-&gt;guard = <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="基于锁的数据结构"><a href="#基于锁的数据结构" class="headerlink" title="基于锁的数据结构"></a>基于锁的数据结构</h4><h5 id="并发链表设计"><a href="#并发链表设计" class="headerlink" title="并发链表设计"></a>并发链表设计</h5><p>关键在于数据结构的定义，节点如何定义(int, node*) ，链表怎么定义(锁+链表头)</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// basic node structure</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> key;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> __<span class="title">node_t</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125; <span class="keyword">node_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// basic list structure (one used per list)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">list_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">node_t</span> * head;</span><br><span class="line">    <span class="keyword">pthread_mutex_t</span> lock;</span><br><span class="line">&#125; <span class="keyword">list_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">List_Init</span><span class="params">(<span class="keyword">list_t</span> * L)</span> </span>&#123;</span><br><span class="line">    L-&gt;head = <span class="literal">NULL</span>;</span><br><span class="line">    pthread_mutex_init(&amp;L-&gt;lock, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Insert</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">node_t</span> * <span class="keyword">new</span> = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">node_t</span>)); <span class="comment">//先分配节点，只有在更新全局资源时候加锁，而不是一上来就全部加锁</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">new</span> == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        perror(<span class="string">"malloc"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>; <span class="comment">// fail</span></span><br><span class="line">    &#125;</span><br><span class="line">	pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">new</span>-&gt;key = key;</span><br><span class="line">    <span class="keyword">new</span>-&gt;next = L-&gt;head;</span><br><span class="line">    L-&gt;head = <span class="keyword">new</span>;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">// success</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//链表查找需要加锁么? 不涉及到全局变量的修改，但是如果不加锁，一个线程在修改正在查找的链表，也会导致race condition</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">List_Lookup</span><span class="params">(<span class="keyword">list_t</span> * L, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    pthread_mutex_lock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">node_t</span> * curr = L-&gt;head;</span><br><span class="line">    <span class="keyword">int</span> rv=<span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">while</span> (curr) &#123;</span><br><span class="line">        <span class="keyword">if</span> (curr-&gt;key == key) &#123;</span><br><span class="line">            rv=<span class="number">0</span>;<span class="comment">//返回0 表示找到</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    pthread_mutex_unlock(&amp;L-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> rv;  <span class="comment">// faulure</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="并发哈希表"><a href="#并发哈希表" class="headerlink" title="并发哈希表"></a>并发哈希表</h5><p>有了这个基础，设计并发哈希表就很简单，通过拉链方法来避免哈希冲突</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUCKETS (101)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">hash_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">list_t</span> lists[BUCKETS];</span><br><span class="line">&#125; <span class="keyword">hash_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Hash_Init</span><span class="params">(<span class="keyword">hash_t</span> * H)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BUCKETS; i++) &#123;</span><br><span class="line">        List_Init(&amp;H-&gt;lists[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Insert</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Insert(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Hash_Lookup</span><span class="params">(<span class="keyword">hash_t</span> * H, <span class="keyword">int</span> key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> bucket = key % BUCKETS;</span><br><span class="line">    <span class="keyword">return</span> List_Lookup(&amp;H-&gt;lists[bucket], key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><blockquote>
-<p>什么是信号量?</p>
-<p>信号量和条件变量区别</p>
-</blockquote>
-<p>信号量用来做lock,也能够用来做条件变量，关键在于信号量的初始化。</p>
-<p>信号量=变量+操作</p>
-<p><strong>信号量操作伪码</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_wait</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	decrement the value of semaphore s by one</span><br><span class="line">	wait <span class="keyword">if</span> value of semaphore s is negative</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_post</span><span class="params">(<span class="keyword">sem_t</span> *s)</span> </span>&#123;</span><br><span class="line">	increment the value of semaphore s by one</span><br><span class="line">	<span class="keyword">if</span> there are one <span class="keyword">or</span> more threads waiting, wake one</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>信号量做二元锁</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> m;</span><br><span class="line">sem_init(&amp;m, <span class="number">0</span>, <span class="number">1</span>); <span class="comment">// initialize semaphore to 1</span></span><br><span class="line">sem_wait(&amp;m);</span><br><span class="line"><span class="comment">// critical section here</span></span><br><span class="line">sem_post(&amp;m);</span><br></pre></td></tr></table></figure>
-
-<p><strong>信号量做条件变量</strong></p>
-<p>下面代码目的是同步父子进程，父进程等待子进程结束。</p>
-<p>注意条件变量被初始化为0，分两个情况考虑，如果子进程被创建之后先执行，sem_post将信号量+1,父进程执行sem_wait正常返回；如果父进程先执行，sem-1小于0，父进程被挂起，子进程执行，将sem+1，然后唤醒父进程。 所以符合我们预定执行顺序。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">sem_t</span> s</span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">child</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"child\n"</span>);</span><br><span class="line">sem_post(&amp;s); <span class="comment">// signal here: child is done</span></span><br><span class="line"><span class="keyword">return</span> <span class="literal">NULL</span>;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">	sem_init(&amp;s, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">// </span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: begin\n"</span>);</span><br><span class="line">	<span class="keyword">pthread_t</span> c;</span><br><span class="line">	Pthread_create(c, <span class="literal">NULL</span>, child, <span class="literal">NULL</span>);</span><br><span class="line">	sem_wait(&amp;s); <span class="comment">// wait here for child</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"parent: end\n"</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h5 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h5><p>允许多个读，一个写，第一个读者自动获得写锁，最后一个读锁释放，写锁也释放。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">lock_t</span>&#123;</span></span><br><span class="line">    <span class="keyword">sem_t</span> lock;</span><br><span class="line">    <span class="keyword">sem_t</span> <span class="built_in">write</span>;</span><br><span class="line">    <span class="keyword">int</span> readers;</span><br><span class="line">&#125; rw_lock;</span><br><span class="line"></span><br><span class="line">init(rw_lock*m)&#123;</span><br><span class="line">    sem_init(m-&gt;lock,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    sem_init(m-&gt;<span class="built_in">write</span>,<span class="number">0</span>,<span class="number">1</span>);</span><br><span class="line">    m-&gt;readers=<span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers++;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">1</span>) sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_release_read</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;lock);</span><br><span class="line">    m-&gt;readers--;</span><br><span class="line">    <span class="keyword">if</span>(m-&gt;readers==<span class="number">0</span>) sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">    sem_post(m-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_wait(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rw_acquire_write</span><span class="params">(rw_lock*m)</span></span>&#123;</span><br><span class="line">    sem_post(m-&gt;<span class="built_in">write</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>OSTEP</tag>
-      </tags>
   </entry>
   <entry>
     <title>数据流算法题目小结</title>
-    <url>/2020/06/09/%E6%95%B0%E6%8D%AE%E6%B5%81%E7%AE%97%E6%B3%95%E9%A2%98%E7%9B%AE%E5%B0%8F%E7%BB%93/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
 <p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
 <a id="more"></a>
@@ -894,26 +1077,43 @@
       </categories>
   </entry>
   <entry>
-    <title>排序二叉树转化为双向链表</title>
-    <url>/2020/05/24/%E6%8E%92%E5%BA%8F%E4%BA%8C%E5%8F%89%E6%A0%91%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8/</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
+    <title>许知远-罗翔访谈记录</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
 <a id="more"></a>
-
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
+<blockquote>
+<p>在人类所有美德中，勇敢是最稀缺的</p>
+</blockquote>
+<p>罗上学时候结巴，后来为了养活自己讲课， 写逐字稿，慢慢就不结巴了。</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228153612.png" alt=""></p>
+<p>巧了我的启蒙也是赵借我看的这一套书，现在还在启蒙，永不过时。</p>
+<p>北京万圣书店</p>
+<p><a href="https://zh.m.wikisource.org/zh-hans/%E4%BF%A0%E5%AE%A2%E8%A1%8C_(%E6%9D%8E%E7%99%BD)" target="_blank" rel="noopener">李白-侠客行</a>   武侠小说中对结果正义的最求，话说罗能够完整背诵侠客行还是挺让我意外的。</p>
+<p><a href="https://book.douban.com/subject/2009914/" target="_blank" rel="noopener">为权力而斗争</a></p>
+<blockquote>
+<p>罗: 人最大的痛楚在于，无法跨越知道和做到的鸿沟</p>
+</blockquote>
+<p>罗对技术主义的转变，这里比较含糊，</p>
+<p>罗说要警惕<a href="https://www.wikiwand.com/zh-hans/%E7%9B%B8%E5%B0%8D%E4%B8%BB%E7%BE%A9" target="_blank" rel="noopener">相对主义</a></p>
+<p>罗推崇节制<a href="https://baike.baidu.com/item/%E5%BE%B7%E5%B0%94%E6%96%90%E7%A5%9E%E8%B0%95" target="_blank" rel="noopener">德尔菲神谕  </a>  ““认识你自己”、“凡事勿过度”、“承诺带来痛苦””</p>
+<p>整个访谈<strong>最精彩的部分</strong>  </p>
+<p>许: 法律学家在20世纪没有参与到整个社会的思想辩论中，如何看待？</p>
+<p>罗:专业人士的自我封闭化，害怕专业变味，法学家的技术主义，上学时以技术主义为荣，觉得没白学</p>
+<p>许: 什么时候这种观点发生了变化？</p>
+<p>罗: 高傲的观点与老百姓内心常识相抵触时候，技术主义在逻辑论证没有问题，但其实是在抵触人内心的良知。人生的经历使得自己<strong>接受人生的有限性</strong></p>
+<blockquote>
+<p>承认自己是有限的，承认你的逻辑是有限的，承认你的理性是有有限的，承认自己的阅读是有限的，承认自己的偏见，一生就是在走出偏见</p>
+</blockquote>
+<p>许: 变化的契机?</p>
+<p>罗：一些不可抗拒的力量，有些话也不好说，经历了亲人的生离死别。人最大的痛苦就是无法跨越知道和做到的鸿沟。笛卡尔说的“我思故我在”给人一种幻想-就是我思考到了，我就能做到，但其实不是这样。</p>
+<p>2010年之前教课很受学生喜欢，有强烈的骄傲，但是内心有一种冲突，自己所教的，自己做不到，骗别人，在自我欺骗，陷入一种虚无</p>
+<p>许: 如何应对那一次危机?</p>
+<p>罗: 虚伪是肯定的，做到行动在言语之前多那么一步，摆脱虚伪的自我控诉。</p>
+]]></content>
   </entry>
   <entry>
     <title>文件系统的持久化</title>
-    <url>/2020/06/11/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>《OSTEP》文件持久化部分阅读笔记</p>
 <a id="more"></a>
 
@@ -977,8 +1177,44 @@
       </tags>
   </entry>
   <entry>
+    <title>系统调用open(),read(),write()具体发了什么?</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
+<a id="more"></a>
+
+
+
+<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
+<p><strong>文件系统</strong></p>
+<p>文件系统可以简单的理解为数据结构+方法</p>
+<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
+<p>方法:open(),read()等调用如何与数据结构打交道</p>
+<p>一个简单的文件系统一般有这几部分</p>
+<ul>
+<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
+<li>data block 存储实际问文件内容</li>
+<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
+<li>data bitmap 记录data blocks 分配情况</li>
+<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
+</ul>
+<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
+<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
+<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
+<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
+<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
+<p>下面的图直观的说明这一过程</p>
+<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>最长上升子序列</title>
-    <url>/2020/05/27/%E6%9C%80%E9%95%BF%E4%B8%8A%E5%8D%87%E5%AD%90%E5%BA%8F%E5%88%97/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
 <a id="more"></a>
 
@@ -1004,7 +1240,7 @@
   </entry>
   <entry>
     <title>滑动窗口小结</title>
-    <url>/2020/06/11/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E5%B0%8F%E7%BB%93/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。</p>
 <a id="more"></a>
 
@@ -1033,8 +1269,73 @@
       </categories>
   </entry>
   <entry>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>读书</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>适合反复看的技术入门教程</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
+
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/339008746?utm_source=org.telegram.messenger&utm_medium=social&utm_oi=966460230863925248" target="_blank" rel="noopener">Kubernetes 入门&amp;进阶实战</a>  腾讯CSIG工程师写的，估计是内部k吧开源出来的</li>
+</ol>
+<blockquote>
+<p>笔者今年（公元 2020 年）9 月从端侧开发转到后台开发，第一个系统开发任务就强依赖了 K8S，加之项目任务重、排期紧，必须马上对 K8S 有概念上的了解。然而，很多所谓“K8S 入门\概念”的文章看的一头雾水，对于大部分新手来说并不友好。经历了几天痛苦地学习之后，回顾来看，<strong>K8S 根本不复杂。</strong>于是，决心有了这一系列的文章：一方面希望对新手同学有帮助；另一方面，以文会友，希望能够有机会交流讨论技术。</p>
+</blockquote>
+<ol start="2">
+<li><a href="https://kingsamchen.github.io/2020/02/08/how-to-learn-cmake-as-the-beginner/" target="_blank" rel="noopener">CMake 入门指南</a>  这位大哥是B站后端工程师，最早是在饭否看到他的技术分享觉得很棒，然后顺藤摸瓜找到了他的个人博客，可以看出来他对C++理解还是很深，虽然我之后可能不怎么会接触C++开发了，但是很多好的概念还是值得学习的。</li>
+</ol>
+<h4 id="0x00-起手式"><a href="#0x00-起手式" class="headerlink" title="0x00 起手式"></a>0x00 起手式</h4><p>这里假设题主以及其他想入门 CMake 的人像我一样，下面是我个人总结的比较适合的学习路径。</p>
+<p>首先默念三遍并记住口诀：</p>
+<ol>
+<li>Declare a target</li>
+<li>Declare target’s traits</li>
+<li>It’s all about targets</li>
+</ol>
+<p>然后 clone <a href="https://github.com/ttroy50/cmake-examples" target="_blank" rel="noopener">https://github.com/ttroy50/cmake-examples</a> 这个项目到本地，把里面的</p>
+<ul>
+<li>01-basic（跳过E-installing，因为和依赖有关，后面会说）</li>
+<li>02-sub-projects</li>
+</ul>
+<p>两个目录认真的学习一遍，最好自己能够动手跟着做一遍。</p>
+<p>每学习完一个小节，把前面的三句口诀复习一下</p>
+<p>每遇到一个不认识的命令，在 <a href="https://link.zhihu.com/?target=https%3A//gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1">Effective Modern CMake</a> 这个页面里搜索一下，看看这个命令是否取代了某个老命令。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>负载均衡大量TW分析</title>
+    <url>/p/undefined.html</url>
+    <content><![CDATA[<a id="more"></a>
+
+<p>背景</p>
+<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
+<p>分析思路</p>
+<ul>
+<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
+<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
+<li>调整tcp_max_tw_buckets</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>网络协议栈收包过程小结</title>
-    <url>/2020/08/05/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%94%B6%E5%8C%85%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/</url>
+    <url>/p/undefined.html</url>
     <content><![CDATA[<p>linux网络协议栈学习小结</p>
 <a id="more"></a>
 
@@ -1193,271 +1494,5 @@
       <tags>
         <tag>技术</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>系统调用open(),read(),write()具体发了什么?</title>
-    <url>/2020/06/01/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8open-read-write-%E5%85%B7%E4%BD%93%E5%8F%91%E4%BA%86%E4%BB%80%E4%B9%88/</url>
-    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
-<a id="more"></a>
-
-
-
-<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
-<p><strong>文件系统</strong></p>
-<p>文件系统可以简单的理解为数据结构+方法</p>
-<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
-<p>方法:open(),read()等调用如何与数据结构打交道</p>
-<p>一个简单的文件系统一般有这几部分</p>
-<ul>
-<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
-<li>data block 存储实际问文件内容</li>
-<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
-<li>data bitmap 记录data blocks 分配情况</li>
-<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
-</ul>
-<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
-<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
-<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
-<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
-<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
-<p>下面的图直观的说明这一过程</p>
-<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>操作系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/2020/11/20/%E8%B0%81%E6%83%B3%E7%9C%8B%E6%B8%85%E5%B0%98%E4%B8%96%E5%B0%B1%E5%BA%94%E5%BD%93%E5%90%8C%E5%AE%83%E4%BF%9D%E6%8C%81%E5%BF%85%E8%A6%81%E7%9A%84%E8%B7%9D%E7%A6%BB/</url>
-    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
-<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
-<blockquote>
-<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
-</blockquote>
-<blockquote>
-<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
-</blockquote>
-<blockquote>
-<p>如果不感到自身充满力量，就不可能有爱情。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>读书</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>负载均衡大量TW分析</title>
-    <url>/2020/08/23/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%E5%A4%A7%E9%87%8FTW%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>背景</p>
-<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
-<p>分析思路</p>
-<ul>
-<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
-<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
-<li>调整tcp_max_tw_buckets</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>bash学习</title>
-    <url>/2020/12/10/bash%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
-<p>bash 脚本开头一行 都有 <code>#!/bin/bash</code> 指此脚本使用<strong>/bin/sh</strong>来解释执行，<strong>#!</strong>是特殊的表示符，其后面根的是此解释此脚本的shell的路径, python脚本在开头也有类似的语句， <code>#!/bin/python2</code> or <code>#!/bin/python3</code></p>
-<p>创建完一个bash脚本之后，需要通过<code>chmod +x XXX.sh</code> 赋予bash脚本执行权限， 文件的权限可以通过<code>ls -l</code> 查看详细， 用户组，其他，用户都具有自己对文件的权限。</p>
-<p>bash 脚本执行可以 通过<code>./XXX.sh</code> 也可以直接指明<code>bash xxx.sh</code>  其中前者指定了sh 文件的路径，<a href="https://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell" target="_blank" rel="noopener">参考</a></p>
-<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>bash 变量不需要指定类型，直接赋值，解释器动态解释。</p>
-<p><strong>变量定义</strong>:</p>
-<p><code>name=&quot;DevDojo&quot;</code>  note： 赋值号左右不能又空格，如果平时编码习惯和这个不一样，需要注意下。</p>
-<p><strong>变量使用</strong></p>
-<p><code>echo ${name}</code> 括号增加可读性。同时变量也可以在表达式中使用，语法与直接使用一样。</p>
-<p>bash 语句不像c++需要显式<code>;</code>表示语句结束</p>
-<p><strong>用户输入</strong></p>
-<p>从命令行读取用户输入</p>
-<p><code>read variable</code></p>
-<p><strong>外部参数</strong></p>
-<p>bash 脚本在运行时候,可以跟可变多的参数,在脚本内部用$1, $2来指代,如下面例子</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument one is <span class="variable">$1</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument two is <span class="variable">$2</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument three is <span class="variable">$3</span>"</span></span><br><span class="line"><span class="comment"># excute</span></span><br><span class="line">./arguments.sh dog cat bird</span><br></pre></td></tr></table></figure>
-
-<p>也可以很方便的用 <code>$@</code> 来引用所有的外部参数.</p>
-<p>$0表示脚本文件名,一个用处就是在执行完脚本之后,可以用$0获取脚本名,然后做自删除.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"The name of the file is: <span class="variable">$0</span> and it is going to be self-</span></span><br><span class="line"><span class="string">deleted."</span></span><br><span class="line">rm -f <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>数组</strong></p>
-<p>语法:<code>my_array=(&quot;value 1&quot; &quot;value 2&quot; &quot;value 3&quot; &quot;value 4&quot;)</code>  元素之间用空格隔开</p>
-<p>数组引用类似C,  <code>echo ${my_array[1]}</code>  元素起始下标为0</p>
-<p>数组长度获取</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">list=(1 2 3 4)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#list[@]&#125;</span>  <span class="comment">#输出4</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h4><ul>
-<li>算数表达  语法类似, 用英文字母的缩写来表示比较属性, eg. lt(less than) ,eq(equal) …..<ul>
-<li>[[ ${arg1} -eq ${arg2} ]]    equal  如果两个变量相同返回true</li>
-</ul>
-</li>
-<li>字符串<ul>
-<li>[[ -v ${varname} ]] 变量如果被赋值返回true</li>
-<li>[[ -z ${string} ]] 字符串长度为0 为true</li>
-<li>[[ -n ${string} ]] 字符串长度不为0</li>
-</ul>
-</li>
-<li>文件表达式 在linux 下面一切都是文件,文件具有不同的类型 比如块文件,字符设备,目录等<ul>
-<li>[[ -d ${file} ]]    是否为目录</li>
-<li>[[ -x ${file} ]]  文件是否可执行</li>
-<li>[[ -L ${file} ]]  文件是否为符号链接</li>
-</ul>
-</li>
-</ul>
-<p>有了条件表达式,自然引出了条件语句</p>
-<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p><strong>if-else</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ some_test ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span> &lt;commands&gt;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>swith 语句</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$some_variable</span> <span class="keyword">in</span></span><br><span class="line">  pattern_1)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  pattern_2| pattern_3)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    default commands</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
-
-<p>注意点</p>
-<ol>
-<li>case 语句用关键字<strong>case</strong>开始,引用变量,然后加关键字<strong>in</strong></li>
-<li>匹配模式用) 结束</li>
-<li>All clauses have to be terminated by adding ;; at the end</li>
-<li>默认模式用*匹配</li>
-<li>case 语句结束用esac关键字</li>
-</ol>
-<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p><strong>while</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_conditions</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
-<p>条件表达式都用[] 或者[[]]括起来, <a href="https://stackoverflow.com/questions/3427872/whats-the-difference-between-and-in-bash" target="_blank" rel="noopener">区别</a></p>
-<p><strong>until</strong></p>
-<p>含义是当条件不为真时候一直运行</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">until [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_commands</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-  </entry>
-  <entry>
-    <title>适合反复看的技术入门教程</title>
-    <url>/2020/12/23/%E9%80%82%E5%90%88%E5%8F%8D%E5%A4%8D%E7%9C%8B%E7%9A%84%E6%8A%80%E6%9C%AF%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<ol>
-<li><a href="https://zhuanlan.zhihu.com/p/339008746?utm_source=org.telegram.messenger&utm_medium=social&utm_oi=966460230863925248" target="_blank" rel="noopener">Kubernetes 入门&amp;进阶实战</a>  腾讯CSIG工程师写的，估计是内部k吧开源出来的</li>
-</ol>
-<blockquote>
-<p>笔者今年（公元 2020 年）9 月从端侧开发转到后台开发，第一个系统开发任务就强依赖了 K8S，加之项目任务重、排期紧，必须马上对 K8S 有概念上的了解。然而，很多所谓“K8S 入门\概念”的文章看的一头雾水，对于大部分新手来说并不友好。经历了几天痛苦地学习之后，回顾来看，<strong>K8S 根本不复杂。</strong>于是，决心有了这一系列的文章：一方面希望对新手同学有帮助；另一方面，以文会友，希望能够有机会交流讨论技术。</p>
-</blockquote>
-<ol start="2">
-<li><a href="https://kingsamchen.github.io/2020/02/08/how-to-learn-cmake-as-the-beginner/" target="_blank" rel="noopener">CMake 入门指南</a>  这位大哥是B站后端工程师，最早是在饭否看到他的技术分享觉得很棒，然后顺藤摸瓜找到了他的个人博客，可以看出来他对C++理解还是很深，虽然我之后可能不怎么会接触C++开发了，但是很多好的概念还是值得学习的。</li>
-</ol>
-<h4 id="0x00-起手式"><a href="#0x00-起手式" class="headerlink" title="0x00 起手式"></a>0x00 起手式</h4><p>这里假设题主以及其他想入门 CMake 的人像我一样，下面是我个人总结的比较适合的学习路径。</p>
-<p>首先默念三遍并记住口诀：</p>
-<ol>
-<li>Declare a target</li>
-<li>Declare target’s traits</li>
-<li>It’s all about targets</li>
-</ol>
-<p>然后 clone <a href="https://github.com/ttroy50/cmake-examples" target="_blank" rel="noopener">https://github.com/ttroy50/cmake-examples</a> 这个项目到本地，把里面的</p>
-<ul>
-<li>01-basic（跳过E-installing，因为和依赖有关，后面会说）</li>
-<li>02-sub-projects</li>
-</ul>
-<p>两个目录认真的学习一遍，最好自己能够动手跟着做一遍。</p>
-<p>每学习完一个小节，把前面的三句口诀复习一下</p>
-<p>每遇到一个不认识的命令，在 <a href="https://link.zhihu.com/?target=https%3A//gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1">Effective Modern CMake</a> 这个页面里搜索一下，看看这个命令是否取代了某个老命令。</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Peter Thiel&#39;s Religion — David Perell</title>
-    <url>/2020/12/17/Peter%20Thiel&#39;s%20Religion%20%E2%80%94%20David%20Perell/</url>
-    <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
-<blockquote>
-<ol>
-<li>Don’t copy your neighbors</li>
-<li>Time moves forward</li>
-<li>The future will be different from the present</li>
-</ol>
-</blockquote>
-<p>以及为什么这样模仿他人创业不会成功，为什么在高强度竞争不会得到高效率产出。</p>
-<a id="more"></a>
-
-<blockquote>
-<p>“Our Mimetic nature is simultaneously our biggest strength and biggest weakness. When it goes right, imitation is a shortcut to learning. But when it spirals out of control, Mimetic imitation leads to envy, violence, and bitter, ever-escalating violence. “</p>
-</blockquote>
-<p>人类模仿的天性既是我们的最大优点也是我们最大的缺点，用对了，模仿是学习的捷径。但是一旦模仿失去了控制，模仿将导致人与人之间的嫉妒，暴力。</p>
-<blockquote>
-<p>“As Peter Thiel recounted:</p>
-<p>“When I left after seven months and three days, one of the lawyers down the hall from me said, ‘You know, I had no idea it was possible to escape from Alcatraz.’ Of course that was not literally true, since all you had to do was go out the front door and not come back. But psychologically this was not what people were capable of. Because their identity was defined by competing so intensely with other people, they could not imagine leaving… <strong>On the outside, everybody wanted to get in. On the inside, everybody wanted to get out</strong>.”” </p>
-</blockquote>
-<p>项飙对内卷有类似表述，<a href="https://m.thepaper.cn/newsDetail_forward_9648585" target="_blank" rel="noopener">人类学家项飙谈内卷：一种不允许失败和退出的竞争</a>。 项飙最开始通过十三邀认识的，温州人，人类学博士，瘦瘦的，穿一件白衬衫。属于年少成名，大学期间发表了《浙江村》属于社区田野调查，我翻了下并没有多大兴趣。。。反倒是最近的一本 <a href="https://book.douban.com/subject/35092383/" target="_blank" rel="noopener">《把自己作为方法》</a> 一口气读完了，单读的主编吴琦(以前一直以为是女的。。。)采访项飙的一些文章集合，读起来没什么压力，有一处印象很深，“我调查时也有这个问题，我不太放松，不太能够调笑戏谑，比较欠缺跟大家打成一片的能力，也是我自己不太满意的地方。这个当然跟我小时候的成长有关系，我老跟我外公在一起，不太跟同龄人玩。我外公不让我跟同龄人玩，因为同龄人都是拉板车的子弟。我记得邻居如果给我东西吃，他表面上会很客气地接受，转身就让我不要吃，觉得不卫生。他也是有两面性的，对外非常客气，内心又可能有一种鄙视，其实对我也有影响，一方面把我变得比较理智，另外一方面使我不太放松。”  这让我想到我的外公。</p>
-<p>下面的一些表述也让我产生强烈的感触，但是知道和有勇气去做还是很不一样的，路还很远。</p>
-<blockquote>
-<p>“真正的英雄不是改变世界，而是改变自己生活的每一天。很遗憾，在现代性之下，“边缘”和“中心”变成一组对立关系，中国人又有那么强的中心情结，觉得边缘的生活不值得过，造成极大的焦虑。”</p>
-</blockquote>
-<blockquote>
-<p>我们在国内写报告，好像就是要高于生活，要写得很拽很正式，脱离生活，如果把吃喝拉撒睡都写进去，好像很不正常。</p>
-<p>把自己作为方法：与项飙谈话【牛津大学社会人类学教授项飙，从个人经历切入，回应当下年轻人的精神困境，追索80年代、阶层流动、大学教育、民族与民粹、中国意识等社会议题的新答案】 (项飙)</p>
-<p>您在位置 #1013-1014的标注 | 添加于 2020年10月4日星期日 上午12:27:50</p>
-</blockquote>
-<blockquote>
-<p>不要怕边缘，或者知识不够，把自己的不够、天真真实地体现出来，就会很可爱，不要装腔作势</p>
-</blockquote>
-<blockquote>
-<p>Thiel’s companies are governed by Girard’s wisdom. Girard observed that all desires come from other people. When two people want the same scarce object, they fight. In response, as CEO of PayPal, Thiel set up the company structure to eliminate competition between employees. PayPal overhauled the organization chart every three months. By repositioning people, the company avoided most conflicts before they even started. Employees were evaluated on one single criterion, and no two employees had the same one. They were responsible for one job, one metric, and one part of the business. </p>
-</blockquote>
-<p>这样花大力气调整组织架构来避免内部人员的竞争，值得考虑，但是每一个公司创世的企业文化可能差别很大，不过这种观念以及措施之前真的没有听说过，大开眼界。</p>
-<blockquote>
-<p>Girard observed that even when you put a group of kids together in a room full of toys, they’ll inevitably desire the same toy instead of finding their own toy to play with. A rivalry will emerge. Human see, human want. </p>
-<p>Our capacity for imitation leads to envy. Babies’ interest in a particular toy has less to do with the toy itself and more to do with the fact that the other babies desire the toy. As soon as one child desires the toy, so do the others. Eventually, even though there are many toys available to play with, all the children want the same toy. </p>
-</blockquote>
-<p>#好故事 人类模仿的天性导致嫉妒</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>多抓鱼采访</title>
-    <url>/2020/12/28/%E5%A4%9A%E6%8A%93%E9%B1%BC%E9%87%87%E8%AE%BF/</url>
-    <content><![CDATA[<ul>
-<li>多抓鱼和咸鱼区别？</li>
-</ul>
-<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
-<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
-<p><strong>为什么做多抓鱼</strong>？</p>
-<ul>
-<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
-</li>
-<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
-</li>
-<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
-</li>
-<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
-</li>
-<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
-</li>
-<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
-</li>
-</ul>
-<blockquote>
-<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
-</blockquote>
-<p><strong>多抓鱼的定价策略</strong></p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
-<ul>
-<li>确定几类书不收</li>
-<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
-<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
-</ul>
-<p><strong>shownotes</strong></p>
-<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
-<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
-]]></content>
   </entry>
 </search>
