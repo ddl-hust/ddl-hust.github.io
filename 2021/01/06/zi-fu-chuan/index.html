@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字符串专题">
+<meta property="og:url" content="http://yoursite.com/2021/01/06/zi-fu-chuan/index.html">
+<meta property="og:site_name" content="DDL&#39;s homepage">
+<meta property="og:description" content="校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。">
+<meta property="article:published_time" content="2021-01-05T16:00:48.000Z">
+<meta property="article:modified_time" content="2021-01-06T07:49:49.643Z">
+<meta property="article:author" content="ddl">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/01/06/zi-fu-chuan/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>字符串专题 | DDL's homepage</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="DDL's homepage" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DDL's homepage</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/06/zi-fu-chuan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ddl">
+      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DDL's homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          字符串专题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-06 00:00:48" itemprop="dateCreated datePublished" datetime="2021-01-06T00:00:48+08:00">2021-01-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">算法笔记</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/01/06/zi-fu-chuan/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/06/zi-fu-chuan/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。<br>这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。<br>最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。</p>
+<a id="more"></a>
+
+<p>[TOC]</p>
+<h3 id="3-无重复字符的最长子串"><a href="#3-无重复字符的最长子串" class="headerlink" title="3.无重复字符的最长子串"></a>3.无重复字符的最长子串</h3><p>主要思想：滑动窗口，双指针</p>
+<p>数据结构：set，map 可以通过map优化性能，更加快速更新左边界</p>
+<p>使用set 通过insert(),erease()来更新集合元素</p>
+<h4 id="方法1-set"><a href="#方法1-set" class="headerlink" title="方法1.set"></a>方法1.set</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt; <span class="built_in">set</span>;</span><br><span class="line">        <span class="keyword">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;i&lt;s.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="keyword">while</span>(<span class="built_in">set</span>.count(s[i])) &#123;</span><br><span class="line">                <span class="built_in">set</span>.erase(s[j++]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">set</span>.insert(s[i]);</span><br><span class="line">            <span class="keyword">if</span>(ans&lt;<span class="built_in">set</span>.<span class="built_in">size</span>()) ans=<span class="built_in">set</span>.<span class="built_in">size</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="方法2-map"><a href="#方法2-map" class="headerlink" title="方法2.map"></a>方法2.map</h4><p>参考acwing 提供了一种类似写法, 用哈希表存字符出现次数，当字符个数大于2即出现重复字符</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; ma;</span><br><span class="line"><span class="keyword">int</span> res;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;i&lt;s.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">    ma[s[i]]++;</span><br><span class="line">    <span class="keyword">while</span>(s[i]&gt;<span class="number">1</span>) ma[s[j++]]--;</span><br><span class="line">    res=<span class="built_in">max</span>(res,j-i+<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="CountandSay"><a href="#CountandSay" class="headerlink" title="CountandSay"></a>CountandSay</h3><p>是一道老题目了<br>「外观数列」是一个整数序列，从数字 1 开始，序列中的每一项都是对前一项的描述。前五项如下：</p>
+<ul>
+<li><ol>
+<li>1</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>11</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>21</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>1211</li>
+</ol>
+</li>
+<li><ol start="5">
+<li>111221</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><p>1 被读作 “one 1” (“一个一”) , 即 11。</p>
+</li>
+<li><p>11 被读作 “two 1s” (“两个一”）, 即 21。</p>
+</li>
+<li><p>21 被读作 “one 2”, “one 1” （”一个二” , “一个一”) , 即 1211。</p>
+</li>
+<li><p>给定一个正整数 n（1 ≤ n ≤ 30），输出外观数列的第 n 项。</p>
+</li>
+</ul>
+<p>解题思路：</p>
+<ul>
+<li>外层按照给定层次n 迭代</li>
+<li>内层对当前层次处理每一个字符，统计其个数</li>
+</ul>
+<p>要点：</p>
+<ul>
+<li>数字转化为字符 通过加‘0’ 或者 to_string</li>
+<li>边界处理<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">countAndSay</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span>(n==<span class="number">1</span>) <span class="keyword">return</span> <span class="built_in">string</span>(<span class="string">"1"</span>);</span><br><span class="line">       <span class="built_in">string</span> res=<span class="string">"1"</span>;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)&#123;</span><br><span class="line">           <span class="built_in">string</span> buf;</span><br><span class="line">           <span class="keyword">int</span> str_len=res.<span class="built_in">size</span>();</span><br><span class="line">           <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;str_len;j++)&#123;</span><br><span class="line">               <span class="keyword">int</span> count=<span class="number">1</span>;</span><br><span class="line">               <span class="keyword">while</span>(res[j]==res[j+<span class="number">1</span>]&amp;&amp;j+<span class="number">1</span>&lt;str_len)&#123;</span><br><span class="line">                   j++;</span><br><span class="line">                   count++;</span><br><span class="line">               &#125;</span><br><span class="line">               buf.push_back(count+<span class="string">'0'</span>);</span><br><span class="line">               buf.push_back(res[j]);</span><br><span class="line">           &#125;</span><br><span class="line">           res=buf;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="49-字母异位词分组"><a href="#49-字母异位词分组" class="headerlink" title="49. 字母异位词分组"></a>49. 字母异位词分组</h3><p>给定一个字符串数组，将字母异位词组合在一起。字母异位词指字母相同，但排列不同的字符串。</p>
+<p>考点：<br> 无序字符串排序+哈希表<br> <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; <span class="title">groupAnagrams</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; strs)</span> </span>&#123;</span><br><span class="line">      <span class="built_in">unordered_map</span>&lt;<span class="built_in">string</span>,<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; hash_map;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">auto</span> str: strs)&#123;</span><br><span class="line">          <span class="built_in">string</span> key=str;</span><br><span class="line">          sort(key.<span class="built_in">begin</span>(),key.<span class="built_in">end</span>());</span><br><span class="line">          hash_map[key].push_back(str);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; res;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">auto</span> c: hash_map)&#123;</span><br><span class="line">          res.push_back(c.second);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> res;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="151-翻转字符串中的单词-时间O-n-空间O-1"><a href="#151-翻转字符串中的单词-时间O-n-空间O-1" class="headerlink" title="151. 翻转字符串中的单词 时间O(n) 空间O(1)"></a>151. 翻转字符串中的单词 时间O(n) 空间O(1)</h3><p>给定一个字符串，逐个翻转字符串中的每个单词。<br>比如说：<br>输入: “the sky is blue”<br>输出: “blue is sky the”</p>
+<p>如果是翻转整个的字符串呢？</p>
+<p>解题思路：</p>
+<ul>
+<li>先翻转字符串中的每一个单词</li>
+<li>在翻转整个字符串</li>
+</ul>
+<p>技能点</p>
+<ul>
+<li>遍历去除字符串开始空格</li>
+<li>从字符串提取单个单词，处理，注意index的边界判定</li>
+<li>思想in-place 替代字符串<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">reverseWords</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">while</span>(s[i]==<span class="string">' '</span>) i++; <span class="comment">//去除连续空格</span></span><br><span class="line">            <span class="keyword">if</span>(s.<span class="built_in">size</span>()==i) <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">int</span> j=i;</span><br><span class="line">            <span class="keyword">while</span>(s[j]!=<span class="string">' '</span>&amp;&amp;j&lt;s.<span class="built_in">size</span>())j++;</span><br><span class="line">            reverse(s.<span class="built_in">begin</span>()+i,s.<span class="built_in">begin</span>()+j);</span><br><span class="line">            <span class="keyword">if</span>(index) s[index++]=<span class="string">' '</span>;</span><br><span class="line">            <span class="keyword">while</span>(i&lt;j) s[index++]=s[i++]; <span class="comment">// 这个很巧妙 in-place </span></span><br><span class="line">        &#125;</span><br><span class="line">        s.erase(s.<span class="built_in">begin</span>()+index,s.<span class="built_in">end</span>()); <span class="comment">// 可能有多余空格情况</span></span><br><span class="line">        reverse(s.<span class="built_in">begin</span>(),s.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> s;       </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="联想"><a href="#联想" class="headerlink" title="联想"></a>联想</h5>这个题目起始也可以用来去除字符串中的空格，面试时候经常考察。<br>要求</li>
+</ul>
+<ol>
+<li>去除字符串开始所有空格，中间的连续空格只保存一个，末尾的空格全部去除<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> s;</span><br><span class="line"><span class="keyword">int</span> n=s.<span class="built_in">size</span>();</span><br><span class="line"><span class="keyword">int</span> index=<span class="number">0</span>,i=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span>(i&lt;n)&#123;</span><br><span class="line">    <span class="keyword">while</span>(s[i]==<span class="string">' '</span>) i++;</span><br><span class="line">    <span class="keyword">if</span>(i==s.<span class="built_in">size</span>()) <span class="keyword">break</span>; <span class="comment">//为了防止已经到末尾加上空格</span></span><br><span class="line">    <span class="keyword">if</span>(index) s[index++]=<span class="string">' '</span>;</span><br><span class="line">    <span class="keyword">while</span>(s[i]!=<span class="string">' '</span>)s[index++]=s[i++];</span><br><span class="line">&#125;</span><br><span class="line">s.erase(k);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="165-版本号比较"><a href="#165-版本号比较" class="headerlink" title="165. 版本号比较"></a>165. 版本号比较</h3><p>难点: </p>
+<ul>
+<li>前导0的处理</li>
+</ul>
+<p>提取符合特定要求的子字符串模式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> j=i;</span><br><span class="line"><span class="keyword">while</span>(j&lt;s.<span class="built_in">size</span>()&amp;&amp;s[j]!=<span class="string">'.'</span>) j++;</span><br></pre></td></tr></table></figure>
+<p><a href="http://www.cplusplus.com/reference/cstdlib/atoi/?kw=atoi" target="_blank" rel="noopener">atoi() 函数用法</a><br><a href="http://www.cplusplus.com/reference/string/string/substr/" target="_blank" rel="noopener">substring()用法</a><br>完整参考代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compareVersion</span><span class="params">(<span class="built_in">string</span> s1, <span class="built_in">string</span> s2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(i&lt;s1.<span class="built_in">size</span>()|| j&lt;s2.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">int</span> x=i,y=j;</span><br><span class="line">            <span class="keyword">while</span>(x&lt;s1.<span class="built_in">size</span>()&amp;&amp;s1[x]!=<span class="string">'.'</span>) x++;</span><br><span class="line">            <span class="keyword">while</span>(y&lt;s2.<span class="built_in">size</span>()&amp;&amp;s2[y]!=<span class="string">'.'</span>) y++;</span><br><span class="line">            <span class="keyword">int</span> a=(x==i)?<span class="number">0</span>:atoi(s1.substr(i,x-i).c_str());</span><br><span class="line">            <span class="keyword">int</span> b=(y==j)?<span class="number">0</span>:atoi(s2.substr(j,y-j).c_str());</span><br><span class="line">            i=x+<span class="number">1</span>; <span class="comment">//jump .</span></span><br><span class="line">            j=y+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(a&lt;b) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">            <span class="keyword">if</span>(a&gt;b) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>两个字符串，两个数组通过<code>while(s1.size()||s2.size())</code>来控制循环流</p>
+<h3 id="929-独特的电子邮件地址"><a href="#929-独特的电子邮件地址" class="headerlink" title="929. 独特的电子邮件地址"></a>929. 独特的电子邮件地址</h3><p>思路：</p>
+<ul>
+<li>分离本地和域名</li>
+<li>按照+，.规则来处理本地</li>
+<li>链接成新的邮件地址 存入到unordered_set<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">numUniqueEmails</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; emails)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_set</span>&lt;<span class="built_in">string</span>&gt; hash_set;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> email:emails)&#123;</span><br><span class="line">            <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span>(email[i]!=<span class="string">'@'</span>) i++;</span><br><span class="line">            <span class="built_in">string</span> local =email.substr(<span class="number">0</span>,i);</span><br><span class="line">            <span class="built_in">string</span> prefix=email.substr(i+<span class="number">1</span>,email.<span class="built_in">size</span>()-i);</span><br><span class="line">            <span class="built_in">string</span> newlocal;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">auto</span> c: local)&#123;</span><br><span class="line">                <span class="keyword">if</span>(c==<span class="string">'+'</span>) <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">if</span>(c!=<span class="string">'.'</span>) newlocal+=c;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">string</span> s=newlocal+<span class="string">'@'</span>+prefix;</span><br><span class="line">            hash_set.insert(s);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> hash_set.<span class="built_in">size</span>();</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+小技巧</li>
+<li>substr() 默认位置到 end() 因此在提取domin 的时候可以简写为<code>email.sub(i+1);</code></li>
+<li>在寻找‘@’ 可以通过 string.find()  <a href="http://www.cplusplus.com/reference/string/string/find/" target="_blank" rel="noopener">http://www.cplusplus.com/reference/string/string/find/</a></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(c==<span class="string">'+'</span>) <span class="keyword">break</span>;</span><br><span class="line"><span class="keyword">if</span>(c!=<span class="string">'.'</span>) newlocal+=c;</span><br></pre></td></tr></table></figure>
+<p>这个是有顺序的，第二次写的时候给疏忽了。</p>
+<h3 id="5-最长回文子串"><a href="#5-最长回文子串" class="headerlink" title="5.最长回文子串"></a>5.最长回文子串</h3><p>思路： 暴力枚举 时间复杂度 O(n*n)</p>
+<ul>
+<li>以中心点 分为奇偶向两边扩展<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">longestPalindrome</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++)</span><br><span class="line">        &#123;   </span><br><span class="line">            <span class="comment">// 对奇数长度</span></span><br><span class="line">            <span class="keyword">for</span>( <span class="keyword">int</span> j=i,k=i;j&gt;=<span class="number">0</span>&amp;&amp;k&lt;s.<span class="built_in">size</span>()&amp;&amp;s[k]==s[j];j--,k++)</span><br><span class="line">                <span class="keyword">if</span>(res.<span class="built_in">size</span>()&lt;k-j+<span class="number">1</span>) res=s.substr(j,k-j+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=i,k=i+<span class="number">1</span>;j&gt;=<span class="number">0</span>&amp;&amp;k&lt;s.<span class="built_in">size</span>()&amp;&amp;s[k]==s[j];j--,k++)</span><br><span class="line">             <span class="keyword">if</span>(res.<span class="built_in">size</span>()&lt;k-j+<span class="number">1</span>) res=s.substr(j,k-j+<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="在这里总结下判断回文字符串的几种常见方法"><a href="#在这里总结下判断回文字符串的几种常见方法" class="headerlink" title="在这里总结下判断回文字符串的几种常见方法"></a>在这里总结下判断回文字符串的几种常见方法</h5></li>
+</ul>
+<ol>
+<li>双指针从首尾向中间靠拢</li>
+<li>从中间向两边，但是需要注意考虑奇偶情况，如果仅仅只是判断单个的字符串是否满足回文<br>这样来做是划不来的，调用<code>reverse()</code>直接将字符串翻转比较</li>
+</ol>
+<p>2020年2月11日</p>
+<h3 id="6-Z字形变换"><a href="#6-Z字形变换" class="headerlink" title="6. Z字形变换"></a>6. Z字形变换</h3><p>这道题目描述有点长，属于一找规律的题目</p>
+<p>关键规律：行数 n<br>自己画一下 Z图发现 首尾行为等差数列 2(n-1)<br>其他行为 两个交错的等差数列 第二个等差数列的首相需要注意下<br>以及对于边界条件的判断 n==1</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">convert</span><span class="params">(<span class="built_in">string</span> s, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//rule 1 for begin row and end</span></span><br><span class="line">            <span class="keyword">if</span>(!i||i==n<span class="number">-1</span>) </span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &lt; s.<span class="built_in">size</span>(); j+=<span class="number">2</span>*(n<span class="number">-1</span>))  res+=s[j];</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i,k=<span class="number">2</span>*(n<span class="number">-1</span>)-i; j &lt; s.<span class="built_in">size</span>()||k&lt;s.<span class="built_in">size</span>(); j+=<span class="number">2</span>*(n<span class="number">-1</span>),k+=<span class="number">2</span>*(n<span class="number">-1</span>))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(j&lt;s.<span class="built_in">size</span>()) res+=s[j];</span><br><span class="line">                <span class="keyword">if</span>(k&lt;s.<span class="built_in">size</span>()) res+=s[k];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;&#125;</span><br><span class="line">        <span class="keyword">return</span> res;   </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="208-前缀树-trie"><a href="#208-前缀树-trie" class="headerlink" title="208.前缀树(trie)"></a>208.前缀树(trie)</h3><p>这个概念之前没有接触过<br>基本数据结构</p>
+<ul>
+<li>根节点不包含字符，除根节点外每一个节点都只包含一个字符。</li>
+<li>从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串。</li>
+<li>每个节点的所有子节点包含的字符都不相同。<br>以该题为例 都是小写字母 则有26个子节点</li>
+</ul>
+<p>每个字符串需要有一个标志结尾，考虑上述因素定义如下数据结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">        <span class="keyword">bool</span> is_end;</span><br><span class="line">        node* son[<span class="number">26</span>];</span><br><span class="line">        node()&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">26</span>;i++) son[i]=<span class="literal">NULL</span>;</span><br><span class="line">            is_end=<span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;*root;</span><br></pre></td></tr></table></figure>
+<p>开始写的时候对面向对象的知识都丢了，不记得怎么来 new 一个对象。。。</p>
+<h3 id="trie-基础"><a href="#trie-基础" class="headerlink" title="trie 基础"></a>trie 基础</h3><p>目的：高效存储和查找字符串集合</p>
+<p>特点：要么都是小写，大写，或者数字</p>
+<p>使用数组来实现trie基本操作</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> son[N][<span class="number">26</span>], cnt[N], idx;</span><br><span class="line"><span class="comment">// 0号点既是根节点，又是空节点</span></span><br><span class="line"><span class="comment">// son[][]存储树中每个节点的子节点</span></span><br><span class="line"><span class="comment">// cnt[]存储以每个节点结尾的单词数量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 插入一个字符串</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> p = <span class="number">0</span>; <span class="comment">//表示从根节点开始遍历</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; str[i]; i ++ ) <span class="comment">//str[i] 作为判断条件 因为 字符串以`0`结尾</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> u = str[i] - <span class="string">'a'</span>; <span class="comment">//求孩子下标index</span></span><br><span class="line">        <span class="keyword">if</span> (!son[p][u]) son[p][u] = ++ idx;<span class="comment">//如果孩子不存在分配新的节点，类比new ，注意是前置++</span></span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    cnt[p] ++ ; <span class="comment">//表示插入字符串个数++</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 查询字符串出现的次数</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">query</span><span class="params">(<span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> p = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; str[i]; i ++ )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> u = str[i] - <span class="string">'a'</span>;</span><br><span class="line">        <span class="keyword">if</span> (!son[p][u]) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt[p];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>trie 不仅能用来存储字符串，也能够存储0-1bit,如下面例子</p>
+<h4 id="421-数组中两个数的最大异或值"><a href="#421-数组中两个数的最大异或值" class="headerlink" title="421. 数组中两个数的最大异或值"></a><a href="https://leetcode-cn.com/problems/maximum-xor-of-two-numbers-in-an-array/" target="_blank" rel="noopener">421. 数组中两个数的最大异或值</a></h4><p>不要觉得构建字典树麻烦，能对时间性能有很大提升。</p>
+<p>思路</p>
+<p>按整数从高位到低位异或比较，在字典树中查找最大的异或对</p>
+<p>这里看起来比较复杂的点在于trie的构建，需要自己定义数据结构</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">    node*son[<span class="number">2</span>];</span><br><span class="line">    node()&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">2</span>;i++) son[i]=<span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">trie</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">        trie()&#123;</span><br><span class="line">            root =<span class="keyword">new</span> node();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//将元素插入到字典树</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">            <span class="keyword">auto</span> p=root;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">31</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">                <span class="keyword">int</span> path=(x&gt;&gt;i)&amp;<span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span>(!p-&gt;son[path]) p-&gt;son[path]=<span class="keyword">new</span> node();</span><br><span class="line">                p=p-&gt;son[path];</span><br><span class="line">            &#125;            </span><br><span class="line">        &#125;</span><br><span class="line">    <span class="comment">//查找x 对应的异或最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> p=root;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">31</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">            <span class="keyword">int</span> path=(x&gt;&gt;i)&amp;<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(p-&gt;son[!path]) &#123;<span class="comment">//优先选相反位 这样异或值最大</span></span><br><span class="line">                res=res*<span class="number">2</span>+!path;</span><br><span class="line">                 p=p-&gt;son[!path]; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">             res=res*<span class="number">2</span>+path;</span><br><span class="line">             p=p-&gt;son[path];&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">        node* root;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findMaximumXOR</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        trie t;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.size();i++)&#123;</span><br><span class="line">            t.insert(nums[i]);</span><br><span class="line">            res=max(res,nums[i]^t.find(nums[i]));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>时间复杂度分析，树的查找时间复杂度为logn, 循环n次，所以整个的时间复杂度为nlogn, 但是题目里面的要求是<strong>O(n)， 如何进一步优化</strong></p>
+<h3 id="1371-每个元音包含偶数次的最长子字符串"><a href="#1371-每个元音包含偶数次的最长子字符串" class="headerlink" title="1371. 每个元音包含偶数次的最长子字符串"></a><a href="https://leetcode-cn.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/" target="_blank" rel="noopener">1371. 每个元音包含偶数次的最长子字符串</a></h3><p>给你一个字符串 s，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 ‘a’，’e’，’i’，’o’，’u’，在子字符串中都恰好出现了偶数次。</p>
+<p>解题思路: 哈希表+状态压缩+前缀和</p>
+<p>将5个元音字母出现次数的奇偶视为一种状态，一共有32种状态，不妨使用一个整数代表状态，第0位为1表示a出现奇数次，第一位为1表示e出现奇数次……以此类推。仅有状态0符合题意。</p>
+<p>而如果子串[0，i]与字串[0,j]状态相同，那么字串[i+1,j]的状态一定是0，因此可以记录每个状态第一次出现的位置，此后再出现该状态时相减即可。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findTheLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=s.size();</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>; <span class="comment">//前缀和-&gt;第一次出现</span></span><br><span class="line">        <span class="built_in">map</span>[<span class="number">0</span>]=<span class="number">-1</span>;</span><br><span class="line">        <span class="built_in">string</span> p=<span class="string">"aeiou"</span>;</span><br><span class="line">        <span class="keyword">int</span> mask=<span class="number">0</span>,res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">5</span>;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(s[i]==p[j])&#123;</span><br><span class="line">                    mask^=<span class="number">1</span>&lt;&lt;j;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">map</span>.count(mask)) res=max(res,i-<span class="built_in">map</span>[mask]);</span><br><span class="line">            <span class="keyword">else</span> <span class="built_in">map</span>[mask]=i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="227-基本计算器-II-加减乘除表达式"><a href="#227-基本计算器-II-加减乘除表达式" class="headerlink" title="227. 基本计算器 II(加减乘除表达式)"></a>227. 基本计算器 II(加减乘除表达式)</h3><p>[-tag stack]</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">calculate</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        s=s+<span class="string">"+0"</span>; <span class="comment">//数据预处理防止  最后一个运算符可能用不到</span></span><br><span class="line">        <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; nums;</span><br><span class="line">        <span class="keyword">int</span> n=s.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">long</span> <span class="keyword">long</span> num=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">char</span> sign=<span class="string">'+'</span>; <span class="comment">//前一个字符 这里由于+/- 优先级最低 初始化</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(s[i]&lt;=<span class="string">'9'</span>&amp;&amp;s[i]&gt;=<span class="string">'0'</span>) num=num*<span class="number">10</span>+s[i]-<span class="string">'0'</span>; <span class="comment">//可能出现符号溢出</span></span><br><span class="line">            <span class="keyword">if</span>(s[i]==<span class="string">'/'</span>||s[i]==<span class="string">'*'</span>||s[i]==<span class="string">'+'</span>||s[i]==<span class="string">'-'</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'+'</span>) nums.push(num);</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'-'</span>)nums.push(-num);</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'*'</span>)&#123;</span><br><span class="line">                    <span class="keyword">int</span> t=nums.top();</span><br><span class="line">                    nums.pop();</span><br><span class="line">                    nums.push(t*num);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'/'</span>)&#123;</span><br><span class="line">                    <span class="keyword">int</span> t=nums.top();</span><br><span class="line">                    nums.pop();</span><br><span class="line">                    nums.push(t/num);</span><br><span class="line">                &#125;</span><br><span class="line">                sign=s[i];</span><br><span class="line">                num=<span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(nums.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="comment">//cout&lt;&lt;nums.top()&lt;&lt;endl;</span></span><br><span class="line">            res+=nums.top();</span><br><span class="line">            nums.pop();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/" rel="prev" title="许知远-罗翔访谈记录">
+      <i class="fa fa-chevron-left"></i> 许知远-罗翔访谈记录
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-无重复字符的最长子串"><span class="nav-number">1.</span> <span class="nav-text">3.无重复字符的最长子串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#方法1-set"><span class="nav-number">1.1.</span> <span class="nav-text">方法1.set</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法2-map"><span class="nav-number">1.2.</span> <span class="nav-text">方法2.map</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CountandSay"><span class="nav-number">2.</span> <span class="nav-text">CountandSay</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#49-字母异位词分组"><span class="nav-number">3.</span> <span class="nav-text">49. 字母异位词分组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#151-翻转字符串中的单词-时间O-n-空间O-1"><span class="nav-number">4.</span> <span class="nav-text">151. 翻转字符串中的单词 时间O(n) 空间O(1)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#联想"><span class="nav-number">4.0.1.</span> <span class="nav-text">联想</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#165-版本号比较"><span class="nav-number">5.</span> <span class="nav-text">165. 版本号比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#929-独特的电子邮件地址"><span class="nav-number">6.</span> <span class="nav-text">929. 独特的电子邮件地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-最长回文子串"><span class="nav-number">7.</span> <span class="nav-text">5.最长回文子串</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#在这里总结下判断回文字符串的几种常见方法"><span class="nav-number">7.0.1.</span> <span class="nav-text">在这里总结下判断回文字符串的几种常见方法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Z字形变换"><span class="nav-number">8.</span> <span class="nav-text">6. Z字形变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#208-前缀树-trie"><span class="nav-number">9.</span> <span class="nav-text">208.前缀树(trie)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trie-基础"><span class="nav-number">10.</span> <span class="nav-text">trie 基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#421-数组中两个数的最大异或值"><span class="nav-number">10.1.</span> <span class="nav-text">421. 数组中两个数的最大异或值</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1371-每个元音包含偶数次的最长子字符串"><span class="nav-number">11.</span> <span class="nav-text">1371. 每个元音包含偶数次的最长子字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#227-基本计算器-II-加减乘除表达式"><span class="nav-number">12.</span> <span class="nav-text">227. 基本计算器 II(加减乘除表达式)</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ddl</p>
+  <div class="site-description" itemprop="description">世间之奇伟瑰怪常在于险远，而人之所罕至也</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ddl-hust" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ddl-hust" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ddl196526@163.com" title="E-Mail → mailto:ddl196526@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.douban.com/people/119649216" title="douban → https:&#x2F;&#x2F;www.douban.com&#x2F;people&#x2F;119649216" rel="noopener" target="_blank"><i class="fa fa-egg fa-fw"></i>douban</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ddl</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'OfKiBLcL985bpR1AySBF4WRH-gzGzoHsz',
+      appKey     : 'b0W5IRpONdP0IQy2TDzoY3Ib',
+      placeholder: "看都看了不留下点什么？",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
