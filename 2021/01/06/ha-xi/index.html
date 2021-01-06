@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="title: 哈希专题date: 2021-01-06 00:00:48tags:categories:  算法笔记   用哈希表(hash table) 常见的场景是用空间换时间  如果求解决方案或者数量，存的一般就是XXX-&gt;数量的映射，eg.560.  如果求的是最长最短等性质 一般存的就是XXX-&gt;下标的映射 525.连续数组">
+<meta property="og:type" content="article">
+<meta property="og:title" content="哈希">
+<meta property="og:url" content="http://yoursite.com/2021/01/06/ha-xi/index.html">
+<meta property="og:site_name" content="DDL&#39;s homepage">
+<meta property="og:description" content="title: 哈希专题date: 2021-01-06 00:00:48tags:categories:  算法笔记   用哈希表(hash table) 常见的场景是用空间换时间  如果求解决方案或者数量，存的一般就是XXX-&gt;数量的映射，eg.560.  如果求的是最长最短等性质 一般存的就是XXX-&gt;下标的映射 525.连续数组">
+<meta property="article:published_time" content="2021-01-06T08:10:12.331Z">
+<meta property="article:modified_time" content="2021-01-06T08:13:15.580Z">
+<meta property="article:author" content="ddl">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/01/06/ha-xi/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>哈希 | DDL's homepage</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="DDL's homepage" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DDL's homepage</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/06/ha-xi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ddl">
+      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DDL's homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          哈希
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-06 16:10:12" itemprop="dateCreated datePublished" datetime="2021-01-06T16:10:12+08:00">2021-01-06</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/01/06/ha-xi/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/06/ha-xi/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <hr>
+<p>title: 哈希专题<br>date: 2021-01-06 00:00:48<br>tags:<br>categories:</p>
+<ul>
+<li>算法笔记</li>
+</ul>
+<hr>
+<p>用哈希表(hash table) 常见的场景是用空间换时间</p>
+<ol>
+<li><p>如果求解决方案或者数量，存的一般就是XXX-&gt;数量的映射，eg.<a href="#560-和为k的子数组">560.</a></p>
+</li>
+<li><p>如果求的是最长最短等性质 一般存的就是XXX-&gt;下标的映射 <a href="#525.连续数组">525.连续数组</a></p>
+</li>
+</ol>
+<a id="more"></a>
+
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><h3 id="560-和为K的子数组"><a href="#560-和为K的子数组" class="headerlink" title="560. 和为K的子数组"></a>560. 和为K的子数组</h3><p><a href="https://leetcode-cn.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener">原题链接</a></p>
+<p>给定一个整数数组和一个整数 k，你需要找到该数组中和为 k 的连续的子数组的个数</p>
+<p>一开始拿到这个题目,想到通过双指针找连续子序列和的方法来做,但是这个题目还是不一样的.<br>但是之前的题目是</p>
+<blockquote>
+<p>输入一个正数s，打印出所有和为s的连续<strong>正数序列</strong>（至少含有两个数）。<br>例如输入15，由于1+2+3+4+5=4+5+6=7+8=15，所以结果打印出3个连续序列1～5、4～6和7～8。</p>
+</blockquote>
+<p>这里有明显的单调性,当移动 i 时,如果此时sum&gt;k,那么就只能够向右移动j,所以我们才能够用双指针来做!!!</p>
+<p>一个感悟:题目做多了容易将很多细微的差别搞混了,同时也很容易乱用方法,没有别的办法,多总结.</p>
+<p>首先看一下暴力做法<br>两重循环,预处理一下前缀和</p>
+<p>为什么能优化，起始这个最开始的想法来自于<code>lc2.sum2</code> 通过hash 空间换时间 来查找之前出现元素的个数</p>
+<p>今天学习了一个更加巧妙的方法 前缀和+哈希</p>
+<p>具体思路:<br>我们很熟悉了 如何去求一段区间和 [l,r]=s[r]-s[l-1]</p>
+<p>我们现在需要求的是和为k的区间个数<code>cnt</code>,如果我们将右区间和<code>sum</code>固定 那么<code>cnt==sum-k</code>的个数</p>
+<p>通过哈希表来存储这样一个键值对{前缀和,出现次数个数}</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">subarraySum</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span> &gt; <span class="built_in">map</span>;</span><br><span class="line">        <span class="built_in">map</span>[<span class="number">0</span>]=<span class="number">1</span>;<span class="comment">//初始前缀和等于0的子串个数为1</span></span><br><span class="line">        <span class="keyword">int</span> sum=<span class="number">0</span>,res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            sum+=c;</span><br><span class="line">            res+=<span class="built_in">map</span>[sum-k];</span><br><span class="line">            <span class="built_in">map</span>[sum]++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="594-最长和谐子序列"><a href="#594-最长和谐子序列" class="headerlink" title="594. 最长和谐子序列"></a>594. 最长和谐子序列</h3><p>和谐数组是指一个数组里元素的最大值和最小值之间的差别正好是1。</p>
+<p>现在，给定一个整数数组，你需要在所有可能的子序列中找到最长的和谐子序列的长度。</p>
+<hr>
+<p>解法1.两次扫描</p>
+<p>思路:</p>
+<ul>
+<li>hash 统计每个数字出现次数</li>
+<li>如果 num+1 在哈希中, 取max(res,hash[num]+hash[num+1])</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findLHS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; hash;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums) hash[c]++;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            <span class="keyword">if</span>(hash.count(c+<span class="number">1</span>)) res=max(res,hash[c]+hash[c+<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>解法2. 单次扫描</p>
+<p>思路</p>
+<p>在之前的基础上改进，假设遍历到数字c,查找哈希表 统计<code>c+1</code>，<code>c-1</code>出现次数，取结果较大值</p>
+<p>这个思路可行在于 ，把问题转化为了以ith结尾的数字c 其最长和谐子序列长度</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findLHS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; hash;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            hash[c]++;</span><br><span class="line">            <span class="keyword">if</span>(hash.count(c+<span class="number">1</span>)) res=max(res,hash[c]+hash[c+<span class="number">1</span>]);</span><br><span class="line">            <span class="keyword">if</span>(hash.count(c<span class="number">-1</span>)) res=max(res,hash[c]+hash[c<span class="number">-1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="205-同构字符串"><a href="#205-同构字符串" class="headerlink" title="205. 同构字符串"></a>205. 同构字符串</h3><h4 id="解法1-hash统计第一次出现的字符位置"><a href="#解法1-hash统计第一次出现的字符位置" class="headerlink" title="解法1.hash统计第一次出现的字符位置"></a>解法1.hash统计第一次出现的字符位置</h4><h4 id="解法2-双射"><a href="#解法2-双射" class="headerlink" title="解法2.双射"></a>解法2.双射</h4><p>两个哈希表存char-&gt;char<br>我们要判断字母之间是否一一对应，即判断 ss 中的相同字母是否对应到 tt 中的相同字母，且 tt 中的相同字母是否对应到 ss 中的相同字母。</p>
+<p>我们用两个哈希表分别存储 ss 到 tt 和 tt 到 ss 的映射关系。<br>然后从前往后扫描字符串，判断相同字符是否都映射到相同字符。</p>
+<p>时间复杂度分析：哈希表的插入、查找操作的时间复杂度是 O(1)，两个字符串均只扫描一遍，所以总时间复杂度是 O(n)。</p>
+<h3 id="290-单词规律"><a href="#290-单词规律" class="headerlink" title="290. 单词规律"></a>290. 单词规律</h3><p>给定一种规律 pattern 和一个字符串 str ，判断 str 是否遵循相同的规律。</p>
+<p>这里的 遵循 指完全匹配，例如， pattern 里的每个字母和字符串 str 中的每个非空单词之间存在着双向连接的对应规律。</p>
+<p>思路同<a href="#205-同构字符串">lc205</a> 一样 ,两种方法都可以</p>
+<ol>
+<li>哈希表存字符(单词)第一次出现的位置</li>
+<li>哈希表分别存 单词-&gt;字符 字符-&gt;单词映射关系</li>
+</ol>
+<p>这里新学到了一点 利用<code>stringstream</code>将”dog cat cat dog” 处理成vector<string></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line"><span class="built_in">string</span> <span class="built_in">line</span>;</span><br><span class="line"><span class="keyword">while</span> (raw &gt;&gt; <span class="built_in">line</span>) strs.push_back(<span class="built_in">line</span>);</span><br></pre></td></tr></table></figure>
+
+<p>完整代码如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">wordPattern</span><span class="params">(<span class="built_in">string</span> pattern, <span class="built_in">string</span> str)</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">ss</span><span class="params">(str)</span></span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; vec;</span><br><span class="line">        <span class="built_in">string</span> line;</span><br><span class="line">        <span class="keyword">while</span>(ss&gt;&gt;line) vec.push_back(line);</span><br><span class="line"></span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="built_in">string</span>&gt; hash1;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="built_in">string</span>,<span class="keyword">char</span>&gt; hash2;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(pattern.size()!=vec.size()) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;pattern.size();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(!hash1.count(pattern[i])) hash1[pattern[i]]=vec[i];</span><br><span class="line">            <span class="keyword">if</span>(!hash2.count(vec[i]))  hash2[vec[i]]=pattern[i];</span><br><span class="line">            <span class="keyword">if</span>(hash1[pattern[i]]!=vec[i]||hash2[vec[i]]!=pattern[i]) <span class="keyword">return</span> <span class="literal">false</span> </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://www.acwing.com/solution/content/335/" target="_blank" rel="noopener">https://www.acwing.com/solution/content/335/</a></p>
+<h3 id="347-前-K-个高频元素"><a href="#347-前-K-个高频元素" class="headerlink" title="347. 前 K 个高频元素"></a>347. 前 K 个高频元素</h3><p>给定一个非空的整数数组，返回其中出现频率前 k 高的元素。</p>
+<p>示例 1:</p>
+<p>输入: nums = [1,1,1,2,2,3], k = 2<br>输出: [1,2]</p>
+<p>面试题经常考</p>
+<h4 id="解法1-hash-sort"><a href="#解法1-hash-sort" class="headerlink" title="解法1.hash+sort"></a>解法1.hash+sort</h4><p>这个思路很直接</p>
+<ul>
+<li>先用hash table 统计词频</li>
+<li>将hash 转化为vector 进行排序(降序)</li>
+<li>返回前k个元素</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">topKFrequent</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums) <span class="built_in">map</span>[c]++;</span><br><span class="line">        <span class="keyword">typedef</span> pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; pii;</span><br><span class="line">        <span class="built_in">vector</span>&lt;pii&gt; vec;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:<span class="built_in">map</span>) vec.push_back(&#123;c.second,c.first&#125;);</span><br><span class="line">        sort(vec.<span class="built_in">begin</span>(),vec.<span class="built_in">end</span>(),greater&lt;pii&gt;());</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;k;i++)&#123;</span><br><span class="line">            res.push_back(vec[i].second);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="解法2-hash-优先队列"><a href="#解法2-hash-优先队列" class="headerlink" title="解法2. hash+优先队列"></a>解法2. hash+优先队列</h4><ul>
+<li><p>topk （前k大）用小根堆，维护堆大小不超过 k 即可。每次压入堆前和堆顶元素比较，如果比堆顶元素还小，直接扔掉，否则压入堆。检查堆大小是否超过 k，如果超过，弹出堆顶。复杂度是<code>nlogk</code></p>
+</li>
+<li><p>避免使用大根堆，因为你得把所有元素压入堆，复杂度是 nlogn，而且还浪费内存。如果是海量元素，那就挂了。<br>[</p>
+</li>
+</ul>
+<p><strong>求前 k 大，用小根堆，求前 k 小，用大根堆</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">topKFrequent</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums, <span class="keyword">int</span> k)</span> </span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; hash;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> x : nums) hash[x] ++;</span><br><span class="line">        priority_queue&lt;pii,<span class="built_in">vector</span>&lt;pii&gt;,greater&lt;pii&gt;&gt; qu; <span class="comment">//建立小根堆</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:hash)&#123;</span><br><span class="line">            qu.push(&#123;c.second,c.first&#125;);</span><br><span class="line">            <span class="keyword">if</span>(qu.<span class="built_in">size</span>()&gt;k) qu.pop();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(qu.<span class="built_in">size</span>())&#123;</span><br><span class="line">            res.push_back(qu.top().second);</span><br><span class="line">            qu.pop();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> res;</span><br></pre></td></tr></table></figure>
+
+<h3 id="面试题50-第一个只出现一次的字符"><a href="#面试题50-第一个只出现一次的字符" class="headerlink" title="面试题50. 第一个只出现一次的字符"></a>面试题50. 第一个只出现一次的字符</h3><p>在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。</p>
+<p>这个算是旧题重写</p>
+<p>一下还没转过来，老想着hash 无序呀，怎么找第一个出现次数为1的字符</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> <span class="title">firstUniqChar</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:s) <span class="built_in">map</span>[c]++;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:s) <span class="keyword">if</span>(<span class="built_in">map</span>[c]==<span class="number">1</span>) <span class="keyword">return</span> c;  <span class="comment">//hash虽然无序  按照字符串的顺序遍历就ok，map是无序的</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">' '</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="增强版-字节流动态查找-tag-queue"><a href="#增强版-字节流动态查找-tag-queue" class="headerlink" title="增强版 字节流动态查找  [-tag queue]"></a>增强版 字节流动态查找  [-tag queue]</h4><p>请实现一个函数用来找出字符流中第一个只出现一次的字符。</p>
+<p>例如，当从字符流中只读出前两个字符”go”时，第一个只出现一次的字符是’g’。</p>
+<p>当从该字符流中读出前六个字符<code>”google”</code>时，第一个只出现一次的字符是’l’。</p>
+<p>如果当前字符流没有存在出现一次的字符返回#字符。</p>
+<p><strong>时间复杂度</strong> 均摊O(n)</p>
+<p>思路<br>为什么能想到?<br>如果还是按照上上一题的做法,那么每查找一次就是O(n)，查找n次就是O(n^2)<br>于是我们需要优化, 一般这种优化不是双指针利用单调性就是用一些特殊的数据结构比如单调队列，单调栈</p>
+<p>这道题目能用到单调性的原因:</p>
+<p>假设我们有一个指针<code>index</code>指向第一次出现次数为1的元素,<strong>当我们再插入元素,index 只可能往后走，不可能往前走</strong><br>反正法: 如果index 可以往前走， 根据其含义,就违背了<code>index</code>指向的当前位置为第一次出现次数为1的元素</p>
+<p>用一个hash 记录出现的次数<br>queue<char> 按照流的顺序来保存<br>维护这样一个队列: 队首就是第一次出现一次的字符,一旦不满足要求,就pop队首</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt;<span class="built_in">map</span>;</span><br><span class="line">    <span class="built_in">queue</span>&lt;<span class="keyword">char</span>&gt; qu;</span><br><span class="line"><span class="comment">//动态插入维护一个queue</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">char</span> ch)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(++<span class="built_in">map</span>[ch]&gt;<span class="number">1</span>)&#123;</span><br><span class="line">            <span class="keyword">while</span>(qu.<span class="built_in">size</span>()&amp;&amp;<span class="built_in">map</span>[qu.front()]&gt;<span class="number">1</span>) qu.pop(); <span class="comment">//队列不为空&amp;&amp;队首元素出现的次数&gt;1</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> qu.push(ch);</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="525-连续数组"><a href="#525-连续数组" class="headerlink" title="525. 连续数组"></a>525. 连续数组</h3><p>给定一个二进制数组, 找到含有相同数量的 0 和 1 的最长连续子数组（的长度）</p>
+<p>思路</p>
+<ol>
+<li>将问题转化为求区间和为0 的最长值： 具体做法 遇到0加-1</li>
+<li>开一个哈希表存储前缀和sum-&gt;index 映射 ,即第一次出现这个前缀和的下标</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//问题在转化为 求最长连续子数组和为0</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findMaxLength</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>; <span class="comment">// 前缀和-&gt;首次出现下标</span></span><br><span class="line">        <span class="built_in">map</span>[<span class="number">0</span>]=<span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">int</span> s=<span class="number">0</span>,res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            s+=nums[i]?<span class="number">1</span>:<span class="number">-1</span>;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">map</span>.count(s)) res=<span class="built_in">max</span>(res,i-<span class="built_in">map</span>[s]); <span class="comment">//</span></span><br><span class="line">            <span class="keyword">else</span> <span class="built_in">map</span>[s]=i; <span class="comment">//如果不存在说明这个前缀和第一次出现 记录下</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="349-350-数组交集"><a href="#349-350-数组交集" class="headerlink" title="349/350. 数组交集"></a>349/350. 数组交集</h3><p>349.给定两个数组，编写一个函数来计算它们的交集。</p>
+<p>示例 1:</p>
+<p>输入:<code>nums1 = [1,2,2,1], nums2 = [2,2]</code><br>输出: [2]<br>350 输出[2,2]</p>
+<p>选择合适的数据结构是解决问题的关键</p>
+<p>对于349. 输出的每个元素是唯一的 数据结构用<code>unordered_set</code></p>
+<p>350 输出的元素可能重复, 选用<code>unordered_multiset</code><br>注意在<code>mutli</code>里面如何删除一个特定的元素，而不是将其所有都删除</p>
+<p>迭代器删除特定的元素， 就好像string 里面的erase() 可以范围删除(输入迭代器范围),也可以删除单个元素</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">intersect</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums1, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums2)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_multiset</span>&lt;<span class="keyword">int</span>&gt;st;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums1) st.insert(c);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums2)&#123;</span><br><span class="line">            <span class="keyword">if</span>(st.count(c))&#123;</span><br><span class="line">                <span class="keyword">auto</span> it=st.<span class="built_in">find</span>(c); <span class="comment">//查找迭代器</span></span><br><span class="line">                res.push_back(c);</span><br><span class="line">                st.erase(it);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br></pre></td></tr></table></figure>
+<h3 id="187-重复的DNA序列"><a href="#187-重复的DNA序列" class="headerlink" title="187. 重复的DNA序列"></a>187. 重复的DNA序列</h3><p>所有 DNA 都由一系列缩写为 A，C，G 和 T 的核苷酸组成，例如：“ACGAATTCCG”。在研究 DNA 时，识别 DNA 中的重复序列有时会对研究非常有帮助。</p>
+<p>编写一个函数来查找 DNA 分子中所有出现超过一次的 10 个字母长的序列（子串）。</p>
+<p>示例：</p>
+<p>输入：<code>s = &quot;AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT&quot;</code><br>输出：<code>[&quot;AAAAACCCCC&quot;, &quot;CCCCCAAAAA&quot;]</code><br><strong>思路</strong><br>遍历字符串s, 提取长度为10的子串str,依次存到哈希表中,如果 <code>++hash[str]==2</code> 就找到了一个满足要求的子串</p>
+<p>这个处理真的很妙,++res==2 找到了满足要求的解，但是又不会重复将解push，省去了后面去重.</p>
+<h3 id="554-砖墙"><a href="#554-砖墙" class="headerlink" title="554. 砖墙"></a>554. 砖墙</h3><p>这个题目就绕了一点,需要做一下问题的转化 将穿过最少砖块转化为最大砖块重合</p>
+<p>还有一点特别要<strong>注意你不能沿着墙的两个垂直边缘之一画线，这样显然是没有穿过一块砖的。</strong></p>
+<p><strong>思路</strong><br>对砖块的每一行, 求到当前砖块的前缀和,哈希表存前缀和-&gt;出现次数 映射<br>前缀和出现次数最多表示每一行在当前位置重合的砖块最多</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">leastBricks</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt;&amp; wall)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt;<span class="built_in">map</span>;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> blocks:wall)&#123;</span><br><span class="line">            <span class="keyword">int</span> s=<span class="number">0</span>; <span class="comment">//求每一行的前缀和</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i+<span class="number">1</span>&lt;blocks.<span class="built_in">size</span>();i++)&#123; <span class="comment">//i+1&lt;size 避免沿着墙的右边缘</span></span><br><span class="line">                s+=blocks[i];</span><br><span class="line">                res=<span class="built_in">max</span>(res,++<span class="built_in">map</span>[s]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> wall.<span class="built_in">size</span>()-res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1371-每个元音包含偶数次的最长子字符串"><a href="#1371-每个元音包含偶数次的最长子字符串" class="headerlink" title="1371. 每个元音包含偶数次的最长子字符串"></a><a href="https://leetcode-cn.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/" target="_blank" rel="noopener">1371. 每个元音包含偶数次的最长子字符串</a></h3><p>给你一个字符串 <code>s</code> ，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 ‘a’，’e’，’i’，’o’，’u’ ，在子字符串中都恰好出现了偶数次。</p>
+<ul>
+<li>为啥<code>hash[0]=-1</code></li>
+</ul>
+<p>这是用哈希表存储val-&gt;index 套路做法</p>
+<p>原因在于  区间<code>[l,r]</code>和为<code>s[r]-s[l-1]</code>  当<code>r==l==0</code>  即  <code>nums[0]=s[0]-s[-1]</code>  所以有<code>s[-1]=0</code> </p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findTheLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; hash; <span class="comment">// state code-&gt;index</span></span><br><span class="line">        hash[<span class="number">0</span>]=<span class="number">-1</span>; </span><br><span class="line">        <span class="built_in">string</span> nums=<span class="string">"aeiou"</span>;</span><br><span class="line">        <span class="keyword">int</span> st=<span class="number">0</span>,res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;s.size();i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">5</span>;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(s[i]==nums[j])&#123;</span><br><span class="line">                    st^=<span class="number">1</span>&lt;&lt;j;<span class="comment">//异或 1^1=0 0^1=1 不进位加法</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">           <span class="comment">// cout&lt;&lt;"i:"&lt;&lt;i&lt;&lt;"  state code:"&lt;&lt;st&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(hash.count(st))  res=max(res,i-hash[st]); <span class="comment">// 表示区间段 st为0 即元音出现次数为偶数</span></span><br><span class="line">            <span class="keyword">else</span> hash[st]=i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/06/zi-fu-chuan/" rel="prev" title="字符串专题">
+      <i class="fa fa-chevron-left"></i> 字符串专题
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#560-和为K的子数组"><span class="nav-number">2.</span> <span class="nav-text">560. 和为K的子数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#594-最长和谐子序列"><span class="nav-number">3.</span> <span class="nav-text">594. 最长和谐子序列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#205-同构字符串"><span class="nav-number">4.</span> <span class="nav-text">205. 同构字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解法1-hash统计第一次出现的字符位置"><span class="nav-number">4.1.</span> <span class="nav-text">解法1.hash统计第一次出现的字符位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解法2-双射"><span class="nav-number">4.2.</span> <span class="nav-text">解法2.双射</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#290-单词规律"><span class="nav-number">5.</span> <span class="nav-text">290. 单词规律</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#347-前-K-个高频元素"><span class="nav-number">6.</span> <span class="nav-text">347. 前 K 个高频元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解法1-hash-sort"><span class="nav-number">6.1.</span> <span class="nav-text">解法1.hash+sort</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解法2-hash-优先队列"><span class="nav-number">6.2.</span> <span class="nav-text">解法2. hash+优先队列</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面试题50-第一个只出现一次的字符"><span class="nav-number">7.</span> <span class="nav-text">面试题50. 第一个只出现一次的字符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#增强版-字节流动态查找-tag-queue"><span class="nav-number">7.1.</span> <span class="nav-text">增强版 字节流动态查找  [-tag queue]</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#525-连续数组"><span class="nav-number">8.</span> <span class="nav-text">525. 连续数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#349-350-数组交集"><span class="nav-number">9.</span> <span class="nav-text">349&#x2F;350. 数组交集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#187-重复的DNA序列"><span class="nav-number">10.</span> <span class="nav-text">187. 重复的DNA序列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#554-砖墙"><span class="nav-number">11.</span> <span class="nav-text">554. 砖墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1371-每个元音包含偶数次的最长子字符串"><span class="nav-number">12.</span> <span class="nav-text">1371. 每个元音包含偶数次的最长子字符串</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ddl</p>
+  <div class="site-description" itemprop="description">世间之奇伟瑰怪常在于险远，而人之所罕至也</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ddl-hust" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ddl-hust" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ddl196526@163.com" title="E-Mail → mailto:ddl196526@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.douban.com/people/119649216" title="douban → https:&#x2F;&#x2F;www.douban.com&#x2F;people&#x2F;119649216" rel="noopener" target="_blank"><i class="fa fa-egg fa-fw"></i>douban</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ddl</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'OfKiBLcL985bpR1AySBF4WRH-gzGzoHsz',
+      appKey     : 'b0W5IRpONdP0IQy2TDzoY3Ib',
+      placeholder: "看都看了不留下点什么？",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
