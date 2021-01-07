@@ -20,16 +20,18 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-<meta property="og:type" content="website">
-<meta property="og:title" content="DDL&#39;s homepage">
-<meta property="og:url" content="http://yoursite.com/archives/2020/12/index.html">
+  <meta name="description" content="问题 clash 电脑端所有节点time out 分析 电脑端最近才出现了clash 代理节点全部time out ,手机端访问正常，最近的一些操作可能导致网络问题的  win10 开启了wsl 安装了ubuntu20.20 导致双系统时间不统一  修改hosts 添加了github域名解析(这个我觉得应该没有影响)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="clash节点time out解决">
+<meta property="og:url" content="http://yoursite.com/2021/01/07/clash-jie-dian-time-out-jie-jue/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
-<meta property="og:description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
+<meta property="og:description" content="问题 clash 电脑端所有节点time out 分析 电脑端最近才出现了clash 代理节点全部time out ,手机端访问正常，最近的一些操作可能导致网络问题的  win10 开启了wsl 安装了ubuntu20.20 导致双系统时间不统一  修改hosts 添加了github域名解析(这个我觉得应该没有影响)">
+<meta property="article:published_time" content="2021-01-07T03:12:38.296Z">
+<meta property="article:modified_time" content="2021-01-07T03:17:29.978Z">
 <meta property="article:author" content="ddl">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/archives/2020/12/">
+<link rel="canonical" href="http://yoursite.com/2021/01/07/clash-jie-dian-time-out-jie-jue/">
 
 
 <script id="page-configurations">
@@ -37,12 +39,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-Hans'
   };
 </script>
 
-  <title>归档 | DDL's homepage</title>
+  <title>clash节点time out解决 | DDL's homepage</title>
   
 
 
@@ -184,136 +186,127 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/01/07/clash-jie-dian-time-out-jie-jue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ddl">
+      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DDL's homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          clash节点time out解决
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-07 11:12:38" itemprop="dateCreated datePublished" datetime="2021-01-07T11:12:38+08:00">2021-01-07</time>
+            </span>
+
+          
   
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 27 篇日志。 继续努力。</span>
-      </div>
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/01/07/clash-jie-dian-time-out-jie-jue/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/07/clash-jie-dian-time-out-jie-jue/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
+        <p><strong>问题</strong></p>
+<p>clash 电脑端所有节点time out</p>
+<p><strong>分析</strong></p>
+<p>电脑端最近才出现了clash 代理节点全部time out ,手机端访问正常，最近的一些操作可能导致网络问题的</p>
+<ul>
+<li><p>win10 开启了wsl 安装了ubuntu20.20 导致双系统时间不统一</p>
+</li>
+<li><p>修改hosts 添加了github域名解析(这个我觉得应该没有影响)</p>
+</li>
+</ul>
+<a id="more"></a>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-29T08:54:46+08:00"
-              content="2020-12-29">
-          12-29
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/" itemprop="url">
-            <span itemprop="name">许知远-罗翔访谈记录</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-28T22:42:09+08:00"
-              content="2020-12-28">
-          12-28
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/28/duo-zhua-yu-cai-fang/" itemprop="url">
-            <span itemprop="name">多抓鱼采访</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-23T19:55:39+08:00"
-              content="2020-12-23">
-          12-23
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/23/gua-he-fan-fu-kan-de-ji-zhu-ru-men-jiao-cheng/" itemprop="url">
-            <span itemprop="name">适合反复看的技术入门教程</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-17T14:36:29+08:00"
-              content="2020-12-17">
-          12-17
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/17/peter-thiel-s-religion-david-perell/" itemprop="url">
-            <span itemprop="name">Peter Thiel's Religion — David Perell</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-10T16:38:24+08:00"
-              content="2020-12-10">
-          12-10
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/10/bash-xue-xi/" itemprop="url">
-            <span itemprop="name">bash学习</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+<p>尝试解决方法:</p>
+<ol>
+<li><p>一开始发现时间是同步的，然后卸载了wsl 中的ubuntu 发现还是不对</p>
+</li>
+<li><p>关闭了wsl 虚拟网卡，没有效果</p>
+</li>
+<li><p>开启了cfw(clash for windows)    让所有流量走clash 代理， 这个还是不行</p>
+</li>
+<li><p>认为是clash windows 客户端问题， 于是换成了v2rayN 更新服务之后， 突然发现电脑时间和手机时间差了4分钟</p>
+</li>
+<li><p>手动同步windows 时间， clash 节点time out问题解决</p>
+</li>
+</ol>
+<p><strong>回顾</strong></p>
+<p>实际上发现win10 上次同步时间成功为2020/12/29 ，这里本身就有问题，当时不够敏锐，一通瞎尝试，最后还是回到了时钟同步这个点，</p>
+<blockquote>
+<p>时钟同步出问题，为什么会导致服务失效，什么验证机制起作用？</p>
+</blockquote>
+<p>电脑端自动同步服务还是失败，参考 <a href="https://answers.microsoft.com/zh-hans/windows/forum/windows_10-networking-win_phone/win10%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5%E5%87%BA/558c1f25-30ce-49b6-88b1-390b6c7e74b6" target="_blank" rel="noopener">win10时间同步出错</a> 问题并没有解决</p>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/06/2020-nian-du-zong-jie/" rel="prev" title="2020年度总结">
+      <i class="fa fa-chevron-left"></i> 2020年度总结
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {

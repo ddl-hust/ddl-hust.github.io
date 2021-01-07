@@ -1809,7 +1809,7 @@
 </ol>
 <h4 id="读书"><a href="#读书" class="headerlink" title="读书"></a>读书</h4><p>今年看了不少书，主要集中12月份在微信读书上看的，说来也奇怪，疫情期间在家里并没有怎么看书，那时候整个人都很焦虑。</p>
 <p><strong>《余英时回忆录》</strong> 疫情期间在家看的，没有合适的电子资源，最后看的竖版繁体，当时还找了各种工具倒腾，琢磨怎么把竖版转化为横版，最后放弃了，直接开干。因为看的很慢，所以印象很深刻。</p>
-<p><strong>《带一本书去巴黎》，《历史在你我身边》</strong> 林达的散文系列，在大的时代背景下写个人的命运变迁，希特勒的秘书，文革时期的拳王这几个故事对我的触动很大。其次我对甘地的了解又多了一点，一句“圣雄甘地”概括了太多，但是甘地对子女，以及“非暴力抵抗”所造成的不好一面有了新的了解。</p>
+<p><strong>《带一本书去巴黎》，《历史在你我身边》</strong> 林达的散文系列，在大的时代背景下写个人的命运变迁，希特勒的秘书，文革时期的拳王这几个故事对我的触动很大。我对甘地的了解又多了一点，以前一句“圣雄甘地”概括了太多，通过《历史》这本书对甘地和子女，以及“非暴力抵抗”所造成的不好一面有了新的了解。</p>
 <p><strong>《蝇王》</strong> 听一起播客提到的，感触不是很大，小孩子在没有规则约束下所展现的恶。</p>
 <p><strong>《把自己作为方法》</strong>人类学家项飙的一本访谈录</p>
 <blockquote>
@@ -1842,5 +1842,41 @@
       <tags>
         <tag>总结</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>clash节点time out解决</title>
+    <url>/2021/01/07/clash-jie-dian-time-out-jie-jue/</url>
+    <content><![CDATA[<p><strong>问题</strong></p>
+<p>clash 电脑端所有节点time out</p>
+<p><strong>分析</strong></p>
+<p>电脑端最近才出现了clash 代理节点全部time out ,手机端访问正常，最近的一些操作可能导致网络问题的</p>
+<ul>
+<li><p>win10 开启了wsl 安装了ubuntu20.20 导致双系统时间不统一</p>
+</li>
+<li><p>修改hosts 添加了github域名解析(这个我觉得应该没有影响)</p>
+</li>
+</ul>
+<a id="more"></a>
+
+<p>尝试解决方法:</p>
+<ol>
+<li><p>一开始发现时间是同步的，然后卸载了wsl 中的ubuntu 发现还是不对</p>
+</li>
+<li><p>关闭了wsl 虚拟网卡，没有效果</p>
+</li>
+<li><p>开启了cfw(clash for windows)    让所有流量走clash 代理， 这个还是不行</p>
+</li>
+<li><p>认为是clash windows 客户端问题， 于是换成了v2rayN 更新服务之后， 突然发现电脑时间和手机时间差了4分钟</p>
+</li>
+<li><p>手动同步windows 时间， clash 节点time out问题解决</p>
+</li>
+</ol>
+<p><strong>回顾</strong></p>
+<p>实际上发现win10 上次同步时间成功为2020/12/29 ，这里本身就有问题，当时不够敏锐，一通瞎尝试，最后还是回到了时钟同步这个点，</p>
+<blockquote>
+<p>时钟同步出问题，为什么会导致服务失效，什么验证机制起作用？</p>
+</blockquote>
+<p>电脑端自动同步服务还是失败，参考 <a href="https://answers.microsoft.com/zh-hans/windows/forum/windows_10-networking-win_phone/win10%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5%E5%87%BA/558c1f25-30ce-49b6-88b1-390b6c7e74b6" target="_blank" rel="noopener">win10时间同步出错</a> 问题并没有解决</p>
+]]></content>
   </entry>
 </search>

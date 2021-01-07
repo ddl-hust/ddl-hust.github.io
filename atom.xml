@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2021-01-06T13:26:56.215Z</updated>
+  <updated>2021-01-07T03:17:29.978Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,37 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>clash节点time out解决</title>
+    <link href="http://yoursite.com/2021/01/07/clash-jie-dian-time-out-jie-jue/"/>
+    <id>http://yoursite.com/2021/01/07/clash-jie-dian-time-out-jie-jue/</id>
+    <published>2021-01-07T03:12:38.296Z</published>
+    <updated>2021-01-07T03:17:29.978Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;clash 电脑端所有节点time out&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;分析&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;电脑端最近才出现了clash 代理节点全部time out ,手机端访问正常，最近的一些操作可能导致网络问题的&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;win10 开启了wsl 安装了ubuntu20.20 导致双系统时间不统一&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;修改hosts 添加了github域名解析(这个我觉得应该没有影响)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>2020年度总结</title>
     <link href="http://yoursite.com/2021/01/06/2020-nian-du-zong-jie/"/>
     <id>http://yoursite.com/2021/01/06/2020-nian-du-zong-jie/</id>
     <published>2021-01-06T12:21:41.076Z</published>
-    <updated>2021-01-06T13:26:56.215Z</updated>
+    <updated>2021-01-07T02:56:09.489Z</updated>
     
     <summary type="html">
     
@@ -438,33 +464,6 @@
     
     
       <category term="算法" scheme="http://yoursite.com/categories/%E7%AE%97%E6%B3%95/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>shared_from_this解决了什么问题</title>
-    <link href="http://yoursite.com/2020/06/02/shared-from-this-jie-jue-liao-shi-me-wen-ti/"/>
-    <id>http://yoursite.com/2020/06/02/shared-from-this-jie-jue-liao-shi-me-wen-ti/</id>
-    <published>2020-06-02T05:39:07.000Z</published>
-    <updated>2020-06-07T23:57:22.596Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-
-&lt;p&gt;enable_shared_from_this
-        
-      
-    
-    </summary>
-    
-    
-      <category term="C++" scheme="http://yoursite.com/categories/C/"/>
     
     
   </entry>
