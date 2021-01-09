@@ -23,7 +23,7 @@
   <meta name="description" content="背景 tcp抓包发现服务端回复ack存在40ms左右延迟  问题排查过程 通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：客户端开启nagle算法+服务端延迟ack，延迟ack的超时时间为40ms。 先介绍下重要的概念 delay ack 在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互">
 <meta property="og:type" content="article">
 <meta property="og:title" content="tcp40ms延迟问题分析">
-<meta property="og:url" content="https://hustddl.com/child/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/index.html">
+<meta property="og:url" content="https://hustddl.com/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
 <meta property="og:description" content="背景 tcp抓包发现服务端回复ack存在40ms左右延迟  问题排查过程 通过查阅资料发现tcp40ms延迟不是一个偶然的现象。先给出结论：客户端开启nagle算法+服务端延迟ack，延迟ack的超时时间为40ms。 先介绍下重要的概念 delay ack 在TCP建立连接之后，最开始的数据交互是处于quick ack mode,顾名思义就是当对端收到数据立马就会回复ack。在接下来的数据交互">
 <meta property="og:image" content="https://s1.ax1x.com/2020/08/17/dmqEqK.png">
@@ -34,7 +34,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s1.ax1x.com/2020/08/17/dmqEqK.png">
 
-<link rel="canonical" href="https://hustddl.com/child/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/">
+<link rel="canonical" href="https://hustddl.com/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/">
 
 
 <script id="page-configurations">
@@ -196,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/child/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/">
+    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
