@@ -17,13 +17,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"hustddl.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="linux网络协议栈学习小结">
 <meta property="og:type" content="article">
 <meta property="og:title" content="网络协议栈收包过程小结">
-<meta property="og:url" content="http://yoursite.com/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/index.html">
+<meta property="og:url" content="https://hustddl.com/child/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
 <meta property="og:description" content="linux网络协议栈学习小结">
 <meta property="og:image" content="https://s1.ax1x.com/2020/08/08/a42rFO.png">
@@ -40,7 +40,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s1.ax1x.com/2020/08/08/a42rFO.png">
 
-<link rel="canonical" href="http://yoursite.com/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/">
+<link rel="canonical" href="https://hustddl.com/child/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/">
 
 
 <script id="page-configurations">
@@ -202,7 +202,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/">
+    <link itemprop="mainEntityOfPage" href="https://hustddl.com/child/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -282,7 +282,7 @@
 <li><code>bind()</code>绑定套接字</li>
 <li><code>listen()</code>监听套接字</li>
 </ul>
-<p>这里详细参考我的这篇文章   <a href="https://hustddl.com/2020/08/08/socket%E4%BB%8E%E5%88%9B%E5%BB%BA%E5%88%B0%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/#more" target="_blank" rel="noopener">socket从创建到连接过程小结</a></p>
+<p>这里详细参考我的这篇文章   <a href="https://hustddl.com/2020/08/08/socket%E4%BB%8E%E5%88%9B%E5%BB%BA%E5%88%B0%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/#more">socket从创建到连接过程小结</a></p>
 <h4 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h4><p>TCP 栈简要过程：</p>
 <ol>
 <li><p>tcp_sendmsg 函数会首先检查已经建立的 TCP connection 的状态，然后获取该连接的 MSS，开始 segement 发送流程。</p>
@@ -533,6 +533,9 @@
       </span>
       <span class="links-of-author-item">
         <a href="https://www.douban.com/people/119649216" title="douban → https:&#x2F;&#x2F;www.douban.com&#x2F;people&#x2F;119649216" rel="noopener" target="_blank"><i class="fa fa-egg fa-fw"></i>douban</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="rss fa-fw"></i>RSS</a>
       </span>
   </div>
 
