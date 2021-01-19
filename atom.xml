@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://hustddl.com/"/>
-  <updated>2021-01-07T03:26:35.039Z</updated>
+  <updated>2021-01-19T08:56:42.596Z</updated>
   <id>https://hustddl.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>禅与摩托车维修艺术</title>
+    <link href="https://hustddl.com/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/"/>
+    <id>https://hustddl.com/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</id>
+    <published>2021-01-19T08:58:21.984Z</published>
+    <updated>2021-01-19T08:56:42.596Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;ul&gt;
+&lt;li&gt;谈科学研究现状&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>clash节点time out解决</title>
@@ -439,26 +466,6 @@
     <summary type="html">
     
       &lt;p&gt;滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="算法" scheme="https://hustddl.com/categories/%E7%AE%97%E6%B3%95/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>数据流算法题目小结</title>
-    <link href="https://hustddl.com/2020/06/09/shu-ju-liu-suan-fa-ti-mu-xiao-jie/"/>
-    <id>https://hustddl.com/2020/06/09/shu-ju-liu-suan-fa-ti-mu-xiao-jie/</id>
-    <published>2020-06-09T00:09:21.000Z</published>
-    <updated>2020-06-09T05:08:24.019Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为&lt;code&gt;O(n)&lt;/code&gt;,这样往往造成TLE&lt;/p&gt;
-&lt;p&gt;通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 &lt;code&gt;logn&lt;/code&gt;&lt;/p&gt;
     
     </summary>
     
