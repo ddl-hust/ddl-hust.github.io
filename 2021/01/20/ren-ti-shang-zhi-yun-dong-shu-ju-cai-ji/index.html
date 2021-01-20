@@ -20,18 +20,22 @@
     var CONFIG = {"hostname":"hustddl.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="谈科学研究现状   在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他们的野心。有一些人则完全是为了实用的目的，而将自己思考的产物献在祭坛上。如果上帝派来的天使将上面两种人从殿里驱逐出去，那么殿里显然会空旷许多，但是里面仍然会住着一批古今人物……如果殿里本">
+  <meta name="description" content="实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="禅与摩托车维修艺术">
-<meta property="og:url" content="https://hustddl.com/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/index.html">
+<meta property="og:title" content="人体上肢自然运动数据采集">
+<meta property="og:url" content="https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
-<meta property="og:description" content="谈科学研究现状   在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他们的野心。有一些人则完全是为了实用的目的，而将自己思考的产物献在祭坛上。如果上帝派来的天使将上面两种人从殿里驱逐出去，那么殿里显然会空旷许多，但是里面仍然会住着一批古今人物……如果殿里本">
-<meta property="article:published_time" content="2021-01-19T08:58:21.984Z">
-<meta property="article:modified_time" content="2021-01-19T08:56:42.596Z">
+<meta property="og:description" content="实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。">
+<meta property="og:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120145436.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120144628.png">
+<meta property="article:published_time" content="2021-01-19T16:00:48.000Z">
+<meta property="article:modified_time" content="2021-01-20T07:16:25.408Z">
 <meta property="article:author" content="ddl">
+<meta property="article:tag" content="机器人">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120145436.png">
 
-<link rel="canonical" href="https://hustddl.com/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/">
+<link rel="canonical" href="https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/">
 
 
 <script id="page-configurations">
@@ -44,7 +48,7 @@
   };
 </script>
 
-  <title>禅与摩托车维修艺术 | DDL's homepage</title>
+  <title>人体上肢自然运动数据采集 | DDL's homepage</title>
   
 
 
@@ -193,7 +197,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/">
+    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -206,7 +210,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          禅与摩托车维修艺术
+          人体上肢自然运动数据采集
         </h1>
 
         <div class="post-meta">
@@ -216,7 +220,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-01-19 16:58:21" itemprop="dateCreated datePublished" datetime="2021-01-19T16:58:21+08:00">2021-01-19</time>
+              <time title="创建时间：2021-01-20 00:00:48" itemprop="dateCreated datePublished" datetime="2021-01-20T00:00:48+08:00">2021-01-20</time>
             </span>
 
           
@@ -228,8 +232,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -244,33 +248,31 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <ul>
-<li>谈科学研究现状</li>
-</ul>
-<blockquote>
-<p>在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他们的野心。有一些人则完全是为了实用的目的，而将自己思考的产物献在祭坛上。如果上帝派来的天使将上面两种人从殿里驱逐出去，那么殿里显然会空旷许多，但是里面仍然会住着一批古今人物……如果殿里本来只住着前述两种人，那么如今的它就只不过是一座空木屋，只有四处攀爬的蔓草……那些得到天使青睐的人……有些古怪、沉默和孤独，除了同是不受欢迎的人之外，彼此之间少有相似之处。</p>
-</blockquote>
-<p>这不仅仅适用于科学研究领域的现状，当下计算机甚至各行各业，大部分人都谈不上真正热爱，只想讨饭吃，但是一个推动一个行业前进的可能就只是前面那1%的少数人</p>
-<ul>
-<li>谈少有人走的路</li>
-</ul>
-<blockquote>
-<p>“好像我们身后山谷里的那些人，大部分望着灵性的高峰，但是一生从来不曾攀上去过，只是听听别人的经验就已经满足，而自己不愿意花费任何心血。另一些人则是靠着有经验的向导，他们知道最安全的路，因而能够顺利到达他们的目的地。但是还有另外一批人，不但没有经验，而且不太相信别人的经验，想要走出自己的路。其中很少有人能成功，但是总有一些靠着自己的意志、运气，还有上天的恩典而做到了。那些成功的人要比别人明白，其实登山并没有唯一或是固定的路线，有多少这样的人就有多少条路。”</p>
-</blockquote>
-<p>古人之观于天地、山川、草木、虫鱼、鸟兽，往往有得，以其求思之深而无不在也。夫夷以近，则游者众；险以远，则至者少。而世之奇伟、瑰怪，非常之观，常在于险远，而人之所罕至焉，故非有志者不能至也。有志矣，不随以止也，然力不足者，亦不能至也。有志与力，而又不随以怠，至于幽暗昏惑而无物以相之，亦不能至也。然力足以至焉，于人为可讥，而在己为有悔；尽吾志也而不能至者，可以无悔矣，其孰能讥之乎？此余之所得也！</p>
-<ul>
-<li>谈教育</li>
-</ul>
-<blockquote>
-<p>这个学生最大的问题就是，因为多年来胡萝卜和鞭子的教育方式，造成了他思考上的惰性。就好像一头驴子：“如果你不打我，我就不工作。”如果没有人鞭打他，他就不会努力工作。而训练他去拉的文明的车子，很可能就会因此而走慢了一点。</p>
-</blockquote>
-<blockquote>
-<p>于是他就会回到没有分数也没有学位的学校里，这时他变了，不再为分数而来，而是为了追求真正的知识。他不需要别人强迫他去学习，他的动力来自于内在。这个时候，他就是一个自由的人，他不需要许多规章制度的督促。事实上，如果老师上课的态度松懈，他倒可能会唐突地问许多问题去督促老师。他来这儿是要学东西的，并且付了钱，那么老师们最好也不要懈怠。</p>
-</blockquote>
-<blockquote>
-<p>他真正的想法是，这些规则是作品写好之后才归纳出来的，作者不是依照这些原则来写作的。他最后终于确信，这些学生想模仿的作家，根本就没有所谓的原则，只是把他们认为对的东西写下来，然后再回头看看是否有问题，如果修辞不妥，可以再修“</p>
-</blockquote>
-<p>这一点我深以为然，写作技巧层面的东西，一开始都没有那么重要，切记不要做过早优化(<strong>premature optimization is the root of all evil</strong>)， 写作，写播客，刷题等等一开始都需要先搞起来，没有原始积累，谈技巧都是耍流氓。</p>
+        <p>实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。</p>
+<a id="more"></a>
+
+<p>基本思路是通过离散人上肢可达操作空间，然后采点，多次测量人手掌中心到采样点的运动轨迹，但空间中直接采点测量存在较大难度，精度也达不到要求，于是通过引入协作机器人UR5来辅助定位，在编写好程序之后，能够适应不同受试者臂长，并且能够做到对空间中点随机采样。</p>
+<p>示意图如下</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120145436.png" alt="image-20210120145435979"></p>
+<p>坐标系原点O与实验对象利手侧肩部盂肱关节旋转中心对齐，双肩连线为X轴，盂肱关节旋转中心的铅垂线为Z轴，Y轴垂直于冠状面并指向实验对象正前方，只讨论Y轴正半轴，也就是冠状面以前部分的工作空间。以球极坐标描述实验工作区各点，以实验对象臂长AL为半径作为工作空间边界，目标点位于以0.5AL,0.7AL,0.9AL为半径的半球面上，r的取值分别是0.5AL,0.7AL,0.9AL。</p>
+<p>在XOY平面上定义手腕与盂肱关节旋转中心连线和Y轴夹角为方位角，手腕与盂肱关节旋转中心连线与Z轴夹角为俯仰角 。通过三个参数$\gamma$ ,$\theta$,$r$ 来表示腕关节中心在球面坐标系下表达。</p>
+<p><strong>实现流程</strong></p>
+<ol>
+<li>用vicon测量人体肩关节中心与jUR5基座中心相对姿态</li>
+<li>以人体肩关节为中心，臂长为参数，离散操作空间采样点</li>
+<li>将采样点按照相邻顺序，序列化“一条线” 目的为了减少机械臂在相邻采样点关节运动范围。</li>
+<li>处理UR5多组反解，优选不与机架存在干涉的解 并且尽量减少相邻两次运动中关节角移动</li>
+</ol>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ol>
+<li><p>需要注意的是第4步我们使用了第三方库得到UR5所有的8组反解， 这个库用到了ikfast，因此依赖Egien，如果系统没有安装，记得添加上。</p>
+</li>
+<li><p>其次反解库对C++做了封装，提供matlab接口，因此还需要安装C++-mex编译器。</p>
+</li>
+<li><p>我们之所以手动做反解，不用UR5自带的反解器是因为我们一开始的确是发送操作空间指令，即给定目标点位姿。但是在实际执行中发现在相邻两次运动中，即使目标点距离很近，但是由于UR5存在多组反解，这就可能导致两次运动中关节角实际变换特别大，超出了关节角限制</p>
+</li>
+</ol>
+<p>下面是一张实拍图（感谢老罗友情出镜</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120144628.png" alt=""></p>
 
     </div>
 
@@ -279,6 +281,10 @@
     
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/" rel="tag"><i class="fa fa-tag"></i> 机器人</a>
+          </div>
 
         
 
@@ -289,7 +295,10 @@
     <a href="/2021/01/07/clash-jie-dian-time-out-jie-jue/" rel="prev" title="clash节点time out解决">
       <i class="fa fa-chevron-left"></i> clash节点time out解决
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/" rel="next" title="《Factluness》阅读笔记">
+      《Factluness》阅读笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -349,6 +358,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#注意点"><span class="nav-number">1.</span> <span class="nav-text">注意点</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -362,7 +372,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -375,7 +385,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -1880,8 +1880,8 @@
 ]]></content>
   </entry>
   <entry>
-    <title>禅与摩托车维修艺术</title>
-    <url>/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</url>
+    <title>《Factluness》阅读笔记</title>
+    <url>/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</url>
     <content><![CDATA[<ul>
 <li>谈科学研究现状</li>
 </ul>
@@ -1910,5 +1910,41 @@
 </blockquote>
 <p>这一点我深以为然，写作技巧层面的东西，一开始都没有那么重要，切记不要做过早优化(<strong>premature optimization is the root of all evil</strong>)， 写作，写播客，刷题等等一开始都需要先搞起来，没有原始积累，谈技巧都是耍流氓。</p>
 ]]></content>
+      <tags>
+        <tag>-读书笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>人体上肢自然运动数据采集</title>
+    <url>/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/</url>
+    <content><![CDATA[<p>实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。</p>
+<a id="more"></a>
+
+<p>基本思路是通过离散人上肢可达操作空间，然后采点，多次测量人手掌中心到采样点的运动轨迹，但空间中直接采点测量存在较大难度，精度也达不到要求，于是通过引入协作机器人UR5来辅助定位，在编写好程序之后，能够适应不同受试者臂长，并且能够做到对空间中点随机采样。</p>
+<p>示意图如下</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120145436.png" alt="image-20210120145435979"></p>
+<p>坐标系原点O与实验对象利手侧肩部盂肱关节旋转中心对齐，双肩连线为X轴，盂肱关节旋转中心的铅垂线为Z轴，Y轴垂直于冠状面并指向实验对象正前方，只讨论Y轴正半轴，也就是冠状面以前部分的工作空间。以球极坐标描述实验工作区各点，以实验对象臂长AL为半径作为工作空间边界，目标点位于以0.5AL,0.7AL,0.9AL为半径的半球面上，r的取值分别是0.5AL,0.7AL,0.9AL。</p>
+<p>在XOY平面上定义手腕与盂肱关节旋转中心连线和Y轴夹角为方位角，手腕与盂肱关节旋转中心连线与Z轴夹角为俯仰角 。通过三个参数$\gamma$ ,$\theta$,$r$ 来表示腕关节中心在球面坐标系下表达。</p>
+<p><strong>实现流程</strong></p>
+<ol>
+<li>用vicon测量人体肩关节中心与jUR5基座中心相对姿态</li>
+<li>以人体肩关节为中心，臂长为参数，离散操作空间采样点</li>
+<li>将采样点按照相邻顺序，序列化“一条线” 目的为了减少机械臂在相邻采样点关节运动范围。</li>
+<li>处理UR5多组反解，优选不与机架存在干涉的解 并且尽量减少相邻两次运动中关节角移动</li>
+</ol>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ol>
+<li><p>需要注意的是第4步我们使用了第三方库得到UR5所有的8组反解， 这个库用到了ikfast，因此依赖Egien，如果系统没有安装，记得添加上。</p>
+</li>
+<li><p>其次反解库对C++做了封装，提供matlab接口，因此还需要安装C++-mex编译器。</p>
+</li>
+<li><p>我们之所以手动做反解，不用UR5自带的反解器是因为我们一开始的确是发送操作空间指令，即给定目标点位姿。但是在实际执行中发现在相邻两次运动中，即使目标点距离很近，但是由于UR5存在多组反解，这就可能导致两次运动中关节角实际变换特别大，超出了关节角限制</p>
+</li>
+</ol>
+<p>下面是一张实拍图（感谢老罗友情出镜</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120144628.png" alt=""></p>
+]]></content>
+      <tags>
+        <tag>机器人</tag>
+      </tags>
   </entry>
 </search>

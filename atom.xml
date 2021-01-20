@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://hustddl.com/"/>
-  <updated>2021-01-19T08:56:42.596Z</updated>
+  <updated>2021-01-20T07:17:55.283Z</updated>
   <id>https://hustddl.com/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>禅与摩托车维修艺术</title>
-    <link href="https://hustddl.com/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/"/>
-    <id>https://hustddl.com/2021/01/19/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</id>
-    <published>2021-01-19T08:58:21.984Z</published>
-    <updated>2021-01-19T08:56:42.596Z</updated>
+    <title>《Factluness》阅读笔记</title>
+    <link href="https://hustddl.com/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/"/>
+    <id>https://hustddl.com/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</id>
+    <published>2021-01-20T04:17:21.000Z</published>
+    <updated>2021-01-20T07:17:55.283Z</updated>
     
     <summary type="html">
     
@@ -40,6 +40,27 @@
     </summary>
     
     
+    
+      <category term="-读书笔记" scheme="https://hustddl.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>人体上肢自然运动数据采集</title>
+    <link href="https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/"/>
+    <id>https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/</id>
+    <published>2021-01-19T16:00:48.000Z</published>
+    <updated>2021-01-20T07:16:25.408Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="机器人" scheme="https://hustddl.com/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/"/>
     
   </entry>
   
@@ -453,25 +474,6 @@
     
     
       <category term="操作系统" scheme="https://hustddl.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>滑动窗口小结</title>
-    <link href="https://hustddl.com/2020/06/11/hua-dong-chuang-kou-xiao-jie/"/>
-    <id>https://hustddl.com/2020/06/11/hua-dong-chuang-kou-xiao-jie/</id>
-    <published>2020-06-11T01:45:39.000Z</published>
-    <updated>2020-06-11T01:51:51.825Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="算法" scheme="https://hustddl.com/categories/%E7%AE%97%E6%B3%95/"/>
-    
     
   </entry>
   
