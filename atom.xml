@@ -45,6 +45,26 @@
   </entry>
   
   <entry>
+    <title>《Factluness》阅读笔记</title>
+    <link href="https://hustddl.com/2021/01/20/factluness-yue-du-bi-ji/"/>
+    <id>https://hustddl.com/2021/01/20/factluness-yue-du-bi-ji/</id>
+    <published>2021-01-20T04:17:21.000Z</published>
+    <updated>2021-01-20T07:33:13.063Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;《Factluness》开篇给了11个选择题，用来测试人们对这个世界存在的认知偏差。作者通过一系列数据说明简单的将这个世界分为发展&amp;amp;&amp;amp;发达，贫穷&amp;amp;&amp;amp;富有早已经不合适了，于是作者提出了一个概念:按照收入水平将世界人口分为四个等级，现阶段大部分人处于第二，第三等级。&lt;/p&gt;
+&lt;p&gt;这本书比较好读，有明确的问题导向， 每一个大章节最后都会有总结，但作者给出的一些数据和在非洲国家的亲身经历让我深思。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="读书笔记" scheme="https://hustddl.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
     <title>《禅与摩托车维修艺术》阅读笔记</title>
     <link href="https://hustddl.com/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/"/>
     <id>https://hustddl.com/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</id>
@@ -62,26 +82,6 @@
     
     
       <category term="-读书笔记" scheme="https://hustddl.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《Factluness》阅读笔记</title>
-    <link href="https://hustddl.com/2021/01/20/factluness-yue-du-bi-ji/"/>
-    <id>https://hustddl.com/2021/01/20/factluness-yue-du-bi-ji/</id>
-    <published>2021-01-20T04:17:21.000Z</published>
-    <updated>2021-01-20T07:33:13.063Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;《Factluness》开篇给了11个选择题，用来测试人们对这个世界存在的认知偏差。作者通过一系列数据说明简单的将这个世界分为发展&amp;amp;&amp;amp;发达，贫穷&amp;amp;&amp;amp;富有早已经不合适了，于是作者提出了一个概念:按照收入水平将世界人口分为四个等级，现阶段大部分人处于第二，第三等级。&lt;/p&gt;
-&lt;p&gt;这本书比较好读，有明确的问题导向， 每一个大章节最后都会有总结，但作者给出的一些数据和在非洲国家的亲身经历让我深思。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="读书笔记" scheme="https://hustddl.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
@@ -150,25 +150,6 @@
   </entry>
   
   <entry>
-    <title>字符串专题</title>
-    <link href="https://hustddl.com/2021/01/06/zi-fu-chuan/"/>
-    <id>https://hustddl.com/2021/01/06/zi-fu-chuan/</id>
-    <published>2021-01-05T16:00:48.000Z</published>
-    <updated>2021-01-06T13:27:18.684Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。&lt;br&gt;这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。&lt;br&gt;最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="算法笔记" scheme="https://hustddl.com/tags/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
     <title>哈希专题</title>
     <link href="https://hustddl.com/2021/01/06/ha-xi/"/>
     <id>https://hustddl.com/2021/01/06/ha-xi/</id>
@@ -184,6 +165,25 @@
 &lt;li&gt;&lt;p&gt;如果求的是最长最短等性质 一般存的就是XXX-&amp;gt;下标的映射 &lt;a href=&quot;#525.连续数组&quot;&gt;525.连续数组&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="算法笔记" scheme="https://hustddl.com/tags/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>字符串专题</title>
+    <link href="https://hustddl.com/2021/01/06/zi-fu-chuan/"/>
+    <id>https://hustddl.com/2021/01/06/zi-fu-chuan/</id>
+    <published>2021-01-05T16:00:48.000Z</published>
+    <updated>2021-01-06T13:27:18.684Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。&lt;br&gt;这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。&lt;br&gt;最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。&lt;/p&gt;
     
     </summary>
     
@@ -469,9 +469,9 @@
     
     
     
-      <category term="操作系统" scheme="https://hustddl.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
-    
       <category term="读书笔记" scheme="https://hustddl.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+      <category term="操作系统" scheme="https://hustddl.com/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"/>
     
   </entry>
   
