@@ -5,20 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
 <meta name="generator" content="Hexo 4.2.1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
 
 <link rel="stylesheet" href="/css/main.css">
 
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Roboto Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 <script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"hustddl.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
-  </script>
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('https://hustddl.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"mac"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"buttons","active":null,"storage":true,"lazyload":true,"nav":{"disqus":{"text":"Load Disqus","order":-1}}},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":false,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
 
   <meta name="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
 <meta property="og:type" content="website">
@@ -36,9 +62,8 @@
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
-    lang   : 'zh-Hans'
+    isHome: true,
+    isPost: false
   };
 </script>
 
@@ -77,106 +102,93 @@
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
+  <div class="container">
     <div class="headband"></div>
 
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">DDL's homepage</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
+    <div class="toggle" aria-label="Cambiar a barra de navegación">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">DDL's homepage</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
 </div>
 
 
-
-
 <nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
+  
+  <ul id="menu" class="menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Inicio</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>Sobre mi</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Etiquetas</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categorías</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archivo</a>
 
   </li>
       <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Buscar
         </a>
       </li>
   </ul>
+
 </nav>
-
-
-
-  <div class="search-pop-overlay">
+  <div class="site-search">
     <div class="popup search-popup">
-        <div class="search-header">
+    <div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off"
-           placeholder="搜索..." spellcheck="false"
-           type="search" class="search-input">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="Buscando..." spellcheck="false"
+           type="text" id="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result">
-  <div id="no-result">
-    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
-  </div>
+<div id="search-result"></div>
+
 </div>
+<div class="search-pop-overlay"></div>
 
-    </div>
   </div>
-
 </div>
     </header>
 
     
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -184,856 +196,237 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/" class="post-title-link" itemprop="url">《把自己作为方法:与项飙谈话》整理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-22 12:17:21" itemprop="dateCreated datePublished" datetime="2021-01-22T12:17:21+08:00">2021-01-22</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li><p>项飙小时候和外公住在一起，他们家隔壁是一个暗娼，附近大一点的孩子就趴在木墙缝隙中看，声音都听得见。这个性启蒙真的比较直接，比起我当时在新华书店看啥《三言二拍》直接多了。</p>
-</li>
-<li><p>项谈到自己做调查时候不够放松，缺少和大家打成一片的能力，这和他小时候经常和外公玩有关系。外公对外非常客气，但内心可能又是一种鄙视。</p>
-</li>
-<li><p>一个理论不至于新旧，正确与否，关键在于是否具有可沟通性，能够调动对方的积极性，那么这个理论就是革命性的</p>
-</li>
-<li><p><strong>真正的英雄不是改变世界，而是改变自己生活的每一天</strong></p>
-<p>当下边缘与中心变为对立概念，中国人自古就有很强的中心情节，觉得边缘生活不值得过，造成极大焦虑。传统儒家文化通过意识上的“内在化”来处理边缘与中心问题，地方与中央不是等级化关系，有高有低，而是像月照千湖，每一个湖都有自己的月亮 #example</p>
-</li>
-<li><p>不要怕边缘，怕知识不够，天真真实地体现出来，就会很可爱，不要装腔作势。</p>
-</li>
-<li><p>高平子孙子高准和胡适说他要继承“为天地立心，为生民立命，为往圣继绝学，为万世开太平”，胡适用他一套英国实证主义来反问他”到底怎么叫为天地立心”，这些都是情感表达，没有着落，没有价值。英国实证主义的代表罗素，应该是来过中国，胡适可能受他影响比较大。</p>
-</li>
-<li><p>杜赞奇对项影响比较大，缘起杜对彭湃感兴趣，彭老家在海丰，就是五条人的故乡，五条人有首歌《彭啊湃》还提到了彭湃。彭作为地主阶级却反叛自己阶级，回家搞土地革命这让杜赞奇感到不可思议。</p>
-</li>
-<li><p>再谈乡绅，好的人民代表就是现代社会的乡绅，但现在人大代表按照职业划分，代表和被代表之间的关系疏远，那么代表如何这群人利益理解清楚？</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/20/factluness-yue-du-bi-ji/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/20/factluness-yue-du-bi-ji/" class="post-title-link" itemprop="url">《Factluness》阅读笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-20 12:17:21" itemprop="dateCreated datePublished" datetime="2021-01-20T12:17:21+08:00">2021-01-20</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/20/factluness-yue-du-bi-ji/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/20/factluness-yue-du-bi-ji/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>《Factluness》开篇给了11个选择题，用来测试人们对这个世界存在的认知偏差。作者通过一系列数据说明简单的将这个世界分为发展&amp;&amp;发达，贫穷&amp;&amp;富有早已经不合适了，于是作者提出了一个概念:按照收入水平将世界人口分为四个等级，现阶段大部分人处于第二，第三等级。</p>
-<p>这本书比较好读，有明确的问题导向， 每一个大章节最后都会有总结，但作者给出的一些数据和在非洲国家的亲身经历让我深思。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/20/factluness-yue-du-bi-ji/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
+  <div class="post-block">
+    <div class="posts-collapse">
+      <div class="collection-title">
         
+        <span class="collection-header">Bueno! 32 entradas en total. Sigue posteando.</span>
+      </div>
+
       
+    <div class="collection-year">
+      <h1 class="collection-header">2021</h1>
     </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-22T23:57:25+08:00"
+              content="2021-01-22">
+          01-22
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/22/hui-yi-wei-qi/" itemprop="url">
+            <span itemprop="name">回忆围棋</span>
+          </a>
+      </h2>
+
+    </header>
   </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/">
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-22T12:17:21+08:00"
+              content="2021-01-22">
+          01-22
+        </time>
+      </div>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/" class="post-title-link" itemprop="url">《禅与摩托车维修艺术》阅读笔记</a>
-        </h2>
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/" itemprop="url">
+            <span itemprop="name">《把自己作为方法:与项飙谈话》整理</span>
+          </a>
+      </h2>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
+    </header>
+  </article>
 
-              <time title="创建时间：2021-01-20 12:17:21" itemprop="dateCreated datePublished" datetime="2021-01-20T12:17:21+08:00">2021-01-20</time>
-            </span>
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
 
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-20T12:17:21+08:00"
+              content="2021-01-20">
+          01-20
+        </time>
+      </div>
 
-        </div>
-      </header>
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/20/factluness-yue-du-bi-ji/" itemprop="url">
+            <span itemprop="name">《Factluness》阅读笔记</span>
+          </a>
+      </h2>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+    </header>
+  </article>
 
-      
-          <blockquote>
-<p>理性的幽灵悬浮在空中，我决定去一探究竟</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-20T12:17:21+08:00"
+              content="2021-01-20">
+          01-20
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/" itemprop="url">
+            <span itemprop="name">《禅与摩托车维修艺术》阅读笔记</span>
+          </a>
+      </h2>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-20T00:00:48+08:00"
+              content="2021-01-20">
+          01-20
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/" itemprop="url">
+            <span itemprop="name">人体上肢自然运动数据采集</span>
+          </a>
+      </h2>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-07T11:12:38+08:00"
+              content="2021-01-07">
+          01-07
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/07/clash-jie-dian-time-out-jie-jue/" itemprop="url">
+            <span itemprop="name">clash节点time out解决</span>
+          </a>
+      </h2>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-06T20:21:41+08:00"
+              content="2021-01-06">
+          01-06
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/06/2020-nian-du-zong-jie/" itemprop="url">
+            <span itemprop="name">2020年度总结</span>
+          </a>
+      </h2>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-06T00:00:48+08:00"
+              content="2021-01-06">
+          01-06
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/06/ha-xi/" itemprop="url">
+            <span itemprop="name">哈希专题</span>
+          </a>
+      </h2>
+
+    </header>
+  </article>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2021-01-06T00:00:48+08:00"
+              content="2021-01-06">
+          01-06
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2021/01/06/zi-fu-chuan/" itemprop="url">
+            <span itemprop="name">字符串专题</span>
+          </a>
+      </h2>
+
+    </header>
+  </article>
+    <div class="collection-year">
+      <h1 class="collection-header">2020</h1>
     </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-12-29T08:54:46+08:00"
+              content="2020-12-29">
+          12-29
+        </time>
+      </div>
+
+      <h2 class="post-title">
+          <a class="post-title-link" href="/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/" itemprop="url">
+            <span itemprop="name">许知远-罗翔访谈记录</span>
+          </a>
+      </h2>
+
+    </header>
   </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/" class="post-title-link" itemprop="url">人体上肢自然运动数据采集</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-20 00:00:48" itemprop="dateCreated datePublished" datetime="2021-01-20T00:00:48+08:00">2021-01-20</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
+  </div>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/07/clash-jie-dian-time-out-jie-jue/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/07/clash-jie-dian-time-out-jie-jue/" class="post-title-link" itemprop="url">clash节点time out解决</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-07 11:12:38" itemprop="dateCreated datePublished" datetime="2021-01-07T11:12:38+08:00">2021-01-07</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/07/clash-jie-dian-time-out-jie-jue/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/07/clash-jie-dian-time-out-jie-jue/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>问题</strong></p>
-<p>clash 电脑端所有节点time out</p>
-<p><strong>分析</strong></p>
-<p>电脑端最近才出现了clash 代理节点全部time out ,手机端访问正常，最近的一些操作可能导致网络问题的</p>
-<ul>
-<li><p>win10 开启了wsl 安装了ubuntu20.20 导致双系统时间不统一</p>
-</li>
-<li><p>修改hosts 添加了github域名解析(这个我觉得应该没有影响)</p>
-</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/07/clash-jie-dian-time-out-jie-jue/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/06/2020-nian-du-zong-jie/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/06/2020-nian-du-zong-jie/" class="post-title-link" itemprop="url">2020年度总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-06 20:21:41" itemprop="dateCreated datePublished" datetime="2021-01-06T20:21:41+08:00">2021-01-06</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/06/2020-nian-du-zong-jie/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/06/2020-nian-du-zong-jie/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="2020年度总结"><a href="#2020年度总结" class="headerlink" title="2020年度总结"></a>2020年度总结</h3><p>这是我的一次年度小结，从工作，读书等几个角度做了一下年终盘点。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/06/2020-nian-du-zong-jie/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/06/ha-xi/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/06/ha-xi/" class="post-title-link" itemprop="url">哈希专题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-06 00:00:48" itemprop="dateCreated datePublished" datetime="2021-01-06T00:00:48+08:00">2021-01-06</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/06/ha-xi/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/06/ha-xi/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>用哈希表(hash table) 常见的场景是用空间换时间</p>
-<ol>
-<li><p>如果求解决方案或者数量，存的一般就是XXX-&gt;数量的映射，eg.<a href="#560-和为k的子数组">560.</a></p>
-</li>
-<li><p>如果求的是最长最短等性质 一般存的就是XXX-&gt;下标的映射 <a href="#525.连续数组">525.连续数组</a></p>
-</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/06/ha-xi/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/06/zi-fu-chuan/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/06/zi-fu-chuan/" class="post-title-link" itemprop="url">字符串专题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-06 00:00:48" itemprop="dateCreated datePublished" datetime="2021-01-06T00:00:48+08:00">2021-01-06</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/06/zi-fu-chuan/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/06/zi-fu-chuan/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。<br>这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。<br>最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/01/06/zi-fu-chuan/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/" class="post-title-link" itemprop="url">许知远-罗翔访谈记录</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-29 08:54:46" itemprop="dateCreated datePublished" datetime="2020-12-29T08:54:46+08:00">2020-12-29</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2020/12/28/duo-zhua-yu-cai-fang/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ddl">
-      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="DDL's homepage">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/28/duo-zhua-yu-cai-fang/" class="post-title-link" itemprop="url">多抓鱼采访</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-28 22:42:09" itemprop="dateCreated datePublished" datetime="2020-12-28T22:42:09+08:00">2020-12-28</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/12/28/duo-zhua-yu-cai-fang/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/12/28/duo-zhua-yu-cai-fang/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>多抓鱼和咸鱼区别？</li>
-</ul>
-<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
-<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
-<p><strong>为什么做多抓鱼</strong>？</p>
-<ul>
-<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
-</li>
-<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
-</li>
-<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
-</li>
-<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
-</li>
-<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
-</li>
-<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
-</li>
-</ul>
-<blockquote>
-<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
-</blockquote>
-<p><strong>多抓鱼的定价策略</strong></p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
-<ul>
-<li>确定几类书不收</li>
-<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
-<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
-</ul>
-<p><strong>shownotes</strong></p>
-<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
-<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Página siguiente"></i></a>
   </nav>
 
 
@@ -1043,7 +436,7 @@
 
 <script>
   window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
+    let activeClass = CONFIG.comments.activeClass;
     if (CONFIG.comments.storage) {
       activeClass = localStorage.getItem('comments_active') || activeClass;
     }
@@ -1077,10 +470,10 @@
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
-          文章目录
+          Tabla de contenidos
         </li>
         <li class="sidebar-nav-overview">
-          站点概览
+          Inicio
         </li>
       </ul>
 
@@ -1091,6 +484,8 @@
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="ddl"
+      src="/images/avatar.gif">
   <p class="site-author-name" itemprop="name">ddl</p>
   <div class="site-description" itemprop="description">世间之奇伟瑰怪常在于险远，而人之所罕至也</div>
 </div>
@@ -1099,42 +494,46 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">31</span>
-          <span class="site-state-item-name">日志</span>
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">entradas</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
         <span class="site-state-item-count">5</span>
-        <span class="site-state-item-name">分类</span></a>
+        <span class="site-state-item-name">categorías</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
         <span class="site-state-item-count">13</span>
-        <span class="site-state-item-name">标签</span></a>
+        <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/ddl-hust" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ddl-hust" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/ddl-hust" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ddl-hust" rel="noopener" target="_blank"><i class="fa fa-fw fa-fab fa-github"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:ddl196526@163.com" title="E-Mail → mailto:ddl196526@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+        <a href="mailto:ddl196526@163.com" title="E-Mail → mailto:ddl196526@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-fa fa-envelope"></i>E-Mail</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.douban.com/people/119649216" title="douban → https:&#x2F;&#x2F;www.douban.com&#x2F;people&#x2F;119649216" rel="noopener" target="_blank"><i class="fa fa-egg fa-fw"></i>douban</a>
+        <a href="https://www.douban.com/people/119649216" title="douban → https:&#x2F;&#x2F;www.douban.com&#x2F;people&#x2F;119649216" rel="noopener" target="_blank"><i class="fa fa-fw fa-fa fa-egg"></i>douban</a>
       </span>
       <span class="links-of-author-item">
-        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="rss fa-fw"></i>RSS</a>
+        <a href="/atom.xml" title="RSS → &#x2F;atom.xml"><i class="fa fa-fw fa-rss"></i>RSS</a>
       </span>
   </div>
 
 
 
       </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
 
     </div>
   </aside>
@@ -1148,18 +547,19 @@
       <div class="footer-inner">
         
 
-        
-
 <div class="copyright">
   
-  &copy; 
+  &copy; 2018 – 
   <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">ddl</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  <div class="powered-by">Creado mediante <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a>
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Tema – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
   </div>
 
         
@@ -1177,12 +577,8 @@
 
   
   <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
 
 <script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
 
 
 <script src="/js/schemes/pisces.js"></script>
@@ -1216,6 +612,16 @@
   
 
   
+  <script src="//cdn.jsdelivr.net/npm/quicklink@1/dist/quicklink.umd.js"></script>
+  <script>
+      window.addEventListener('load', () => {
+      quicklink({
+        timeout: 3000,
+        priority: true,
+        ignores: [uri => uri.includes('#'),uri => uri == 'https://hustddl.com/',]
+      });
+      });
+  </script>
 
 
 <script>
@@ -1227,20 +633,20 @@ NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
       return GUEST.includes(item);
     });
     new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'OfKiBLcL985bpR1AySBF4WRH-gzGzoHsz',
-      appKey     : 'b0W5IRpONdP0IQy2TDzoY3Ib',
+      el: '#valine-comments',
+      verify: false,
+      notify: false,
+      appId: 'OfKiBLcL985bpR1AySBF4WRH-gzGzoHsz',
+      appKey: 'b0W5IRpONdP0IQy2TDzoY3Ib',
       placeholder: "看都看了不留下点什么？",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : false,
-      lang       : 'zh-cn' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : false,
-      serverURLs : ''
+      avatar: 'mm',
+      meta: guest,
+      pageSize: '10' || 10,
+      visitor: false,
+      lang: 'zh-cn' || 'zh-cn',
+      path: location.pathname,
+      recordIP: false,
+      serverURLs: ''
     });
   }, window.Valine);
 });
