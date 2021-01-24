@@ -28,7 +28,7 @@
 <meta property="og:description" content="复杂性科学的核心问题是：涌现和自组织行为是如何产生的   简单规则以难以预测的方式产生出复杂行为，这种系统的宏观行为有时也称为涌现 系统有组织的行为不存在内部和外部的控制者或领导者，则也称之为自组织（self-organizing）">
 <meta property="og:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210124112118.png">
 <meta property="article:published_time" content="2021-01-24T04:17:21.000Z">
-<meta property="article:modified_time" content="2021-01-24T03:33:08.743Z">
+<meta property="article:modified_time" content="2021-01-24T03:37:53.066Z">
 <meta property="article:author" content="ddl">
 <meta property="article:tag" content="读书笔记">
 <meta name="twitter:card" content="summary">
@@ -548,6 +548,59 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
