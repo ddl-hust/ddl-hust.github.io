@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://hustddl.com/"/>
-  <updated>2021-01-22T16:23:13.824Z</updated>
+  <updated>2021-01-24T03:33:08.743Z</updated>
   <id>https://hustddl.com/</id>
   
   <author>
@@ -17,20 +17,46 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>回忆围棋</title>
-    <link href="https://hustddl.com/2021/01/22/hui-yi-wei-qi/"/>
-    <id>https://hustddl.com/2021/01/22/hui-yi-wei-qi/</id>
-    <published>2021-01-22T15:57:25.560Z</published>
-    <updated>2021-01-22T16:23:13.824Z</updated>
+    <title>《复杂》</title>
+    <link href="https://hustddl.com/2021/01/24/fu-za/"/>
+    <id>https://hustddl.com/2021/01/24/fu-za/</id>
+    <published>2021-01-24T04:17:21.000Z</published>
+    <updated>2021-01-24T03:33:08.743Z</updated>
     
     <summary type="html">
     
-      &lt;p&gt;#recall#&lt;/p&gt;
-&lt;p&gt;回顾到今年三月看到的一篇文章&lt;a href=&quot;https://weibo.com/ttarticle/p/show?id=2309404475844541153439#_0&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;《&lt;strong&gt;一个时代的退隐——李世石退役的纪念&lt;/strong&gt; 》&lt;/a&gt;，作者李喆疫情期间困在武汉，作为国手在微博上写一些自己的随想，围棋见解。我非常喜欢李的文字，优美又充满哲学般的深思。比如下面这段&lt;/p&gt;
+      &lt;blockquote&gt;
+&lt;p&gt;复杂性科学的核心问题是：&lt;strong&gt;涌现和自组织行为是如何产生的&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;简单规则以难以预测的方式产生出复杂行为，这种系统的宏观行为有时也称为&lt;strong&gt;涌现&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;系统有组织的行为不存在内部和外部的控制者或领导者，则也称之为&lt;strong&gt;自组织（self-organizing）&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
     
     </summary>
     
     
+    
+      <category term="读书笔记" scheme="https://hustddl.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>回忆围棋</title>
+    <link href="https://hustddl.com/2021/01/23/hui-yi-wei-qi/"/>
+    <id>https://hustddl.com/2021/01/23/hui-yi-wei-qi/</id>
+    <published>2021-01-23T04:17:21.000Z</published>
+    <updated>2021-01-24T03:32:44.134Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;回顾到今年三月看到的一篇文章&lt;a href=&quot;https://weibo.com/ttarticle/p/show?id=2309404475844541153439#_0&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;《&lt;strong&gt;一个时代的退隐——李世石退役的纪念&lt;/strong&gt; 》&lt;/a&gt;，作者李喆疫情期间困在武汉，作为国手在微博上写一些自己的随想，围棋见解。我非常喜欢李的文字，优美又充满哲学般的深思。比如下面这段&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="随笔" scheme="https://hustddl.com/tags/%E9%9A%8F%E7%AC%94/"/>
     
   </entry>
   
@@ -450,25 +476,6 @@
       <category term="socket" scheme="https://hustddl.com/tags/socket/"/>
     
       <category term="linux" scheme="https://hustddl.com/tags/linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>网络协议栈收包过程小结</title>
-    <link href="https://hustddl.com/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/"/>
-    <id>https://hustddl.com/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/</id>
-    <published>2020-08-05T13:19:25.000Z</published>
-    <updated>2020-08-08T02:47:57.119Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;linux网络协议栈学习小结&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="技术" scheme="https://hustddl.com/tags/%E6%8A%80%E6%9C%AF/"/>
     
   </entry>
   

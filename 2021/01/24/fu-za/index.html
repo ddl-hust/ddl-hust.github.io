@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hustddl.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="复杂性科学的核心问题是：涌现和自组织行为是如何产生的   简单规则以难以预测的方式产生出复杂行为，这种系统的宏观行为有时也称为涌现 系统有组织的行为不存在内部和外部的控制者或领导者，则也称之为自组织（self-organizing）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《复杂》">
+<meta property="og:url" content="https://hustddl.com/2021/01/24/fu-za/index.html">
+<meta property="og:site_name" content="DDL&#39;s homepage">
+<meta property="og:description" content="复杂性科学的核心问题是：涌现和自组织行为是如何产生的   简单规则以难以预测的方式产生出复杂行为，这种系统的宏观行为有时也称为涌现 系统有组织的行为不存在内部和外部的控制者或领导者，则也称之为自组织（self-organizing）">
+<meta property="og:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210124112118.png">
+<meta property="article:published_time" content="2021-01-24T04:17:21.000Z">
+<meta property="article:modified_time" content="2021-01-24T03:33:08.743Z">
+<meta property="article:author" content="ddl">
+<meta property="article:tag" content="读书笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210124112118.png">
+
+<link rel="canonical" href="https://hustddl.com/2021/01/24/fu-za/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>《复杂》 | DDL's homepage</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="DDL's homepage" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">DDL's homepage</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2021/01/24/fu-za/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ddl">
+      <meta itemprop="description" content="世间之奇伟瑰怪常在于险远，而人之所罕至也">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DDL's homepage">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《复杂》
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-24 12:17:21" itemprop="dateCreated datePublished" datetime="2021-01-24T12:17:21+08:00">2021-01-24</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/01/24/fu-za/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/24/fu-za/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>复杂性科学的核心问题是：<strong>涌现和自组织行为是如何产生的</strong></p>
+</blockquote>
+<ul>
+<li>简单规则以难以预测的方式产生出复杂行为，这种系统的宏观行为有时也称为<strong>涌现</strong></li>
+<li>系统有组织的行为不存在内部和外部的控制者或领导者，则也称之为<strong>自组织（self-organizing）</strong></li>
+</ul>
+<a id="more"></a>
+
+<h3 id="混沌的动力学方程"><a href="#混沌的动力学方程" class="headerlink" title="混沌的动力学方程"></a>混沌的动力学方程</h3><p>牛顿力学描绘了一幅“钟表宇宙”的图景：设定好初始状态，然后就遵循着三条定律一直运行下去。数学家拉普拉斯认识到其中蕴含了可以如钟表般精准预测的观念：他在1814年断言，根据牛顿定律，只要知道宇宙中所有粒子的当前位置和速度，原则上就有可能预测任何时刻的情况。[插图]在20世纪40年代计算机被发明出来之后，这种“原则上”的可能似乎有可能变成现实了。</p>
+<p>早期牛顿在物理科学的进步，发展出来了”决定论”.</p>
+<h4 id="决定论"><a href="#决定论" class="headerlink" title="决定论"></a>决定论</h4><p>决定论认为万事万物都由物理定律决定，每一件事情之间遵循严格的因果规律。</p>
+<p>早期人们认为不存在真正的随机数，计算机里也不存在真正的随机数。计算机生成的所谓随机数，实际上是取一个现成的数字（比如系统时间），经过一系列固定公式计算出来的。</p>
+<p>决定论带来的问题</p>
+<ul>
+<li>人类没有了自由意志；因为意识是由我们身体物质组成的，物质遵循物理定律。</li>
+<li>没有自由，意味着不需要负责，带来人的虚无</li>
+</ul>
+<p>#example# 追乌龟的芝诺就是一个决定论者</p>
+<blockquote>
+<p>芝诺平时总念叨着一切都是注定的。结果有一次，他的奴隶犯了错误，他就鞭挞那奴隶作为惩罚。但是他的奴隶很聪明，辩解说：主人，按照你的决定论学说，我犯错是天生注定了的，不是我自己能控制的，所以你不应该惩罚我。然而芝诺更聪明，他回答说：你说的没错。但是按照同样的理论，我鞭挞你也是天注定了的。所以你就挨打吧。</p>
+</blockquote>
+<p>古希腊的<strong>斯多葛学派</strong>相信部分决定论。他们认为我们不能控制事物，但是可以控制我们自己对待生活的方式。所以这个学派提倡随遇而安的生活态度。</p>
+<p>但是混沌系统以及量子力学的出现给这种绝对的因果论，带来了致命一击。</p>
+<h4 id="混沌定义"><a href="#混沌定义" class="headerlink" title="混沌定义"></a>混沌定义</h4><blockquote>
+<p>混沌指的是一些系统——混沌系统——对于其初始位置和动量的测量如果有极其微小的不精确，也会导致对其的长期预测产生巨大的误差。也就是常说的“对初始条件的敏感依赖性”</p>
+</blockquote>
+<h4 id="三体问题"><a href="#三体问题" class="headerlink" title="三体问题"></a>三体问题</h4><blockquote>
+<p>庞加莱在试图解决一个比预测飓风简单得多的问题时发现了对初始条件的敏感依赖性。他试图解决的是所谓的三体问题（three-body problem）：用牛顿定律预测通过引力相互作用的三个物体的长期运动。牛顿已经解决了二体问题。但没想到三体问题要复杂得多。在向瑞典国王表示敬意的一次数学竞赛中，庞加莱将其解决了。竞赛主办方提供2500瑞典克朗奖励解决“多体”问题：用牛顿定律预测任意多个相互吸引的物体的未来运动。提出这个问题是为了确定太阳系是否稳定，行星是会维持还是会偏离目前的轨道？庞加莱想先试着解决三体问题。  #example# #math#</p>
+</blockquote>
+<p>混沌系统中初始的不确定性到底是如何被急剧放大的呢？关键因素是<strong>非线性</strong>。非线性系统中总体不等于部分之和。</p>
+<p>#example# 举个例子，将一堆兔子分成两部分，放到两个岛上，如果岛上的资源受限制，用逻辑斯蒂模型（logistic model）描述这种情形下群体数量的增长。这个模型以一种简化方式描述群体数量的增长。你设定好出生率、死亡率（由于种群数量过多导致的死亡概率）以及最大种群承载能力（栖息地所能承载的种群数量上限)。 这样兔子一年之后的总数在分成两堆，和不分成两队的总数是不一样的。</p>
+<h4 id="逻辑斯蒂映射"><a href="#逻辑斯蒂映射" class="headerlink" title="逻辑斯蒂映射"></a>逻辑斯蒂映射</h4><p>$$<br>x_{t+1}=R x_{t}\left(1-x_{t}\right)<br>$$</p>
+<p>R取不同的值最终x收敛情况差别很大。</p>
+<p>随着R增加，x从不动点，到二周期震荡，四周期震荡，直到发散，</p>
+<p>逻辑斯蒂映射还被用来在计算机中生成伪随机数。因此，表面上的随机可以来自非常简单的确定性系统。</p>
+<p>简单总结如下</p>
+<ul>
+<li>即逻辑斯蒂映射能产生类似于随机噪声的确定性轨道，这个事实有着让人困扰的实际含义。例如，这就意味着种群调查数据中那种明显的不稳定波动不一定表明环境的变化莫测或是采样有错误</li>
+<li>在混沌中，不管初始条件有多接近，在足够长的时间之后，它们的轨道还是会相互分开。这意味着，即使我们的模型很简单，所有的参数也都完全确定，长期预测也仍然是不可能的。</li>
+</ul>
+<p><strong>混动的共性</strong></p>
+<ol>
+<li>单峰映射存在倍周期</li>
+<li>周期倍增速度为常数:新的周期倍增比前面的周期倍增出现的速度快大约4.6692016倍</li>
+</ol>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>看似混沌的行为有可能来自确定性系统，无须外部的随机源。一些简单的确定性系统的长期变化，由于对初始条件的敏感依赖性，即使在原则上也无法预测。虽然混沌系统的具体变化无法预测，在大量混沌系统的普适共性中却有一些“混沌中的秩序”，例如通往混沌的倍周期之路，以及费根鲍姆常数。因此虽然在细节上“预测变得不可能”，在更高的层面上混沌系统却是可以预测的。</p>
+<h3 id="信息"><a href="#信息" class="headerlink" title="信息"></a>信息</h3><p>我们讨论自组织，实际上是一个从无序到有序过程，一个熵减少过程，复杂系统科学最关注的问题就是这种逆熵的自组织系统是如何可能的。</p>
+<blockquote>
+<p>第二定律：熵总是不断增加直至最大。系统总的熵会不断增加，直至可能的最大值；除非通过外部做功，否则它自身永远也不会减少。热力学第二定律是唯一区分过去和未来的基本物理定律。其他物理定律在时间上都是可逆的。</p>
+</blockquote>
+<p>熵的新定义</p>
+<p>玻尔兹曼将<strong>宏观状态的熵定义为其对应的微观状态的数量</strong>。 这极大撇清了我的疑惑，以前认为熵只是关于能量，温度的关联， 新的定义将熵转化为了信息的度量。</p>
+<h4 id="麦克斯韦的思想实验"><a href="#麦克斯韦的思想实验" class="headerlink" title="麦克斯韦的思想实验"></a>麦克斯韦的思想实验</h4><blockquote>
+<p>麦克斯韦假设有一个箱子被一块板子隔成两部分，板子上有一个活门，如图所示。活门有一个“小妖”把守，小妖能测量气体分子的速度。对于右边来的分子，如果速度快，他就打开门让其通过，速度慢就关上门不让通过。对于左边来的分子，则速度慢的就让其通过，速度快的就不让通过。一段时间以后，箱子左边分子的速度就会很快，右边则会很慢，这样熵就减少了。麦克斯韦假设了小妖使用的门既无质量也无摩擦，因此开门关门要不了多少功，可以忽略不计（对这种门提出了可行的设计）</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210124112118.png" alt="image-20210124112111805"></p>
+<p>这个悖论如何解释呢？</p>
+<p>小妖要通过测量获取“比特”信息，比如趋近的分子速度是慢是快，需要能量，因此必然会产生一定的熵，数量不少于分子变得有序而减少的熵。这样由箱子、分子和小妖组成的整个系统就仍然遵守热力学第二定律。</p>
+<h3 id="计算"><a href="#计算" class="headerlink" title="计算"></a>计算</h3><p>希尔伯特提出了一系列的数学问题  #anki#</p>
+<ol>
+<li>数学是否是完备的，即所有的数学命题都可以由一组有限的公理证明与否</li>
+<li>数学是不是一致的； 简单点理解就是如果我们证明了假命题（eg.1+1=3）那么数学就不是一致的</li>
+<li>是不是所有命题数学都可以判定</li>
+</ol>
+<p>哥德尔给出了不完备性定理证明，认为上述问题1，2不可能同时成立，他给出这样一个命题 #example#  #math#</p>
+<blockquote>
+<p>这个命题是不可证的”</p>
+</blockquote>
+<p>这个命题谈论的是它自身，假设该命题为A。现在假设命题A可证，那它就为假（因为它说它不可证），这就意味着证明了假命题——从而算术是不一致的。好了，那我们就假设命题A不可证，这就意味着命题A为真（因为它断言的就是自己不可证），但这样就存在不可证的真命题——算术是不完备的。因此，算术要么不一致，要么不完备。</p>
+<ul>
+<li><strong>哥德尔的趣事</strong></li>
+</ul>
+<blockquote>
+<p>哥德尔受到时断时续的精神问题困扰，他在维也纳一直待到1940年，最后为了不被征入德军服兵役，移民到美国。（据他的传记作者王浩说，[插图]在准备美国入籍面试时，他发现了美国宪法中的不一致性，结果他的朋友爱因斯坦在陪他去面试时只好不断同他聊天，以引开他的注意力。）</p>
+</blockquote>
+<p><strong>达尔文和孟德尔的思想如何统一</strong></p>
+<blockquote>
+<p>生物的大部分性状都是由许多基因一起决定的，每个基因都有数个不同的等位基因，这种争论才烟消云散。多个不同等位基因会有数量极大的组合可能，从而使得生物的变异像是连续的。生物在基因层面的离散变异会导致表型——基因决定的生理特征（例如高矮、肤色等）——看似连续的变异。人们最终认识到，达尔文与孟德尔的理论并不矛盾，而是互补的。</p>
+</blockquote>
+<p><strong>计算机的自我复制为什么可行</strong></p>
+<blockquote>
+<p>自我复制：计算机不能复制自身；要复制自身就必须包含对自身的描述；而这个描述又包含其本身的描述，这样反复无穷。</p>
+</blockquote>
+<p>自我复制程序，内存中的信息既可以作为指令同时也可以作为数据，用来避免无穷无尽的自我复制</p>
+<hr>
+<p>（待续…….）</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"><i class="fa fa-tag"></i> 读书笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/23/hui-yi-wei-qi/" rel="prev" title="回忆围棋">
+      <i class="fa fa-chevron-left"></i> 回忆围棋
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#混沌的动力学方程"><span class="nav-number">1.</span> <span class="nav-text">混沌的动力学方程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#决定论"><span class="nav-number">1.1.</span> <span class="nav-text">决定论</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#混沌定义"><span class="nav-number">1.2.</span> <span class="nav-text">混沌定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三体问题"><span class="nav-number">1.3.</span> <span class="nav-text">三体问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#逻辑斯蒂映射"><span class="nav-number">1.4.</span> <span class="nav-text">逻辑斯蒂映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#小结"><span class="nav-number">1.5.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#信息"><span class="nav-number">2.</span> <span class="nav-text">信息</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#麦克斯韦的思想实验"><span class="nav-number">2.1.</span> <span class="nav-text">麦克斯韦的思想实验</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算"><span class="nav-number">3.</span> <span class="nav-text">计算</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ddl</p>
+  <div class="site-description" itemprop="description">世间之奇伟瑰怪常在于险远，而人之所罕至也</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">33</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ddl-hust" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ddl-hust" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:ddl196526@163.com" title="E-Mail → mailto:ddl196526@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.douban.com/people/119649216" title="douban → https:&#x2F;&#x2F;www.douban.com&#x2F;people&#x2F;119649216" rel="noopener" target="_blank"><i class="fa fa-egg fa-fw"></i>douban</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/atom.xml" title="rss → &#x2F;atom.xml"><i class="rss fa-fw"></i>rss</a>
+      </span>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ddl</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'OfKiBLcL985bpR1AySBF4WRH-gzGzoHsz',
+      appKey     : 'b0W5IRpONdP0IQy2TDzoY3Ib',
+      placeholder: "看都看了不留下点什么？",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
