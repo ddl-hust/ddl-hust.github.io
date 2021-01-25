@@ -26,15 +26,15 @@
 <meta property="og:url" content="https://hustddl.com/2021/01/25/bi-te-bi-hou-mian-de-shu-xue-yuan-li/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
 <meta property="og:description" content="关于比特币有太多的消息，关于人们赚了多少亏了多少，但是比特币到底是什么呢？想起木遥说  在过去的一年里，我身边的几乎每个朋友都或多或少问过我关于比特币的问题，往往是非常初等的问题。这有点奇怪，因为比特币已经诞生了有将近十年之久，差不多跟智能手机同龄，但今天没有人还会好奇地问智能手机是什么。一个省事的解释是比特币没有像智能手机一样进入千家万户，可是反过来想，拥有一部智能手机并不会让人暴富，人们对比特">
-<meta property="og:image" content="c:/Users/10559/Documents/%E6%80%9D%E6%BA%90%E7%AC%94%E8%AE%B0/DDL/assets/20210125222452-7na7m6o-image.png">
-<meta property="og:image" content="c:/Users/10559/Documents/%E6%80%9D%E6%BA%90%E7%AC%94%E8%AE%B0/DDL/assets/20210125224435-4nit26o-image.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232949.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232904.png">
 <meta property="article:published_time" content="2021-01-25T15:17:21.000Z">
-<meta property="article:modified_time" content="2021-01-25T15:17:57.756Z">
+<meta property="article:modified_time" content="2021-01-25T15:30:06.090Z">
 <meta property="article:author" content="ddl">
 <meta property="article:tag" content="读书笔记">
 <meta property="article:tag" content="好奇">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="c:/Users/10559/Documents/%E6%80%9D%E6%BA%90%E7%AC%94%E8%AE%B0/DDL/assets/20210125222452-7na7m6o-image.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232949.png">
 
 <link rel="canonical" href="https://hustddl.com/2021/01/25/bi-te-bi-hou-mian-de-shu-xue-yuan-li/">
 
@@ -305,7 +305,7 @@
 </blockquote>
 <p>我们规定在这个账本的末位加上一个魔数， 使得整个账本经过哈希运算之后得到的哈希值，前30位(具体位数可以改变)都为0，我们就认为这个账本暂且是合法的。</p>
 <p>从概率的角度找到这样一个魔数，是 $1/(2^{30})$  ，并且只能够通过穷举的方式来找。所以可以认为需要很大算力，平时我们说的挖矿其实就在做这个事情。</p>
-<p><img src="C:/Users/10559/Documents/%E6%80%9D%E6%BA%90%E7%AC%94%E8%AE%B0/DDL/assets/20210125222452-7na7m6o-image.png" alt="20210125222452-7na7m6o-image"></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232949.png" alt="20210125222452-7na7m6o-image"></p>
 <p><strong>区块链( block chain)</strong>就是我们的账本，他把账本拆分成了很多小块，每一块除了有交易记录，还有前一个块的工作量证明(挖矿穷举得到的魔数)，以及当前块工作量证明。</p>
 <p><strong>区块建立者</strong></p>
 <p>可以理解为有人在全网监听所有交易记录，然后根据这些交易记录去计算魔数，一旦找到满足要求的魔数，就认为一个新的区块被建立，然后将新区块广播到全网。为了奖励这些找到魔数的人，规定给他们一定数目的比特币回报。这也就是我们说的挖矿的收入。</p>
@@ -318,7 +318,7 @@
 <p>人们相信他所指向的最长区块链</p>
 </blockquote>
 <p>每次矿工产生了一个新的区块，收到区块的人并不会立马将区块合并到自己的区块链中，而是观望一段时间，比如规定等五个新的区块才合并一个区块。这样即使Alice欺骗了Bob,产生了下图中上方分叉的一条链，网络中的其他矿工此时也在不停挖矿，产生新的区块，并且在向Bob广播，除非Alices的算力达到全网50%y以上，后者他产生的区块链分支就被认为是假的。</p>
-<p><img src="C:/Users/10559/Documents/%E6%80%9D%E6%BA%90%E7%AC%94%E8%AE%B0/DDL/assets/20210125224435-4nit26o-image.png" alt="20210125224435-4nit26o-image"></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232904.png" alt="20210125224435-4nit26o-image"></p>
 <h3 id="其他细节"><a href="#其他细节" class="headerlink" title="其他细节"></a>其他细节</h3><ol>
 <li>前面提到计算魔数，使得散列值前30位为0，这个“30位”会根据当前挖矿难度变化，系统保证大约10分钟产生一个新的区块</li>
 <li>比特币系统中的币都来自于生成新区块的奖励，币的总数目被设计为一定的，一开始挖矿生成一个区块能够得到50个比特币，过一段时间减少为25 -&gt;12.5-&gt;6.25…</li>
