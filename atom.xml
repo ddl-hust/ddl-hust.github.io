@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://hustddl.com/"/>
-  <updated>2021-01-24T03:37:53.066Z</updated>
+  <updated>2021-01-25T15:17:57.756Z</updated>
   <id>https://hustddl.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>理解比特币</title>
+    <link href="https://hustddl.com/2021/01/25/bi-te-bi-hou-mian-de-shu-xue-yuan-li/"/>
+    <id>https://hustddl.com/2021/01/25/bi-te-bi-hou-mian-de-shu-xue-yuan-li/</id>
+    <published>2021-01-25T15:17:21.000Z</published>
+    <updated>2021-01-25T15:17:57.756Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;关于比特币有太多的消息，关于人们赚了多少亏了多少，但是比特币到底是什么呢？想起木遥说&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在过去的一年里，我身边的几乎每个朋友都或多或少问过我关于比特币的问题，往往是非常初等的问题。这有点奇怪，因为比特币已经诞生了有将近十年之久，差不多跟智能手机同龄，但今天没有人还会好奇地问智能手机是什么。一个省事的解释是比特币没有像智能手机一样进入千家万户，可是反过来想，拥有一部智能手机并不会让人暴富，人们对比特币的求知欲应该成百上千倍更高才对。我觉得更本质的原因在于，比特币首先是一种知识，而知识在今天的信息网络里的传播速度正在变得越来越慢，越来越低效。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;20年暑期实习时候，住在一起的一个大哥就是做比特币的，我们开始每天晚上回去了聊天，聊了几天就觉得他满嘴跑火车，拿着一本社会学书在看，聊来聊去就是一些大而空的词，同样关于比特币我问道具体是啥，他也解释不不清楚。我对于比特币能不能赚钱现在兴趣不大，但是我很好奇比特币究竟是什么，他背后的基础是啥？&lt;/p&gt;
+&lt;p&gt;现在把我最近学的关于比特币知识梳理下。&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+      <category term="读书笔记" scheme="https://hustddl.com/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    
+      <category term="好奇" scheme="https://hustddl.com/tags/%E5%A5%BD%E5%A5%87/"/>
+    
+  </entry>
   
   <entry>
     <title>《复杂》</title>
@@ -134,7 +160,7 @@
     <link href="https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/"/>
     <id>https://hustddl.com/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/</id>
     <published>2021-01-19T16:00:48.000Z</published>
-    <updated>2021-01-24T03:38:26.422Z</updated>
+    <updated>2021-01-25T15:18:56.779Z</updated>
     
     <summary type="html">
     
@@ -453,29 +479,6 @@
     </summary>
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>socket从创建到连接过程小结</title>
-    <link href="https://hustddl.com/2020/08/08/socket-cong-chuang-jian-dao-lian-jie-guo-cheng-xiao-jie/"/>
-    <id>https://hustddl.com/2020/08/08/socket-cong-chuang-jian-dao-lian-jie-guo-cheng-xiao-jie/</id>
-    <published>2020-08-08T02:40:45.000Z</published>
-    <updated>2020-08-08T02:44:29.819Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;分析了套接字创建到连接过程中，一些关键的函数调用以及数据结构，同时分析了connect()过程中tcp三次握手状态变化。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="网络" scheme="https://hustddl.com/categories/%E7%BD%91%E7%BB%9C/"/>
-    
-    
-      <category term="socket" scheme="https://hustddl.com/tags/socket/"/>
-    
-      <category term="linux" scheme="https://hustddl.com/tags/linux/"/>
     
   </entry>
   
