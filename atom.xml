@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://hustddl.com/"/>
-  <updated>2021-01-25T15:30:06.090Z</updated>
+  <updated>2021-02-22T02:33:09.376Z</updated>
   <id>https://hustddl.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>2021年寒假小结</title>
+    <link href="https://hustddl.com/2021/02/22/2021-nian-han-jia-xiao-jie/"/>
+    <id>https://hustddl.com/2021/02/22/2021-nian-han-jia-xiao-jie/</id>
+    <published>2021-02-22T02:25:32.698Z</published>
+    <updated>2021-02-22T02:33:09.376Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;2021年寒假小结&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;把跑步当作一件正经事，寒假三周的时间基本上保持了每周35km的跑量，现在五公里平均配速pb是430，跑过的最远的距离13km。在学校大概还有三个多月时间，继续跑下去，计划不做大的改变。这也是我在跑步过程中学到的，计划是要有
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>理解比特币</title>
@@ -446,33 +471,6 @@
 
 &lt;p&gt;背景&lt;/p&gt;
 &lt;p&gt;LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait
-        
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
-  
-  <entry>
-    <title>tcp40ms延迟问题分析</title>
-    <link href="https://hustddl.com/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/"/>
-    <id>https://hustddl.com/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/</id>
-    <published>2020-08-23T06:53:50.000Z</published>
-    <updated>2020-08-23T07:07:00.659Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-
-&lt;p&gt;&lt;strong&gt;背景&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;tcp抓包发现服务端回复ack存在40ms左右延迟&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;https://s1.ax1x.com/2020/08/17/dmqEqK.png&quot;
         
       
     
