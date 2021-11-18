@@ -32,87 +32,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>bash学习</title>
-    <url>/2020/12/10/bash-xue-xi/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
-<p>bash 脚本开头一行 都有 <code>#!/bin/bash</code> 指此脚本使用<strong>/bin/sh</strong>来解释执行，<strong>#!</strong>是特殊的表示符，其后面根的是此解释此脚本的shell的路径, python脚本在开头也有类似的语句， <code>#!/bin/python2</code> or <code>#!/bin/python3</code></p>
-<p>创建完一个bash脚本之后，需要通过<code>chmod +x XXX.sh</code> 赋予bash脚本执行权限， 文件的权限可以通过<code>ls -l</code> 查看详细， 用户组，其他，用户都具有自己对文件的权限。</p>
-<p>bash 脚本执行可以 通过<code>./XXX.sh</code> 也可以直接指明<code>bash xxx.sh</code>  其中前者指定了sh 文件的路径，<a href="https://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell" target="_blank" rel="noopener">参考</a></p>
-<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>bash 变量不需要指定类型，直接赋值，解释器动态解释。</p>
-<p><strong>变量定义</strong>:</p>
-<p><code>name=&quot;DevDojo&quot;</code>  note： 赋值号左右不能又空格，如果平时编码习惯和这个不一样，需要注意下。</p>
-<p><strong>变量使用</strong></p>
-<p><code>echo ${name}</code> 括号增加可读性。同时变量也可以在表达式中使用，语法与直接使用一样。</p>
-<p>bash 语句不像c++需要显式<code>;</code>表示语句结束</p>
-<p><strong>用户输入</strong></p>
-<p>从命令行读取用户输入</p>
-<p><code>read variable</code></p>
-<p><strong>外部参数</strong></p>
-<p>bash 脚本在运行时候,可以跟可变多的参数,在脚本内部用$1, $2来指代,如下面例子</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument one is <span class="variable">$1</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument two is <span class="variable">$2</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument three is <span class="variable">$3</span>"</span></span><br><span class="line"><span class="comment"># excute</span></span><br><span class="line">./arguments.sh dog cat bird</span><br></pre></td></tr></table></figure>
-
-<p>也可以很方便的用 <code>$@</code> 来引用所有的外部参数.</p>
-<p>$0表示脚本文件名,一个用处就是在执行完脚本之后,可以用$0获取脚本名,然后做自删除.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"The name of the file is: <span class="variable">$0</span> and it is going to be self-</span></span><br><span class="line"><span class="string">deleted."</span></span><br><span class="line">rm -f <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>数组</strong></p>
-<p>语法:<code>my_array=(&quot;value 1&quot; &quot;value 2&quot; &quot;value 3&quot; &quot;value 4&quot;)</code>  元素之间用空格隔开</p>
-<p>数组引用类似C,  <code>echo ${my_array[1]}</code>  元素起始下标为0</p>
-<p>数组长度获取</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">list=(1 2 3 4)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#list[@]&#125;</span>  <span class="comment">#输出4</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h4><ul>
-<li>算数表达  语法类似, 用英文字母的缩写来表示比较属性, eg. lt(less than) ,eq(equal) …..<ul>
-<li>[[ ${arg1} -eq ${arg2} ]]    equal  如果两个变量相同返回true</li>
-</ul>
-</li>
-<li>字符串<ul>
-<li>[[ -v ${varname} ]] 变量如果被赋值返回true</li>
-<li>[[ -z ${string} ]] 字符串长度为0 为true</li>
-<li>[[ -n ${string} ]] 字符串长度不为0</li>
-</ul>
-</li>
-<li>文件表达式 在linux 下面一切都是文件,文件具有不同的类型 比如块文件,字符设备,目录等<ul>
-<li>[[ -d ${file} ]]    是否为目录</li>
-<li>[[ -x ${file} ]]  文件是否可执行</li>
-<li>[[ -L ${file} ]]  文件是否为符号链接</li>
-</ul>
-</li>
-</ul>
-<p>有了条件表达式,自然引出了条件语句</p>
-<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p><strong>if-else</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ some_test ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span> &lt;commands&gt;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>swith 语句</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$some_variable</span> <span class="keyword">in</span></span><br><span class="line">  pattern_1)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  pattern_2| pattern_3)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    default commands</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
-
-<p>注意点</p>
-<ol>
-<li>case 语句用关键字<strong>case</strong>开始,引用变量,然后加关键字<strong>in</strong></li>
-<li>匹配模式用) 结束</li>
-<li>All clauses have to be terminated by adding ;; at the end</li>
-<li>默认模式用*匹配</li>
-<li>case 语句结束用esac关键字</li>
-</ol>
-<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p><strong>while</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_conditions</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
-<p>条件表达式都用[] 或者[[]]括起来, <a href="https://stackoverflow.com/questions/3427872/whats-the-difference-between-and-in-bash" target="_blank" rel="noopener">区别</a></p>
-<p><strong>until</strong></p>
-<p>含义是当条件不为真时候一直运行</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">until [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_commands</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
-]]></content>
-  </entry>
-  <entry>
     <title>Peter Thiel&#39;s Religion — David Perell</title>
     <url>/2020/12/17/peter-thiel-s-religion-david-perell/</url>
     <content><![CDATA[<h2 id="读《Peter-Thiel’s-Religion-—-David-Perell》有感"><a href="#读《Peter-Thiel’s-Religion-—-David-Perell》有感" class="headerlink" title="读《Peter Thiel’s Religion — David Perell》有感"></a>读《Peter Thiel’s Religion — David Perell》有感</h2><p>转载的一篇文章，分析皮特泰勒的思想，泰勒原来就是PayPal的创始人之一，《0到1》的作者，原文很长，其中有些思想让我印象深刻，比如“模仿学习”的天性，</p>
@@ -157,6 +76,67 @@
 </blockquote>
 <p>#好故事 人类模仿的天性导致嫉妒</p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>overload,override,overwrite小结</title>
+    <url>/2020/05/23/overload-override-overwrite-xiao-jie/</url>
+    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
+<a id="more"></a>
+
+<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
+<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
+<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
+<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
+<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>什么函数不能够被重载?</p>
+<ol>
+<li>仅仅返回类型不同，不能够做函数重载</li>
+<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
+<li>函数参数差别仅在于有无顶层const或volatile</li>
+</ol>
+<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
+<p>这里就引入什么是top-level const/volatile</p>
+<blockquote>
+<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
+</blockquote>
+<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
+<p>override 可能存在二义性</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
+<ul>
+<li><p>范围不同(作用域不同)</p>
+</li>
+<li><p>函数签名完全一样(名字，常数列表)</p>
+</li>
+<li><p>基类函数必须带有virtual 关键字</p>
+<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
+</li>
+</ul>
+<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
+<ul>
+<li>派生类函数参数与基类不同，不管基类有无virtual</li>
+<li>派生类函数参数与基类相同，但是基类没有virtual</li>
+</ul>
+<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
+<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
   </entry>
   <entry>
     <title>IO复用</title>
@@ -273,64 +253,171 @@
 ]]></content>
   </entry>
   <entry>
-    <title>overload,override,overwrite小结</title>
-    <url>/2020/05/23/overload-override-overwrite-xiao-jie/</url>
-    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
-<a id="more"></a>
+    <title>bash学习</title>
+    <url>/2020/12/10/bash-xue-xi/</url>
+    <content><![CDATA[<a id="more"></a>
 
-<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
-<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
-<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
-<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
-<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="学习bash"><a href="#学习bash" class="headerlink" title="学习bash"></a>学习bash</h3><p> <a href="https://github.com/bobbyiliev/introduction-to-bash-scripting" target="_blank" rel="noopener">introduction-to-bash-scripting</a>的学习笔记 配合 <a href="https://repl.it/languages/bash" target="_blank" rel="noopener">线上bash解释器</a></p>
+<p>bash 脚本开头一行 都有 <code>#!/bin/bash</code> 指此脚本使用<strong>/bin/sh</strong>来解释执行，<strong>#!</strong>是特殊的表示符，其后面根的是此解释此脚本的shell的路径, python脚本在开头也有类似的语句， <code>#!/bin/python2</code> or <code>#!/bin/python3</code></p>
+<p>创建完一个bash脚本之后，需要通过<code>chmod +x XXX.sh</code> 赋予bash脚本执行权限， 文件的权限可以通过<code>ls -l</code> 查看详细， 用户组，其他，用户都具有自己对文件的权限。</p>
+<p>bash 脚本执行可以 通过<code>./XXX.sh</code> 也可以直接指明<code>bash xxx.sh</code>  其中前者指定了sh 文件的路径，<a href="https://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell" target="_blank" rel="noopener">参考</a></p>
+<h4 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h4><p>bash 变量不需要指定类型，直接赋值，解释器动态解释。</p>
+<p><strong>变量定义</strong>:</p>
+<p><code>name=&quot;DevDojo&quot;</code>  note： 赋值号左右不能又空格，如果平时编码习惯和这个不一样，需要注意下。</p>
+<p><strong>变量使用</strong></p>
+<p><code>echo ${name}</code> 括号增加可读性。同时变量也可以在表达式中使用，语法与直接使用一样。</p>
+<p>bash 语句不像c++需要显式<code>;</code>表示语句结束</p>
+<p><strong>用户输入</strong></p>
+<p>从命令行读取用户输入</p>
+<p><code>read variable</code></p>
+<p><strong>外部参数</strong></p>
+<p>bash 脚本在运行时候,可以跟可变多的参数,在脚本内部用$1, $2来指代,如下面例子</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument one is <span class="variable">$1</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument two is <span class="variable">$2</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Argument three is <span class="variable">$3</span>"</span></span><br><span class="line"><span class="comment"># excute</span></span><br><span class="line">./arguments.sh dog cat bird</span><br></pre></td></tr></table></figure>
+
+<p>也可以很方便的用 <code>$@</code> 来引用所有的外部参数.</p>
+<p>$0表示脚本文件名,一个用处就是在执行完脚本之后,可以用$0获取脚本名,然后做自删除.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"The name of the file is: <span class="variable">$0</span> and it is going to be self-</span></span><br><span class="line"><span class="string">deleted."</span></span><br><span class="line">rm -f <span class="variable">$0</span></span><br></pre></td></tr></table></figure>
 
 
 
+<p><strong>数组</strong></p>
+<p>语法:<code>my_array=(&quot;value 1&quot; &quot;value 2&quot; &quot;value 3&quot; &quot;value 4&quot;)</code>  元素之间用空格隔开</p>
+<p>数组引用类似C,  <code>echo ${my_array[1]}</code>  元素起始下标为0</p>
+<p>数组长度获取</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">list=(1 2 3 4)</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$&#123;#list[@]&#125;</span>  <span class="comment">#输出4</span></span><br></pre></td></tr></table></figure>
 
 
-<p>什么函数不能够被重载?</p>
+
+<h4 id="条件表达式"><a href="#条件表达式" class="headerlink" title="条件表达式"></a>条件表达式</h4><ul>
+<li>算数表达  语法类似, 用英文字母的缩写来表示比较属性, eg. lt(less than) ,eq(equal) …..<ul>
+<li>[[ ${arg1} -eq ${arg2} ]]    equal  如果两个变量相同返回true</li>
+</ul>
+</li>
+<li>字符串<ul>
+<li>[[ -v ${varname} ]] 变量如果被赋值返回true</li>
+<li>[[ -z ${string} ]] 字符串长度为0 为true</li>
+<li>[[ -n ${string} ]] 字符串长度不为0</li>
+</ul>
+</li>
+<li>文件表达式 在linux 下面一切都是文件,文件具有不同的类型 比如块文件,字符设备,目录等<ul>
+<li>[[ -d ${file} ]]    是否为目录</li>
+<li>[[ -x ${file} ]]  文件是否可执行</li>
+<li>[[ -L ${file} ]]  文件是否为符号链接</li>
+</ul>
+</li>
+</ul>
+<p>有了条件表达式,自然引出了条件语句</p>
+<h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><p><strong>if-else</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ some_test ]]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">    &lt;commands&gt;</span><br><span class="line"><span class="keyword">else</span> &lt;commands&gt;</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>swith 语句</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$some_variable</span> <span class="keyword">in</span></span><br><span class="line">  pattern_1)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  pattern_2| pattern_3)</span><br><span class="line">    commands</span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    default commands</span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>注意点</p>
 <ol>
-<li>仅仅返回类型不同，不能够做函数重载</li>
-<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
-<li>函数参数差别仅在于有无顶层const或volatile</li>
+<li>case 语句用关键字<strong>case</strong>开始,引用变量,然后加关键字<strong>in</strong></li>
+<li>匹配模式用) 结束</li>
+<li>All clauses have to be terminated by adding ;; at the end</li>
+<li>默认模式用*匹配</li>
+<li>case 语句结束用esac关键字</li>
 </ol>
-<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
-<p>这里就引入什么是top-level const/volatile</p>
-<blockquote>
-<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
-</blockquote>
-<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
-<p>override 可能存在二义性</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h4><p><strong>while</strong></p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_conditions</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 
+<p>条件表达式都用[] 或者[[]]括起来, <a href="https://stackoverflow.com/questions/3427872/whats-the-difference-between-and-in-bash" target="_blank" rel="noopener">区别</a></p>
+<p><strong>until</strong></p>
+<p>含义是当条件不为真时候一直运行</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">until [ your_condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    your_commands</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 
+]]></content>
+  </entry>
+  <entry>
+    <title>shared_from_this解决了什么问题</title>
+    <url>/2020/06/02/shared-from-this-jie-jue-liao-shi-me-wen-ti/</url>
+    <content><![CDATA[<a id="more"></a>
 
-<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
-<ul>
-<li><p>范围不同(作用域不同)</p>
-</li>
-<li><p>函数签名完全一样(名字，常数列表)</p>
-</li>
-<li><p>基类函数必须带有virtual 关键字</p>
-<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
-</li>
-</ul>
-<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
-<ul>
-<li>派生类函数参数与基类不同，不管基类有无virtual</li>
-<li>派生类函数参数与基类相同，但是基类没有virtual</li>
-</ul>
-<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
-<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
-<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
+<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
+<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
 ]]></content>
       <categories>
-        <category>技术</category>
+        <category>C++</category>
       </categories>
+  </entry>
+  <entry>
+    <title>《Factluness》阅读笔记</title>
+    <url>/2021/01/20/factluness-yue-du-bi-ji/</url>
+    <content><![CDATA[<p>《Factluness》开篇给了11个选择题，用来测试人们对这个世界存在的认知偏差。作者通过一系列数据说明简单的将这个世界分为发展&amp;&amp;发达，贫穷&amp;&amp;富有早已经不合适了，于是作者提出了一个概念:按照收入水平将世界人口分为四个等级，现阶段大部分人处于第二，第三等级。</p>
+<p>这本书比较好读，有明确的问题导向， 每一个大章节最后都会有总结，但作者给出的一些数据和在非洲国家的亲身经历让我深思。</p>
+<a id="more"></a>
+
+
+
+<p><strong>一分为二看待问题会出什么问题</strong></p>
+<ul>
+<li><p>从1965年到2017年，这期间人们生活水平发生了巨大变化，已经不能简单的用发达，发展国家来分类，75%的人口，生活在中等收入国家中，不是穷国，也不是富国，而是介于二者之间的一种生活水平。</p>
+</li>
+<li><p>对事实忽略带来的机会损失</p>
+</li>
+</ul>
+<p>对事实的忽略将错失巨大的商业机会，以卫生巾为例，很多公司在欧洲饱和市场做细分领域的开发， 比如探寻在为穿比基尼泳装的妇女们提供更薄的卫生巾，但是却忽视了活在收入水平第四级的三亿处于月经期的妇女服务，而没有去拓展收入水平更低的新市场。</p>
+<p><strong>以偏概全</strong></p>
+<ul>
+<li>想当然的归纳带来的危险</li>
+</ul>
+<p>作者和学生去印度一个医院实地调查，当他学生差点赶不上电梯时候，用脚去拦住快要关闭的电梯，最后被电梯卡住。在瑞典，所有的电梯门上都有传感器。如果探测到门之间有东西的话，电梯门会自动打开。这位印度医生非常疑惑地看着我说：“但是你怎么知道这种先进的设备每次都可以正常工作呢？”我的回答显得很愚蠢，我说：“嗯，在我印象里好像每一次都管用。可能设备在出厂的时候经过了严格的检测吧。”他看起来并不太相信我说的话，他说：“你们国家的生活太安全了，使得其他国家都显得很危险。”</p>
+<p>这一点的确让我惊讶，很多生活中想当然的情况换一个环境就不是这样了。</p>
+<ul>
+<li>NGO项目查看不同收入水平阶级的生活方式对比</li>
+</ul>
+<p><a href="https://www.gapminder.org/dollar-street/?lng=zh-CN&topic=make-up&regions=as" target="_blank" rel="noopener">dollarstreet</a>通过对比相同的主题（eg。家园，牙刷等)下，看下不同生活水平的人差别有多大。 处于同一收入阶层的人即使在不同国家，生活方式是差不多的。同一国家不同收入阶级的生活方式差别很大。</p>
+<p>作者下面提到的避免以偏盖全方法，同样适用于软件工程领域。</p>
+<ul>
+<li>适用于软件测试的方法<ul>
+<li>注意大多数； 99%和51%区别很大</li>
+<li>注意极端案例(corner case),这个很好理解，一些边界条件</li>
+<li>不要把自己放在中心位置，也不要假设他人是傻子，比如下面这个例子</li>
+</ul>
+</li>
+</ul>
+<p>突尼斯可能看到很多盖到一半的房子，初看觉得当地人没有规划，很懒。但实际情况是，对于当地人而言，去银行贷款很难，同时保存现金很不安全（可能贬值或者被偷），单个的屯砖也可能被偷。于是他们用钱去买砖慢慢盖房子。这恰巧体现了当地人的智慧。</p>
+<blockquote>
+<p>世界总的趋势是变好还是变坏？</p>
+</blockquote>
+<p>心理学上人们对悲观负面情绪更加敏感，存在下面几点原因</p>
+<ol>
+<li>记忆存在美好滤镜，人们回忆起童年很多时候都美化了记忆，实际情况可能没这么好</li>
+<li>新闻对于负面新闻的选择报道</li>
+<li>悲观被感性情绪主导</li>
+</ol>
+<p>但作者从统计数据来看， 世界总的贫困人口数最近20年减少了一半，平均寿命也有了大幅提升。</p>
+<p>解决之道”不是我们要多看一些正面的新闻来对冲负面新闻带来的影响，因为那将会带来另一种自我欺骗的、自我安慰的、误导性的偏见。”这让我想到方可成提到的<strong>连接与共情</strong>观点，通过主动释放善意，不消极的认为这个世界就是一个丛林法则。 这方面可以订阅下他=最近的一个项目 微博账号“放晴公园”</p>
+<p><strong>直线思维</strong></p>
+<p>书中提到联合国的人口预估报告，认为2100年儿童人口将和现在数目基本一致，维持在20亿左右。</p>
+<p>这似乎与我们直观认识不符合。毕竟现在总人口还在缓慢增长估计到2100年将到100亿。 这是为什么？</p>
+<ul>
+<li>过去几十年妇女生育人均数目大幅度下降从1965年的5-&gt;2.5/人</li>
+<li>增长的人口主要是由现在小孩变为的成年人</li>
+</ul>
+<p>作者为了阐述很多数据分布不一定符合直线思维，举了一些有意思的案例</p>
+<ul>
+<li>滑梯曲线</li>
+</ul>
+<p>女性人均生育数</p>
+<ul>
+<li>正态分布(驼峰曲线)</li>
+</ul>
+<p>一个有意思的案例关于蛀牙情况分布，第一级人们没钱买糖，第四级人们牙齿健康水平得到了提升，比如他们会去定期洗牙等，反而是处于第二，三级的人蛀牙率比较高。机动车事故也符合同样的逻辑。</p>
+<ul>
+<li>指数曲线； 常见的流行病感染</li>
+</ul>
+]]></content>
       <tags>
-        <tag>C++</tag>
+        <tag>读书笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -615,120 +702,133 @@
 ]]></content>
   </entry>
   <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/2020/05/20/stringstream-chu-li-zi-fu-chuan/</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+    <title>内存虚拟化</title>
+    <url>/2020/08/01/nei-cun-xu-ni-hua/</url>
+    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
 <a id="more"></a>
 
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《Factluness》阅读笔记</title>
-    <url>/2021/01/20/factluness-yue-du-bi-ji/</url>
-    <content><![CDATA[<p>《Factluness》开篇给了11个选择题，用来测试人们对这个世界存在的认知偏差。作者通过一系列数据说明简单的将这个世界分为发展&amp;&amp;发达，贫穷&amp;&amp;富有早已经不合适了，于是作者提出了一个概念:按照收入水平将世界人口分为四个等级，现阶段大部分人处于第二，第三等级。</p>
-<p>这本书比较好读，有明确的问题导向， 每一个大章节最后都会有总结，但作者给出的一些数据和在非洲国家的亲身经历让我深思。</p>
-<a id="more"></a>
-
-
-
-<p><strong>一分为二看待问题会出什么问题</strong></p>
-<ul>
-<li><p>从1965年到2017年，这期间人们生活水平发生了巨大变化，已经不能简单的用发达，发展国家来分类，75%的人口，生活在中等收入国家中，不是穷国，也不是富国，而是介于二者之间的一种生活水平。</p>
-</li>
-<li><p>对事实忽略带来的机会损失</p>
-</li>
-</ul>
-<p>对事实的忽略将错失巨大的商业机会，以卫生巾为例，很多公司在欧洲饱和市场做细分领域的开发， 比如探寻在为穿比基尼泳装的妇女们提供更薄的卫生巾，但是却忽视了活在收入水平第四级的三亿处于月经期的妇女服务，而没有去拓展收入水平更低的新市场。</p>
-<p><strong>以偏概全</strong></p>
-<ul>
-<li>想当然的归纳带来的危险</li>
-</ul>
-<p>作者和学生去印度一个医院实地调查，当他学生差点赶不上电梯时候，用脚去拦住快要关闭的电梯，最后被电梯卡住。在瑞典，所有的电梯门上都有传感器。如果探测到门之间有东西的话，电梯门会自动打开。这位印度医生非常疑惑地看着我说：“但是你怎么知道这种先进的设备每次都可以正常工作呢？”我的回答显得很愚蠢，我说：“嗯，在我印象里好像每一次都管用。可能设备在出厂的时候经过了严格的检测吧。”他看起来并不太相信我说的话，他说：“你们国家的生活太安全了，使得其他国家都显得很危险。”</p>
-<p>这一点的确让我惊讶，很多生活中想当然的情况换一个环境就不是这样了。</p>
-<ul>
-<li>NGO项目查看不同收入水平阶级的生活方式对比</li>
-</ul>
-<p><a href="https://www.gapminder.org/dollar-street/?lng=zh-CN&topic=make-up&regions=as" target="_blank" rel="noopener">dollarstreet</a>通过对比相同的主题（eg。家园，牙刷等)下，看下不同生活水平的人差别有多大。 处于同一收入阶层的人即使在不同国家，生活方式是差不多的。同一国家不同收入阶级的生活方式差别很大。</p>
-<p>作者下面提到的避免以偏盖全方法，同样适用于软件工程领域。</p>
-<ul>
-<li>适用于软件测试的方法<ul>
-<li>注意大多数； 99%和51%区别很大</li>
-<li>注意极端案例(corner case),这个很好理解，一些边界条件</li>
-<li>不要把自己放在中心位置，也不要假设他人是傻子，比如下面这个例子</li>
-</ul>
-</li>
-</ul>
-<p>突尼斯可能看到很多盖到一半的房子，初看觉得当地人没有规划，很懒。但实际情况是，对于当地人而言，去银行贷款很难，同时保存现金很不安全（可能贬值或者被偷），单个的屯砖也可能被偷。于是他们用钱去买砖慢慢盖房子。这恰巧体现了当地人的智慧。</p>
-<blockquote>
-<p>世界总的趋势是变好还是变坏？</p>
+<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
+<p>为什么引入了虚拟地址?</p>
 </blockquote>
-<p>心理学上人们对悲观负面情绪更加敏感，存在下面几点原因</p>
+<ul>
+<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
+<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
+</ul>
+<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
+<blockquote>
+<p>设计一套虚拟内存需要满足满足那些目标?</p>
+</blockquote>
 <ol>
-<li>记忆存在美好滤镜，人们回忆起童年很多时候都美化了记忆，实际情况可能没这么好</li>
-<li>新闻对于负面新闻的选择报道</li>
-<li>悲观被感性情绪主导</li>
+<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
+</li>
+<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
+</li>
+<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
+<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
+</li>
 </ol>
-<p>但作者从统计数据来看， 世界总的贫困人口数最近20年减少了一半，平均寿命也有了大幅提升。</p>
-<p>解决之道”不是我们要多看一些正面的新闻来对冲负面新闻带来的影响，因为那将会带来另一种自我欺骗的、自我安慰的、误导性的偏见。”这让我想到方可成提到的<strong>连接与共情</strong>观点，通过主动释放善意，不消极的认为这个世界就是一个丛林法则。 这方面可以订阅下他=最近的一个项目 微博账号“放晴公园”</p>
-<p><strong>直线思维</strong></p>
-<p>书中提到联合国的人口预估报告，认为2100年儿童人口将和现在数目基本一致，维持在20亿左右。</p>
-<p>这似乎与我们直观认识不符合。毕竟现在总人口还在缓慢增长估计到2100年将到100亿。 这是为什么？</p>
+<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
+<p> 一开始作者假设</p>
+<ol>
+<li>虚拟地址空间连续存放到物理内存</li>
+<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
+</ol>
+<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
+<p>地址转化： <code>physical address = virtual address + base</code></p>
+<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
+<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
+<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
 <ul>
-<li>过去几十年妇女生育人均数目大幅度下降从1965年的5-&gt;2.5/人</li>
-<li>增长的人口主要是由现在小孩变为的成年人</li>
+<li>进程创建时，分配与地址空间对应的物理内存</li>
+<li>当进程结束时，回收内存</li>
+<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
 </ul>
-<p>作者为了阐述很多数据分布不一定符合直线思维，举了一些有意思的案例</p>
+<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
+<p><strong>优点</strong></p>
 <ul>
-<li>滑梯曲线</li>
+<li><p>在硬件支持下起来很高效快速</p>
+</li>
+<li><p>提供了进程间的保护隔离</p>
+</li>
 </ul>
-<p>女性人均生育数</p>
+<p><strong>缺点</strong></p>
+<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
+<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
+<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
+<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
+<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
+<p>分段机制下地址转化伪码</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
+<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
 <ul>
-<li>正态分布(驼峰曲线)</li>
+<li><p>减少了内部碎片,内存浪费</p>
+</li>
+<li><p>代码段等可以共享</p>
+</li>
 </ul>
-<p>一个有意思的案例关于蛀牙情况分布，第一级人们没钱买糖，第四级人们牙齿健康水平得到了提升，比如他们会去定期洗牙等，反而是处于第二，三级的人蛀牙率比较高。机动车事故也符合同样的逻辑。</p>
+<p>问题：</p>
 <ul>
-<li>指数曲线； 常见的流行病感染</li>
+<li><p>大小不一的段可能导致外部碎片</p>
+</li>
+<li><p>内存不能做到按需分配</p>
+</li>
+</ul>
+<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
+<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
+</blockquote>
+<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
+<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
+<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
+</blockquote>
+<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
+<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
+<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
+<p>实现页机制有几个问题</p>
+<blockquote>
+<p>1.页表存在哪里?</p>
+<p>2.每一个页表项具体有什么内容?</p>
+</blockquote>
+<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
+<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
+<ul>
+<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
+<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
+<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
+</ul>
+<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
+<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
+<ul>
+<li><p>固定大小内存单元，避免外部碎片</p>
+</li>
+<li><p>相对分段内存使用灵活</p>
+</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li><p>页表占用内存过大</p>
+</li>
+<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
+</li>
 </ul>
 ]]></content>
       <tags>
-        <tag>读书笔记</tag>
+        <tag>操作系统</tag>
+        <tag>OSTEP</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>shared_from_this解决了什么问题</title>
-    <url>/2020/06/02/shared-from-this-jie-jue-liao-shi-me-wen-ti/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
-<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
-]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
   </entry>
   <entry>
     <title>人体上肢自然运动数据采集</title>
@@ -759,6 +859,54 @@
 ]]></content>
       <tags>
         <tag>机器人</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>stringstream 处理字符串</title>
+    <url>/2020/05/20/stringstream-chu-li-zi-fu-chuan/</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+<a id="more"></a>
+
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>回忆围棋</title>
+    <url>/2021/01/23/hui-yi-wei-qi/</url>
+    <content><![CDATA[<p>回顾到今年三月看到的一篇文章<a href="https://weibo.com/ttarticle/p/show?id=2309404475844541153439#_0" target="_blank" rel="noopener">《<strong>一个时代的退隐——李世石退役的纪念</strong> 》</a>，作者李喆疫情期间困在武汉，作为国手在微博上写一些自己的随想，围棋见解。我非常喜欢李的文字，优美又充满哲学般的深思。比如下面这段</p>
+<a id="more"></a>
+
+<blockquote>
+<p>“毫无疑问，李世石是一位创造感极强的棋士，他的棋谱中充斥着将棋局引入陌生领域的激情，时而选择在悬崖峭壁上跳跃翻腾，时而自降于黑暗地底寻一点灵明，不满足于在既定的航线上平稳前行，宁愿冒着暗礁冰山的风险驶向前所未见的风景。因此当他在退役前夕说出 “我将围棋视为艺术，我心中的围棋是两个人齐心协力创造一部作品” 时，我们也就不应感到丝毫意外了。而他的退役，与韩国棋院的不和解当然是一种外力，而内在更深刻的原因，还是在于围棋 AI 对他作为棋士的创造感的冲击。”</p>
+</blockquote>
+<p>我很小就和围棋接触过，甚至还短暂下过围棋，起因是家里面有一个很大的玻璃围棋，晶莹透亮，最开始是作为我无聊玩具，后来长大了能认字，发现家里书架上为数不多的书中有好几本围棋相关的书，一本是讲南朝鲜传奇棋手曹薰铉的围棋生涯，还有几本小册子讲围棋定式之类的。我爸年轻时代有一股围棋之风， 吴清源，聂卫平那些人当时都是神话般的人物。</p>
+<p>吴清源这个名字我在锵锵三人行经常听到，原因是他们请的嘉宾江铸久妻子是吴清源弟子，吴被称作“昭和棋圣”，宇宙流下法极具观赏性，同时新布局开启了一个新的时代。有一个趣事记得很清楚，吴小时候在北京层下棋就小有名气，于是被叫去陪段祺瑞下棋，别人都让着段， 吴年少不知，沉迷围棋，赢了段，丝毫不给面子。但是段祺瑞仍然每个月给吴清源100大洋养着他，所以看来军阀也不是像书里面说的十足的恶。</p>
+<p>围棋的高深我是一直没有体会到的，但是之后很长时间还是会对这个话题感兴趣，围棋少年动画片，《天龙八部》里面虚竹破珍珑棋局，吴清源的纪录片，以及现在李喆，柯洁的一些动态。说起他们两个人，简直截然不同，李的围棋成就没有柯高，但我觉得在下棋中他找到了新的世界，后来去念了哲学，关于”围棋究竟更偏向艺术还是竞技” 李肯定是偏向艺术的。柯洁打破了我对围棋选手固有的认识，印象里面棋手都是温文尔雅，强调”不显”，但是柯我很喜欢的一点就是他展现了一个人除了作为棋手，同时更多作为一个年轻人的一面，李和柯是完全不一样的，但不妨碍他们同时存在。</p>
+<p><strong>shownotes</strong></p>
+<p>木遥录的一期播客谈李喆写的<a href="https://farmostwood.fireside.fm/6" target="_blank" rel="noopener">《<strong>一个时代的退隐</strong> 》</a></p>
+]]></content>
+      <tags>
+        <tag>随笔</tag>
       </tags>
   </entry>
   <entry>
@@ -1010,154 +1158,6 @@
       </tags>
   </entry>
   <entry>
-    <title>内存虚拟化</title>
-    <url>/2020/08/01/nei-cun-xu-ni-hua/</url>
-    <content><![CDATA[<p>《OSTEP》 内存虚拟化部分小结</p>
-<a id="more"></a>
-
-<h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><blockquote>
-<p>为什么引入了虚拟地址?</p>
-</blockquote>
-<ul>
-<li>使得编程简单，每个应用进程有自己很大一片的地址空间，不用担心代码,变量存放到哪里</li>
-<li>提供了进程之间的保护和隔离；如果我们直接操控物理内存，那么很可能由于进程一个不小心override导致其他进程崩溃</li>
-</ul>
-<p>举个例子两个进程A,B 都有自己的地址空间，eg. 对0x100访问，由于虚拟地址的映射他们对应的物理地址不同。</p>
-<blockquote>
-<p>设计一套虚拟内存需要满足满足那些目标?</p>
-</blockquote>
-<ol>
-<li><p>透明； 对于编程者而言，我们应该是感知不到虚拟地址到物理地址之间的转化，操作系统和硬件在后面帮我们做了地址转化的这些工作</p>
-</li>
-<li><p>高效； 引入虚拟内存，空间角度上来看使用额外很多的内存来存储辅助数据结构，时间上不能导致程序运行变慢</p>
-</li>
-<li><p><strong>保护/隔离</strong>；这个我觉得是最为重要的，程序装载到内存中不能够影响到其他进程。</p>
-<p>具体来看，虚拟内存实现机制，分段，分页下如何做进程间保护?</p>
-</li>
-</ol>
-<h4 id="简单地址翻译"><a href="#简单地址翻译" class="headerlink" title="简单地址翻译"></a>简单地址翻译</h4><p>作者先做了一些假设，对虚拟内存系统设计做了一些简化，然后慢慢放宽条件，逐渐模拟一个真实场景下的虚拟内存系统。这样能够让读者循序渐进体会到系统设计面临的问题，然后慢慢引入新的方案来改进。</p>
-<p> 一开始作者假设</p>
-<ol>
-<li>虚拟地址空间连续存放到物理内存</li>
-<li>地址空间大小不超过物理内存&amp;&amp;每个进程地址空间相同</li>
-</ol>
-<h5 id="硬件支持地址翻译"><a href="#硬件支持地址翻译" class="headerlink" title="硬件支持地址翻译"></a>硬件支持地址翻译</h5><p>在上述假设下，有了基于硬件支持的动态重定位来做地址翻译通过硬件寄存器支持 base+limit </p>
-<p>地址转化： <code>physical address = virtual address + base</code></p>
-<p>limit用来做权限保护，如果虚拟地址超出了limit，程序将终止。</p>
-<p>之前经常听到的MMU,用来做地址转化的硬件单元，这里提到的base,limit寄存器就是MMU的一部分，当然后面为了做更加复杂的地址翻译，MMU还有一些其他硬件的支持。</p>
-<p>从操作系统角度，基于上述虚拟内存的实现方案，有几个问题要解决</p>
-<ul>
-<li>进程创建时，分配与地址空间对应的物理内存</li>
-<li>当进程结束时，回收内存</li>
-<li>进程切换，上下文保存；这里只需要保存一对base-limit寄存器</li>
-</ul>
-<h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5><p>base+bound 的地址转化方案</p>
-<p><strong>优点</strong></p>
-<ul>
-<li><p>在硬件支持下起来很高效快速</p>
-</li>
-<li><p>提供了进程间的保护隔离</p>
-</li>
-</ul>
-<p><strong>缺点</strong></p>
-<p>- 进程空间的整个映射到内存导致了内部碎片(heap,stack)</p>
-<h4 id="分段机制"><a href="#分段机制" class="headerlink" title="分段机制"></a>分段机制</h4><p>基于单个base-limit寄存器将整个地址空间存到了内存造成了内存的浪费，我们分析主要的原因在于，stack,和heap的不确定，基于此，我们为什么不能够在单对寄存器的基础上，对code,data,stack,heap 都分配一对寄存器</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UDsg.png" alt="a1UDsg.png"></p>
-<p>我们经常见到的段错误(segment fault)就是访问非法地址，超出了bound的范围。</p>
-<p>段表的引入带来了一个问题，如何确定访问哪一个段对应的寄存器?</p>
-<p>显示的做法时用虚拟地址前几个bit来标识，如下图</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1Uwz8.png" alt="a1Uwz8.png"></p>
-<p>分段机制下地址转化伪码</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line"><span class="comment">//Bounds[] 段表</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT <span class="comment">//确定是哪一个段</span></span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])<span class="comment">//边界检查</span></span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset</span><br><span class="line">	Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
-
-
-
-<p>按段加载还有一个好处使得段共享成为可能，比如将代码段设为只读，进程仍然认为访问的是私有地址空间，这样也不会破坏进程间的隔离。</p>
-<h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>减少了内部碎片,内存浪费</p>
-</li>
-<li><p>代码段等可以共享</p>
-</li>
-</ul>
-<p>问题：</p>
-<ul>
-<li><p>大小不一的段可能导致外部碎片</p>
-</li>
-<li><p>内存不能做到按需分配</p>
-</li>
-</ul>
-<p>产生外部碎片的原因在于，之前按照整个地址空间加载，并且进程地址空间大小一致，这样就可以将内存看作是一个大的数组，每次分配都是一个slot单位，现在按照段分配，虽然避免了内部碎片产生，但是由于每个段大小不一样，在内存的频繁分配与释放，就可能产生外部碎片，一些小的内存块就不能够得到利用。</p>
-<h4 id="空闲物理内存管理"><a href="#空闲物理内存管理" class="headerlink" title="空闲物理内存管理"></a>空闲物理内存管理</h4><p>我们在C中分配释放内存如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>会发现当我们释放内存时候，只是给了起始地址，没有指定大小，那么系统怎么知道要释放多少了?</p>
-</blockquote>
-<p>分配器用额外的头部信息来记录分配内存的大小，魔数用来做完整性检查。因此当我们申请N字节大小内存，实际分配了N+sizeof(header)</p>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UBQS.png" alt="a1UBQS.png"></p>
-<h5 id="伙伴系统"><a href="#伙伴系统" class="headerlink" title="伙伴系统"></a>伙伴系统</h5><blockquote>
-<p> free memory is first conceptually thought of as one big space of size 2N. When a request for memory is made, the search for free space recursively divides free space by two until a block that is big enough to accommodate the request is found (and a further split into two would result in a space that is too small).</p>
-</blockquote>
-<h4 id="分页机制"><a href="#分页机制" class="headerlink" title="分页机制"></a>分页机制</h4><p>我们说分段导致了外部碎片产生，根本原因在于段的大小不一，分页机制通过将地址空间划分为固定大小的地址单元(eg.4k)来解决这个问题。</p>
-<p>每个进程有自己的一个页表，记录了虚拟页号和物理页号的对应关系。常见的地址映射如下</p>
-<p>​                                               <img src="https://s1.ax1x.com/2020/07/31/a1UzOe.png" alt="a1UzOe.png"></p>
-<p>实现页机制有几个问题</p>
-<blockquote>
-<p>1.页表存在哪里?</p>
-<p>2.每一个页表项具体有什么内容?</p>
-</blockquote>
-<p>对于32bit地址空间，假设一个页表项4byte, 整个地址空间页表需要4M，每个进程有自己的页表，因为页表很大，不可能像段机制那样通过CPU的寄存器来存，因此我们的页表是直接存到内存里面的，刚刚分析一个页表就是4M,这个很恐怖，如果有上百个进程，光是页表就消耗了几百兆内存，因此这一部分后面是需要优化的。</p>
-<p>X86下一个页表项的内容如下，有几个flag需要注意下</p>
-<ul>
-<li>P：存在位。为1表示页表或者页位于内存中。否则，表示不在内存中，必须先予以创建或者从磁盘调入内存后方可使用。</li>
-<li>R/W：读写标志。为1表示页面可以被读写，为0表示只读。当处理器运行在0、1、2特权级时，此位不起作用。页目录中的这个位对其所映射的所有页面起作用。</li>
-<li>U/S：用户/超级用户标志。为1时，允许所有特权级别的程序访问；为0时，仅允许特权级为0、1、2的程序访问。页目录中的这个位对其所映射的所有页面起作用。</li>
-</ul>
-<p><img src="https://s1.ax1x.com/2020/07/31/a1UxyD.png" alt="a1UxyD.png"></p>
-<p>由于页表位于内存，带来的后果就是我们对于一条指令的执行将额外增加一次内存访问(地址翻译)，伪码如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"></span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE)) <span class="comment">//ptbr 页表起始地址 存在寄存器里面</span></span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)v<span class="comment">//一次内存访问得到物理地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)</span><br><span class="line">	RaiseException(SEGMENTATION_FAULT)</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access is OK: form physical address and fetch it</span></span><br><span class="line">offset= VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">Register = AccessMemory(PhysAddr) <span class="comment">//二次内存访问</span></span><br></pre></td></tr></table></figure>
-
-<h5 id="小结-2"><a href="#小结-2" class="headerlink" title="小结"></a>小结</h5><p>好处：</p>
-<ul>
-<li><p>固定大小内存单元，避免外部碎片</p>
-</li>
-<li><p>相对分段内存使用灵活</p>
-</li>
-</ul>
-<p>缺点</p>
-<ul>
-<li><p>页表占用内存过大</p>
-</li>
-<li><p>访问太慢(相比直接内存访问，多一次内存访问)</p>
-</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>操作系统</tag>
-        <tag>OSTEP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>回忆围棋</title>
-    <url>/2021/01/23/hui-yi-wei-qi/</url>
-    <content><![CDATA[<p>回顾到今年三月看到的一篇文章<a href="https://weibo.com/ttarticle/p/show?id=2309404475844541153439#_0" target="_blank" rel="noopener">《<strong>一个时代的退隐——李世石退役的纪念</strong> 》</a>，作者李喆疫情期间困在武汉，作为国手在微博上写一些自己的随想，围棋见解。我非常喜欢李的文字，优美又充满哲学般的深思。比如下面这段</p>
-<a id="more"></a>
-
-<blockquote>
-<p>“毫无疑问，李世石是一位创造感极强的棋士，他的棋谱中充斥着将棋局引入陌生领域的激情，时而选择在悬崖峭壁上跳跃翻腾，时而自降于黑暗地底寻一点灵明，不满足于在既定的航线上平稳前行，宁愿冒着暗礁冰山的风险驶向前所未见的风景。因此当他在退役前夕说出 “我将围棋视为艺术，我心中的围棋是两个人齐心协力创造一部作品” 时，我们也就不应感到丝毫意外了。而他的退役，与韩国棋院的不和解当然是一种外力，而内在更深刻的原因，还是在于围棋 AI 对他作为棋士的创造感的冲击。”</p>
-</blockquote>
-<p>我很小就和围棋接触过，甚至还短暂下过围棋，起因是家里面有一个很大的玻璃围棋，晶莹透亮，最开始是作为我无聊玩具，后来长大了能认字，发现家里书架上为数不多的书中有好几本围棋相关的书，一本是讲南朝鲜传奇棋手曹薰铉的围棋生涯，还有几本小册子讲围棋定式之类的。我爸年轻时代有一股围棋之风， 吴清源，聂卫平那些人当时都是神话般的人物。</p>
-<p>吴清源这个名字我在锵锵三人行经常听到，原因是他们请的嘉宾江铸久妻子是吴清源弟子，吴被称作“昭和棋圣”，宇宙流下法极具观赏性，同时新布局开启了一个新的时代。有一个趣事记得很清楚，吴小时候在北京层下棋就小有名气，于是被叫去陪段祺瑞下棋，别人都让着段， 吴年少不知，沉迷围棋，赢了段，丝毫不给面子。但是段祺瑞仍然每个月给吴清源100大洋养着他，所以看来军阀也不是像书里面说的十足的恶。</p>
-<p>围棋的高深我是一直没有体会到的，但是之后很长时间还是会对这个话题感兴趣，围棋少年动画片，《天龙八部》里面虚竹破珍珑棋局，吴清源的纪录片，以及现在李喆，柯洁的一些动态。说起他们两个人，简直截然不同，李的围棋成就没有柯高，但我觉得在下棋中他找到了新的世界，后来去念了哲学，关于”围棋究竟更偏向艺术还是竞技” 李肯定是偏向艺术的。柯洁打破了我对围棋选手固有的认识，印象里面棋手都是温文尔雅，强调”不显”，但是柯我很喜欢的一点就是他展现了一个人除了作为棋手，同时更多作为一个年轻人的一面，李和柯是完全不一样的，但不妨碍他们同时存在。</p>
-<p><strong>shownotes</strong></p>
-<p>木遥录的一期播客谈李喆写的<a href="https://farmostwood.fireside.fm/6" target="_blank" rel="noopener">《<strong>一个时代的退隐</strong> 》</a></p>
-]]></content>
-      <tags>
-        <tag>随笔</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>多抓鱼采访</title>
     <url>/2020/12/28/duo-zhua-yu-cai-fang/</url>
     <content><![CDATA[<ul>
@@ -1194,154 +1194,6 @@
 <p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
 <p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>字符串专题</title>
-    <url>/2021/01/06/zi-fu-chuan/</url>
-    <content><![CDATA[<p>校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。<br>这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。<br>最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。</p>
-<a id="more"></a>
-
-<h3 id="3-无重复字符的最长子串"><a href="#3-无重复字符的最长子串" class="headerlink" title="3.无重复字符的最长子串"></a>3.无重复字符的最长子串</h3><p>主要思想：滑动窗口，双指针</p>
-<p>数据结构：set，map 可以通过map优化性能，更加快速更新左边界</p>
-<p>使用set 通过insert(),erease()来更新集合元素</p>
-<h4 id="方法1-set"><a href="#方法1-set" class="headerlink" title="方法1.set"></a>方法1.set</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt; <span class="built_in">set</span>;</span><br><span class="line">        <span class="keyword">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;i&lt;s.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="keyword">while</span>(<span class="built_in">set</span>.count(s[i])) &#123;</span><br><span class="line">                <span class="built_in">set</span>.erase(s[j++]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">set</span>.insert(s[i]);</span><br><span class="line">            <span class="keyword">if</span>(ans&lt;<span class="built_in">set</span>.<span class="built_in">size</span>()) ans=<span class="built_in">set</span>.<span class="built_in">size</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h4 id="方法2-map"><a href="#方法2-map" class="headerlink" title="方法2.map"></a>方法2.map</h4><p>参考acwing 提供了一种类似写法, 用哈希表存字符出现次数，当字符个数大于2即出现重复字符</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; ma;</span><br><span class="line"><span class="keyword">int</span> res;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;i&lt;s.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">    ma[s[i]]++;</span><br><span class="line">    <span class="keyword">while</span>(s[i]&gt;<span class="number">1</span>) ma[s[j++]]--;</span><br><span class="line">    res=<span class="built_in">max</span>(res,j-i+<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="CountandSay"><a href="#CountandSay" class="headerlink" title="CountandSay"></a>CountandSay</h3><p>是一道老题目了<br>「外观数列」是一个整数序列，从数字 1 开始，序列中的每一项都是对前一项的描述。前五项如下：</p>
-<ul>
-<li><ol>
-<li>1</li>
-</ol>
-</li>
-<li><ol start="2">
-<li>11</li>
-</ol>
-</li>
-<li><ol start="3">
-<li>21</li>
-</ol>
-</li>
-<li><ol start="4">
-<li>1211</li>
-</ol>
-</li>
-<li><ol start="5">
-<li>111221</li>
-</ol>
-</li>
-</ul>
-<ul>
-<li><p>1 被读作 “one 1” (“一个一”) , 即 11。</p>
-</li>
-<li><p>11 被读作 “two 1s” (“两个一”）, 即 21。</p>
-</li>
-<li><p>21 被读作 “one 2”, “one 1” （”一个二” , “一个一”) , 即 1211。</p>
-</li>
-<li><p>给定一个正整数 n（1 ≤ n ≤ 30），输出外观数列的第 n 项。</p>
-</li>
-</ul>
-<p>解题思路：</p>
-<ul>
-<li>外层按照给定层次n 迭代</li>
-<li>内层对当前层次处理每一个字符，统计其个数</li>
-</ul>
-<p>要点：</p>
-<ul>
-<li>数字转化为字符 通过加‘0’ 或者 to_string</li>
-<li>边界处理<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">countAndSay</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span>(n==<span class="number">1</span>) <span class="keyword">return</span> <span class="built_in">string</span>(<span class="string">"1"</span>);</span><br><span class="line">       <span class="built_in">string</span> res=<span class="string">"1"</span>;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)&#123;</span><br><span class="line">           <span class="built_in">string</span> buf;</span><br><span class="line">           <span class="keyword">int</span> str_len=res.<span class="built_in">size</span>();</span><br><span class="line">           <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;str_len;j++)&#123;</span><br><span class="line">               <span class="keyword">int</span> count=<span class="number">1</span>;</span><br><span class="line">               <span class="keyword">while</span>(res[j]==res[j+<span class="number">1</span>]&amp;&amp;j+<span class="number">1</span>&lt;str_len)&#123;</span><br><span class="line">                   j++;</span><br><span class="line">                   count++;</span><br><span class="line">               &#125;</span><br><span class="line">               buf.push_back(count+<span class="string">'0'</span>);</span><br><span class="line">               buf.push_back(res[j]);</span><br><span class="line">           &#125;</span><br><span class="line">           res=buf;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h3 id="49-字母异位词分组"><a href="#49-字母异位词分组" class="headerlink" title="49. 字母异位词分组"></a>49. 字母异位词分组</h3><p>给定一个字符串数组，将字母异位词组合在一起。字母异位词指字母相同，但排列不同的字符串。</p>
-<p>考点：<br> 无序字符串排序+哈希表<br> <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; <span class="title">groupAnagrams</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; strs)</span> </span>&#123;</span><br><span class="line">      <span class="built_in">unordered_map</span>&lt;<span class="built_in">string</span>,<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; hash_map;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">auto</span> str: strs)&#123;</span><br><span class="line">          <span class="built_in">string</span> key=str;</span><br><span class="line">          sort(key.<span class="built_in">begin</span>(),key.<span class="built_in">end</span>());</span><br><span class="line">          hash_map[key].push_back(str);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; res;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">auto</span> c: hash_map)&#123;</span><br><span class="line">          res.push_back(c.second);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> res;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
-<h3 id="151-翻转字符串中的单词-时间O-n-空间O-1"><a href="#151-翻转字符串中的单词-时间O-n-空间O-1" class="headerlink" title="151. 翻转字符串中的单词 时间O(n) 空间O(1)"></a>151. 翻转字符串中的单词 时间O(n) 空间O(1)</h3><p>给定一个字符串，逐个翻转字符串中的每个单词。<br>比如说：<br>输入: “the sky is blue”<br>输出: “blue is sky the”</p>
-<p>如果是翻转整个的字符串呢？</p>
-<p>解题思路：</p>
-<ul>
-<li>先翻转字符串中的每一个单词</li>
-<li>在翻转整个字符串</li>
-</ul>
-<p>技能点</p>
-<ul>
-<li>遍历去除字符串开始空格</li>
-<li>从字符串提取单个单词，处理，注意index的边界判定</li>
-<li>思想in-place 替代字符串<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">reverseWords</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">while</span>(s[i]==<span class="string">' '</span>) i++; <span class="comment">//去除连续空格</span></span><br><span class="line">            <span class="keyword">if</span>(s.<span class="built_in">size</span>()==i) <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">int</span> j=i;</span><br><span class="line">            <span class="keyword">while</span>(s[j]!=<span class="string">' '</span>&amp;&amp;j&lt;s.<span class="built_in">size</span>())j++;</span><br><span class="line">            reverse(s.<span class="built_in">begin</span>()+i,s.<span class="built_in">begin</span>()+j);</span><br><span class="line">            <span class="keyword">if</span>(index) s[index++]=<span class="string">' '</span>;</span><br><span class="line">            <span class="keyword">while</span>(i&lt;j) s[index++]=s[i++]; <span class="comment">// 这个很巧妙 in-place </span></span><br><span class="line">        &#125;</span><br><span class="line">        s.erase(s.<span class="built_in">begin</span>()+index,s.<span class="built_in">end</span>()); <span class="comment">// 可能有多余空格情况</span></span><br><span class="line">        reverse(s.<span class="built_in">begin</span>(),s.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> s;       </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p><strong>联想</strong><br>这个题目起始也可以用来去除字符串中的空格，面试时候经常考察。<br>要求</p>
-<ol>
-<li>去除字符串开始所有空格，中间的连续空格只保存一个，末尾的空格全部去除<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">string</span> s;</span><br><span class="line"><span class="keyword">int</span> n=s.<span class="built_in">size</span>();</span><br><span class="line"><span class="keyword">int</span> index=<span class="number">0</span>,i=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span>(i&lt;n)&#123;</span><br><span class="line">    <span class="keyword">while</span>(s[i]==<span class="string">' '</span>) i++;</span><br><span class="line">    <span class="keyword">if</span>(i==s.<span class="built_in">size</span>()) <span class="keyword">break</span>; <span class="comment">//为了防止已经到末尾加上空格</span></span><br><span class="line">    <span class="keyword">if</span>(index) s[index++]=<span class="string">' '</span>;</span><br><span class="line">    <span class="keyword">while</span>(s[i]!=<span class="string">' '</span>)s[index++]=s[i++];</span><br><span class="line">&#125;</span><br><span class="line">s.erase(k);</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="165-版本号比较"><a href="#165-版本号比较" class="headerlink" title="165. 版本号比较"></a>165. 版本号比较</h3><p>难点: </p>
-<ul>
-<li>前导0的处理</li>
-</ul>
-<p>提取符合特定要求的子字符串模式：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> j=i;</span><br><span class="line"><span class="keyword">while</span>(j&lt;s.<span class="built_in">size</span>()&amp;&amp;s[j]!=<span class="string">'.'</span>) j++;</span><br></pre></td></tr></table></figure>
-<p><a href="http://www.cplusplus.com/reference/cstdlib/atoi/?kw=atoi" target="_blank" rel="noopener">atoi() 函数用法</a><br><a href="http://www.cplusplus.com/reference/string/string/substr/" target="_blank" rel="noopener">substring()用法</a><br>完整参考代码：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compareVersion</span><span class="params">(<span class="built_in">string</span> s1, <span class="built_in">string</span> s2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(i&lt;s1.<span class="built_in">size</span>()|| j&lt;s2.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">int</span> x=i,y=j;</span><br><span class="line">            <span class="keyword">while</span>(x&lt;s1.<span class="built_in">size</span>()&amp;&amp;s1[x]!=<span class="string">'.'</span>) x++;</span><br><span class="line">            <span class="keyword">while</span>(y&lt;s2.<span class="built_in">size</span>()&amp;&amp;s2[y]!=<span class="string">'.'</span>) y++;</span><br><span class="line">            <span class="keyword">int</span> a=(x==i)?<span class="number">0</span>:atoi(s1.substr(i,x-i).c_str());</span><br><span class="line">            <span class="keyword">int</span> b=(y==j)?<span class="number">0</span>:atoi(s2.substr(j,y-j).c_str());</span><br><span class="line">            i=x+<span class="number">1</span>; <span class="comment">//jump .</span></span><br><span class="line">            j=y+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(a&lt;b) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">            <span class="keyword">if</span>(a&gt;b) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>两个字符串，两个数组通过<code>while(s1.size()||s2.size())</code>来控制循环流</p>
-<h3 id="929-独特的电子邮件地址"><a href="#929-独特的电子邮件地址" class="headerlink" title="929. 独特的电子邮件地址"></a>929. 独特的电子邮件地址</h3><p>思路：</p>
-<ul>
-<li>分离本地和域名</li>
-<li>按照+，.规则来处理本地</li>
-<li>链接成新的邮件地址 存入到unordered_set<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">numUniqueEmails</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; emails)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_set</span>&lt;<span class="built_in">string</span>&gt; hash_set;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> email:emails)&#123;</span><br><span class="line">            <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span>(email[i]!=<span class="string">'@'</span>) i++;</span><br><span class="line">            <span class="built_in">string</span> local =email.substr(<span class="number">0</span>,i);</span><br><span class="line">            <span class="built_in">string</span> prefix=email.substr(i+<span class="number">1</span>,email.<span class="built_in">size</span>()-i);</span><br><span class="line">            <span class="built_in">string</span> newlocal;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">auto</span> c: local)&#123;</span><br><span class="line">                <span class="keyword">if</span>(c==<span class="string">'+'</span>) <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">if</span>(c!=<span class="string">'.'</span>) newlocal+=c;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">string</span> s=newlocal+<span class="string">'@'</span>+prefix;</span><br><span class="line">            hash_set.insert(s);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> hash_set.<span class="built_in">size</span>();</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-小技巧</li>
-<li>substr() 默认位置到 end() 因此在提取domin 的时候可以简写为<code>email.sub(i+1);</code></li>
-<li>在寻找‘@’ 可以通过 string.find()  <a href="http://www.cplusplus.com/reference/string/string/find/" target="_blank" rel="noopener">http://www.cplusplus.com/reference/string/string/find/</a></li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(c==<span class="string">'+'</span>) <span class="keyword">break</span>;</span><br><span class="line"><span class="keyword">if</span>(c!=<span class="string">'.'</span>) newlocal+=c;</span><br></pre></td></tr></table></figure>
-<p>这个是有顺序的，第二次写的时候给疏忽了。</p>
-<h3 id="5-最长回文子串"><a href="#5-最长回文子串" class="headerlink" title="5.最长回文子串"></a>5.最长回文子串</h3><p>思路： 暴力枚举 时间复杂度 O(n*n)</p>
-<ul>
-<li>以中心点 分为奇偶向两边扩展<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">longestPalindrome</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++)</span><br><span class="line">        &#123;   </span><br><span class="line">            <span class="comment">// 对奇数长度</span></span><br><span class="line">            <span class="keyword">for</span>( <span class="keyword">int</span> j=i,k=i;j&gt;=<span class="number">0</span>&amp;&amp;k&lt;s.<span class="built_in">size</span>()&amp;&amp;s[k]==s[j];j--,k++)</span><br><span class="line">                <span class="keyword">if</span>(res.<span class="built_in">size</span>()&lt;k-j+<span class="number">1</span>) res=s.substr(j,k-j+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=i,k=i+<span class="number">1</span>;j&gt;=<span class="number">0</span>&amp;&amp;k&lt;s.<span class="built_in">size</span>()&amp;&amp;s[k]==s[j];j--,k++)</span><br><span class="line">             <span class="keyword">if</span>(res.<span class="built_in">size</span>()&lt;k-j+<span class="number">1</span>) res=s.substr(j,k-j+<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h4 id="在这里总结下判断回文字符串的几种常见方法"><a href="#在这里总结下判断回文字符串的几种常见方法" class="headerlink" title="在这里总结下判断回文字符串的几种常见方法"></a>在这里总结下判断回文字符串的几种常见方法</h4></li>
-</ul>
-<ol>
-<li>双指针从首尾向中间靠拢</li>
-<li>从中间向两边，但是需要注意考虑奇偶情况，如果仅仅只是判断单个的字符串是否满足回文<br>这样来做是划不来的，调用<code>reverse()</code>直接将字符串翻转比较</li>
-</ol>
-<p>2020年2月11日</p>
-<h3 id="6-Z字形变换"><a href="#6-Z字形变换" class="headerlink" title="6. Z字形变换"></a>6. Z字形变换</h3><p>这道题目描述有点长，属于一找规律的题目</p>
-<p>关键规律：行数 n<br>自己画一下 Z图发现 首尾行为等差数列 2(n-1)<br>其他行为 两个交错的等差数列 第二个等差数列的首相需要注意下<br>以及对于边界条件的判断 n==1</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">convert</span><span class="params">(<span class="built_in">string</span> s, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//rule 1 for begin row and end</span></span><br><span class="line">            <span class="keyword">if</span>(!i||i==n<span class="number">-1</span>) </span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &lt; s.<span class="built_in">size</span>(); j+=<span class="number">2</span>*(n<span class="number">-1</span>))  res+=s[j];</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i,k=<span class="number">2</span>*(n<span class="number">-1</span>)-i; j &lt; s.<span class="built_in">size</span>()||k&lt;s.<span class="built_in">size</span>(); j+=<span class="number">2</span>*(n<span class="number">-1</span>),k+=<span class="number">2</span>*(n<span class="number">-1</span>))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(j&lt;s.<span class="built_in">size</span>()) res+=s[j];</span><br><span class="line">                <span class="keyword">if</span>(k&lt;s.<span class="built_in">size</span>()) res+=s[k];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;&#125;</span><br><span class="line">        <span class="keyword">return</span> res;   </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="208-前缀树-trie"><a href="#208-前缀树-trie" class="headerlink" title="208.前缀树(trie)"></a>208.前缀树(trie)</h3><p>这个概念之前没有接触过<br>基本数据结构</p>
-<ul>
-<li>根节点不包含字符，除根节点外每一个节点都只包含一个字符。</li>
-<li>从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串。</li>
-<li>每个节点的所有子节点包含的字符都不相同。<br>以该题为例 都是小写字母 则有26个子节点</li>
-</ul>
-<p>每个字符串需要有一个标志结尾，考虑上述因素定义如下数据结构</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">        <span class="keyword">bool</span> is_end;</span><br><span class="line">        node* son[<span class="number">26</span>];</span><br><span class="line">        node()&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">26</span>;i++) son[i]=<span class="literal">NULL</span>;</span><br><span class="line">            is_end=<span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;*root;</span><br></pre></td></tr></table></figure>
-<p>开始写的时候对面向对象的知识都丢了，不记得怎么来 new 一个对象。。。</p>
-<h3 id="trie-基础"><a href="#trie-基础" class="headerlink" title="trie 基础"></a>trie 基础</h3><p>目的：高效存储和查找字符串集合</p>
-<p>特点：要么都是小写，大写，或者数字</p>
-<p>使用数组来实现trie基本操作</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> son[N][<span class="number">26</span>], cnt[N], idx;</span><br><span class="line"><span class="comment">// 0号点既是根节点，又是空节点</span></span><br><span class="line"><span class="comment">// son[][]存储树中每个节点的子节点</span></span><br><span class="line"><span class="comment">// cnt[]存储以每个节点结尾的单词数量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 插入一个字符串</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> p = <span class="number">0</span>; <span class="comment">//表示从根节点开始遍历</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; str[i]; i ++ ) <span class="comment">//str[i] 作为判断条件 因为 字符串以`0`结尾</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> u = str[i] - <span class="string">'a'</span>; <span class="comment">//求孩子下标index</span></span><br><span class="line">        <span class="keyword">if</span> (!son[p][u]) son[p][u] = ++ idx;<span class="comment">//如果孩子不存在分配新的节点，类比new ，注意是前置++</span></span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    cnt[p] ++ ; <span class="comment">//表示插入字符串个数++</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 查询字符串出现的次数</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">query</span><span class="params">(<span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> p = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; str[i]; i ++ )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> u = str[i] - <span class="string">'a'</span>;</span><br><span class="line">        <span class="keyword">if</span> (!son[p][u]) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt[p];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>trie 不仅能用来存储字符串，也能够存储0-1bit,如下面例子</p>
-<h3 id="421-数组中两个数的最大异或值"><a href="#421-数组中两个数的最大异或值" class="headerlink" title="421. 数组中两个数的最大异或值"></a><a href="https://leetcode-cn.com/problems/maximum-xor-of-two-numbers-in-an-array/" target="_blank" rel="noopener">421. 数组中两个数的最大异或值</a></h3><p>不要觉得构建字典树麻烦，能对时间性能有很大提升。</p>
-<p>思路</p>
-<p>按整数从高位到低位异或比较，在字典树中查找最大的异或对</p>
-<p>这里看起来比较复杂的点在于trie的构建，需要自己定义数据结构</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">    node*son[<span class="number">2</span>];</span><br><span class="line">    node()&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">2</span>;i++) son[i]=<span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">trie</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">        trie()&#123;</span><br><span class="line">            root =<span class="keyword">new</span> node();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//将元素插入到字典树</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">            <span class="keyword">auto</span> p=root;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">31</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">                <span class="keyword">int</span> path=(x&gt;&gt;i)&amp;<span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span>(!p-&gt;son[path]) p-&gt;son[path]=<span class="keyword">new</span> node();</span><br><span class="line">                p=p-&gt;son[path];</span><br><span class="line">            &#125;            </span><br><span class="line">        &#125;</span><br><span class="line">    <span class="comment">//查找x 对应的异或最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> p=root;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">31</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">            <span class="keyword">int</span> path=(x&gt;&gt;i)&amp;<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(p-&gt;son[!path]) &#123;<span class="comment">//优先选相反位 这样异或值最大</span></span><br><span class="line">                res=res*<span class="number">2</span>+!path;</span><br><span class="line">                 p=p-&gt;son[!path]; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">             res=res*<span class="number">2</span>+path;</span><br><span class="line">             p=p-&gt;son[path];&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">        node* root;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findMaximumXOR</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        trie t;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.size();i++)&#123;</span><br><span class="line">            t.insert(nums[i]);</span><br><span class="line">            res=max(res,nums[i]^t.find(nums[i]));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>时间复杂度分析，树的查找时间复杂度为logn, 循环n次，所以整个的时间复杂度为nlogn, 但是题目里面的要求是<strong>O(n)， 如何进一步优化</strong></p>
-<h3 id="1371-每个元音包含偶数次的最长子字符串"><a href="#1371-每个元音包含偶数次的最长子字符串" class="headerlink" title="1371. 每个元音包含偶数次的最长子字符串"></a><a href="https://leetcode-cn.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/" target="_blank" rel="noopener">1371. 每个元音包含偶数次的最长子字符串</a></h3><p>给你一个字符串 s，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 ‘a’，’e’，’i’，’o’，’u’，在子字符串中都恰好出现了偶数次。</p>
-<p>解题思路: 哈希表+状态压缩+前缀和</p>
-<p>将5个元音字母出现次数的奇偶视为一种状态，一共有32种状态，不妨使用一个整数代表状态，第0位为1表示a出现奇数次，第一位为1表示e出现奇数次……以此类推。仅有状态0符合题意。</p>
-<p>而如果子串[0，i]与字串[0,j]状态相同，那么字串[i+1,j]的状态一定是0，因此可以记录每个状态第一次出现的位置，此后再出现该状态时相减即可。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findTheLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=s.size();</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>; <span class="comment">//前缀和-&gt;第一次出现</span></span><br><span class="line">        <span class="built_in">map</span>[<span class="number">0</span>]=<span class="number">-1</span>;</span><br><span class="line">        <span class="built_in">string</span> p=<span class="string">"aeiou"</span>;</span><br><span class="line">        <span class="keyword">int</span> mask=<span class="number">0</span>,res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">5</span>;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(s[i]==p[j])&#123;</span><br><span class="line">                    mask^=<span class="number">1</span>&lt;&lt;j;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">map</span>.count(mask)) res=max(res,i-<span class="built_in">map</span>[mask]);</span><br><span class="line">            <span class="keyword">else</span> <span class="built_in">map</span>[mask]=i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="227-基本计算器-II-加减乘除表达式"><a href="#227-基本计算器-II-加减乘除表达式" class="headerlink" title="227. 基本计算器 II(加减乘除表达式)"></a>227. 基本计算器 II(加减乘除表达式)</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">calculate</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        s=s+<span class="string">"+0"</span>; <span class="comment">//数据预处理防止  最后一个运算符可能用不到</span></span><br><span class="line">        <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; nums;</span><br><span class="line">        <span class="keyword">int</span> n=s.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">long</span> <span class="keyword">long</span> num=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">char</span> sign=<span class="string">'+'</span>; <span class="comment">//前一个字符 这里由于+/- 优先级最低 初始化</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(s[i]&lt;=<span class="string">'9'</span>&amp;&amp;s[i]&gt;=<span class="string">'0'</span>) num=num*<span class="number">10</span>+s[i]-<span class="string">'0'</span>; <span class="comment">//可能出现符号溢出</span></span><br><span class="line">            <span class="keyword">if</span>(s[i]==<span class="string">'/'</span>||s[i]==<span class="string">'*'</span>||s[i]==<span class="string">'+'</span>||s[i]==<span class="string">'-'</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'+'</span>) nums.push(num);</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'-'</span>)nums.push(-num);</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'*'</span>)&#123;</span><br><span class="line">                    <span class="keyword">int</span> t=nums.top();</span><br><span class="line">                    nums.pop();</span><br><span class="line">                    nums.push(t*num);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'/'</span>)&#123;</span><br><span class="line">                    <span class="keyword">int</span> t=nums.top();</span><br><span class="line">                    nums.pop();</span><br><span class="line">                    nums.push(t/num);</span><br><span class="line">                &#125;</span><br><span class="line">                sign=s[i];</span><br><span class="line">                num=<span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(nums.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="comment">//cout&lt;&lt;nums.top()&lt;&lt;endl;</span></span><br><span class="line">            res+=nums.top();</span><br><span class="line">            nums.pop();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>算法笔记</tag>
-      </tags>
   </entry>
   <entry>
     <title>套接字选项小结</title>
@@ -1517,6 +1369,199 @@
       </tags>
   </entry>
   <entry>
+    <title>《把自己作为方法:与项飙谈话》整理</title>
+    <url>/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/</url>
+    <content><![CDATA[<ul>
+<li><p>项飙小时候和外公住在一起，他们家隔壁是一个暗娼，附近大一点的孩子就趴在木墙缝隙中看，声音都听得见。这个性启蒙真的比较直接，比起我当时在新华书店看啥《三言二拍》直接多了。</p>
+</li>
+<li><p>项谈到自己做调查时候不够放松，缺少和大家打成一片的能力，这和他小时候经常和外公玩有关系。外公对外非常客气，但内心可能又是一种鄙视。</p>
+</li>
+<li><p>一个理论不至于新旧，正确与否，关键在于是否具有可沟通性，能够调动对方的积极性，那么这个理论就是革命性的</p>
+</li>
+<li><p><strong>真正的英雄不是改变世界，而是改变自己生活的每一天</strong></p>
+<p>当下边缘与中心变为对立概念，中国人自古就有很强的中心情节，觉得边缘生活不值得过，造成极大焦虑。传统儒家文化通过意识上的“内在化”来处理边缘与中心问题，地方与中央不是等级化关系，有高有低，而是像月照千湖，每一个湖都有自己的月亮 #example</p>
+</li>
+<li><p>不要怕边缘，怕知识不够，天真真实地体现出来，就会很可爱，不要装腔作势。</p>
+</li>
+<li><p>高平子孙子高准和胡适说他要继承“为天地立心，为生民立命，为往圣继绝学，为万世开太平”，胡适用他一套英国实证主义来反问他”到底怎么叫为天地立心”，这些都是情感表达，没有着落，没有价值。英国实证主义的代表罗素，应该是来过中国，胡适可能受他影响比较大。</p>
+</li>
+<li><p>杜赞奇对项影响比较大，缘起杜对彭湃感兴趣，彭老家在海丰，就是五条人的故乡，五条人有首歌《彭啊湃》还提到了彭湃。彭作为地主阶级却反叛自己阶级，回家搞土地革命这让杜赞奇感到不可思议。</p>
+</li>
+<li><p>再谈乡绅，好的人民代表就是现代社会的乡绅，但现在人大代表按照职业划分，代表和被代表之间的关系疏远，那么代表如何这群人利益理解清楚？</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>读书笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串专题</title>
+    <url>/2021/01/06/zi-fu-chuan/</url>
+    <content><![CDATA[<p>校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。<br>这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。<br>最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。</p>
+<a id="more"></a>
+
+<h3 id="3-无重复字符的最长子串"><a href="#3-无重复字符的最长子串" class="headerlink" title="3.无重复字符的最长子串"></a>3.无重复字符的最长子串</h3><p>主要思想：滑动窗口，双指针</p>
+<p>数据结构：set，map 可以通过map优化性能，更加快速更新左边界</p>
+<p>使用set 通过insert(),erease()来更新集合元素</p>
+<h4 id="方法1-set"><a href="#方法1-set" class="headerlink" title="方法1.set"></a>方法1.set</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_set</span>&lt;<span class="keyword">char</span>&gt; <span class="built_in">set</span>;</span><br><span class="line">        <span class="keyword">int</span> ans=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;i&lt;s.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">            <span class="keyword">while</span>(<span class="built_in">set</span>.count(s[i])) &#123;</span><br><span class="line">                <span class="built_in">set</span>.erase(s[j++]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">set</span>.insert(s[i]);</span><br><span class="line">            <span class="keyword">if</span>(ans&lt;<span class="built_in">set</span>.<span class="built_in">size</span>()) ans=<span class="built_in">set</span>.<span class="built_in">size</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="方法2-map"><a href="#方法2-map" class="headerlink" title="方法2.map"></a>方法2.map</h4><p>参考acwing 提供了一种类似写法, 用哈希表存字符出现次数，当字符个数大于2即出现重复字符</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; ma;</span><br><span class="line"><span class="keyword">int</span> res;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;i&lt;s.<span class="built_in">size</span>();i++)&#123;</span><br><span class="line">    ma[s[i]]++;</span><br><span class="line">    <span class="keyword">while</span>(s[i]&gt;<span class="number">1</span>) ma[s[j++]]--;</span><br><span class="line">    res=<span class="built_in">max</span>(res,j-i+<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="CountandSay"><a href="#CountandSay" class="headerlink" title="CountandSay"></a>CountandSay</h3><p>是一道老题目了<br>「外观数列」是一个整数序列，从数字 1 开始，序列中的每一项都是对前一项的描述。前五项如下：</p>
+<ul>
+<li><ol>
+<li>1</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>11</li>
+</ol>
+</li>
+<li><ol start="3">
+<li>21</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>1211</li>
+</ol>
+</li>
+<li><ol start="5">
+<li>111221</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><p>1 被读作 “one 1” (“一个一”) , 即 11。</p>
+</li>
+<li><p>11 被读作 “two 1s” (“两个一”）, 即 21。</p>
+</li>
+<li><p>21 被读作 “one 2”, “one 1” （”一个二” , “一个一”) , 即 1211。</p>
+</li>
+<li><p>给定一个正整数 n（1 ≤ n ≤ 30），输出外观数列的第 n 项。</p>
+</li>
+</ul>
+<p>解题思路：</p>
+<ul>
+<li>外层按照给定层次n 迭代</li>
+<li>内层对当前层次处理每一个字符，统计其个数</li>
+</ul>
+<p>要点：</p>
+<ul>
+<li>数字转化为字符 通过加‘0’ 或者 to_string</li>
+<li>边界处理<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">countAndSay</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span>(n==<span class="number">1</span>) <span class="keyword">return</span> <span class="built_in">string</span>(<span class="string">"1"</span>);</span><br><span class="line">       <span class="built_in">string</span> res=<span class="string">"1"</span>;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)&#123;</span><br><span class="line">           <span class="built_in">string</span> buf;</span><br><span class="line">           <span class="keyword">int</span> str_len=res.<span class="built_in">size</span>();</span><br><span class="line">           <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;str_len;j++)&#123;</span><br><span class="line">               <span class="keyword">int</span> count=<span class="number">1</span>;</span><br><span class="line">               <span class="keyword">while</span>(res[j]==res[j+<span class="number">1</span>]&amp;&amp;j+<span class="number">1</span>&lt;str_len)&#123;</span><br><span class="line">                   j++;</span><br><span class="line">                   count++;</span><br><span class="line">               &#125;</span><br><span class="line">               buf.push_back(count+<span class="string">'0'</span>);</span><br><span class="line">               buf.push_back(res[j]);</span><br><span class="line">           &#125;</span><br><span class="line">           res=buf;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="49-字母异位词分组"><a href="#49-字母异位词分组" class="headerlink" title="49. 字母异位词分组"></a>49. 字母异位词分组</h3><p>给定一个字符串数组，将字母异位词组合在一起。字母异位词指字母相同，但排列不同的字符串。</p>
+<p>考点：<br> 无序字符串排序+哈希表<br> <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; <span class="title">groupAnagrams</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; strs)</span> </span>&#123;</span><br><span class="line">      <span class="built_in">unordered_map</span>&lt;<span class="built_in">string</span>,<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; hash_map;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">auto</span> str: strs)&#123;</span><br><span class="line">          <span class="built_in">string</span> key=str;</span><br><span class="line">          sort(key.<span class="built_in">begin</span>(),key.<span class="built_in">end</span>());</span><br><span class="line">          hash_map[key].push_back(str);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&gt; res;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">auto</span> c: hash_map)&#123;</span><br><span class="line">          res.push_back(c.second);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> res;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="151-翻转字符串中的单词-时间O-n-空间O-1"><a href="#151-翻转字符串中的单词-时间O-n-空间O-1" class="headerlink" title="151. 翻转字符串中的单词 时间O(n) 空间O(1)"></a>151. 翻转字符串中的单词 时间O(n) 空间O(1)</h3><p>给定一个字符串，逐个翻转字符串中的每个单词。<br>比如说：<br>输入: “the sky is blue”<br>输出: “blue is sky the”</p>
+<p>如果是翻转整个的字符串呢？</p>
+<p>解题思路：</p>
+<ul>
+<li>先翻转字符串中的每一个单词</li>
+<li>在翻转整个字符串</li>
+</ul>
+<p>技能点</p>
+<ul>
+<li>遍历去除字符串开始空格</li>
+<li>从字符串提取单个单词，处理，注意index的边界判定</li>
+<li>思想in-place 替代字符串<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">reverseWords</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">while</span>(s[i]==<span class="string">' '</span>) i++; <span class="comment">//去除连续空格</span></span><br><span class="line">            <span class="keyword">if</span>(s.<span class="built_in">size</span>()==i) <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">int</span> j=i;</span><br><span class="line">            <span class="keyword">while</span>(s[j]!=<span class="string">' '</span>&amp;&amp;j&lt;s.<span class="built_in">size</span>())j++;</span><br><span class="line">            reverse(s.<span class="built_in">begin</span>()+i,s.<span class="built_in">begin</span>()+j);</span><br><span class="line">            <span class="keyword">if</span>(index) s[index++]=<span class="string">' '</span>;</span><br><span class="line">            <span class="keyword">while</span>(i&lt;j) s[index++]=s[i++]; <span class="comment">// 这个很巧妙 in-place </span></span><br><span class="line">        &#125;</span><br><span class="line">        s.erase(s.<span class="built_in">begin</span>()+index,s.<span class="built_in">end</span>()); <span class="comment">// 可能有多余空格情况</span></span><br><span class="line">        reverse(s.<span class="built_in">begin</span>(),s.<span class="built_in">end</span>());</span><br><span class="line">        <span class="keyword">return</span> s;       </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>联想</strong><br>这个题目起始也可以用来去除字符串中的空格，面试时候经常考察。<br>要求</p>
+<ol>
+<li>去除字符串开始所有空格，中间的连续空格只保存一个，末尾的空格全部去除<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">string</span> s;</span><br><span class="line"><span class="keyword">int</span> n=s.<span class="built_in">size</span>();</span><br><span class="line"><span class="keyword">int</span> index=<span class="number">0</span>,i=<span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span>(i&lt;n)&#123;</span><br><span class="line">    <span class="keyword">while</span>(s[i]==<span class="string">' '</span>) i++;</span><br><span class="line">    <span class="keyword">if</span>(i==s.<span class="built_in">size</span>()) <span class="keyword">break</span>; <span class="comment">//为了防止已经到末尾加上空格</span></span><br><span class="line">    <span class="keyword">if</span>(index) s[index++]=<span class="string">' '</span>;</span><br><span class="line">    <span class="keyword">while</span>(s[i]!=<span class="string">' '</span>)s[index++]=s[i++];</span><br><span class="line">&#125;</span><br><span class="line">s.erase(k);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h3 id="165-版本号比较"><a href="#165-版本号比较" class="headerlink" title="165. 版本号比较"></a>165. 版本号比较</h3><p>难点: </p>
+<ul>
+<li>前导0的处理</li>
+</ul>
+<p>提取符合特定要求的子字符串模式：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> j=i;</span><br><span class="line"><span class="keyword">while</span>(j&lt;s.<span class="built_in">size</span>()&amp;&amp;s[j]!=<span class="string">'.'</span>) j++;</span><br></pre></td></tr></table></figure>
+<p><a href="http://www.cplusplus.com/reference/cstdlib/atoi/?kw=atoi" target="_blank" rel="noopener">atoi() 函数用法</a><br><a href="http://www.cplusplus.com/reference/string/string/substr/" target="_blank" rel="noopener">substring()用法</a><br>完整参考代码：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compareVersion</span><span class="params">(<span class="built_in">string</span> s1, <span class="built_in">string</span> s2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(i&lt;s1.<span class="built_in">size</span>()|| j&lt;s2.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">int</span> x=i,y=j;</span><br><span class="line">            <span class="keyword">while</span>(x&lt;s1.<span class="built_in">size</span>()&amp;&amp;s1[x]!=<span class="string">'.'</span>) x++;</span><br><span class="line">            <span class="keyword">while</span>(y&lt;s2.<span class="built_in">size</span>()&amp;&amp;s2[y]!=<span class="string">'.'</span>) y++;</span><br><span class="line">            <span class="keyword">int</span> a=(x==i)?<span class="number">0</span>:atoi(s1.substr(i,x-i).c_str());</span><br><span class="line">            <span class="keyword">int</span> b=(y==j)?<span class="number">0</span>:atoi(s2.substr(j,y-j).c_str());</span><br><span class="line">            i=x+<span class="number">1</span>; <span class="comment">//jump .</span></span><br><span class="line">            j=y+<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(a&lt;b) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">            <span class="keyword">if</span>(a&gt;b) <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>两个字符串，两个数组通过<code>while(s1.size()||s2.size())</code>来控制循环流</p>
+<h3 id="929-独特的电子邮件地址"><a href="#929-独特的电子邮件地址" class="headerlink" title="929. 独特的电子邮件地址"></a>929. 独特的电子邮件地址</h3><p>思路：</p>
+<ul>
+<li>分离本地和域名</li>
+<li>按照+，.规则来处理本地</li>
+<li>链接成新的邮件地址 存入到unordered_set<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">numUniqueEmails</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; emails)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_set</span>&lt;<span class="built_in">string</span>&gt; hash_set;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> email:emails)&#123;</span><br><span class="line">            <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span>(email[i]!=<span class="string">'@'</span>) i++;</span><br><span class="line">            <span class="built_in">string</span> local =email.substr(<span class="number">0</span>,i);</span><br><span class="line">            <span class="built_in">string</span> prefix=email.substr(i+<span class="number">1</span>,email.<span class="built_in">size</span>()-i);</span><br><span class="line">            <span class="built_in">string</span> newlocal;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">auto</span> c: local)&#123;</span><br><span class="line">                <span class="keyword">if</span>(c==<span class="string">'+'</span>) <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">if</span>(c!=<span class="string">'.'</span>) newlocal+=c;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">string</span> s=newlocal+<span class="string">'@'</span>+prefix;</span><br><span class="line">            hash_set.insert(s);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> hash_set.<span class="built_in">size</span>();</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+小技巧</li>
+<li>substr() 默认位置到 end() 因此在提取domin 的时候可以简写为<code>email.sub(i+1);</code></li>
+<li>在寻找‘@’ 可以通过 string.find()  <a href="http://www.cplusplus.com/reference/string/string/find/" target="_blank" rel="noopener">http://www.cplusplus.com/reference/string/string/find/</a></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(c==<span class="string">'+'</span>) <span class="keyword">break</span>;</span><br><span class="line"><span class="keyword">if</span>(c!=<span class="string">'.'</span>) newlocal+=c;</span><br></pre></td></tr></table></figure>
+<p>这个是有顺序的，第二次写的时候给疏忽了。</p>
+<h3 id="5-最长回文子串"><a href="#5-最长回文子串" class="headerlink" title="5.最长回文子串"></a>5.最长回文子串</h3><p>思路： 暴力枚举 时间复杂度 O(n*n)</p>
+<ul>
+<li>以中心点 分为奇偶向两边扩展<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">longestPalindrome</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.<span class="built_in">size</span>(); i++)</span><br><span class="line">        &#123;   </span><br><span class="line">            <span class="comment">// 对奇数长度</span></span><br><span class="line">            <span class="keyword">for</span>( <span class="keyword">int</span> j=i,k=i;j&gt;=<span class="number">0</span>&amp;&amp;k&lt;s.<span class="built_in">size</span>()&amp;&amp;s[k]==s[j];j--,k++)</span><br><span class="line">                <span class="keyword">if</span>(res.<span class="built_in">size</span>()&lt;k-j+<span class="number">1</span>) res=s.substr(j,k-j+<span class="number">1</span>);</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=i,k=i+<span class="number">1</span>;j&gt;=<span class="number">0</span>&amp;&amp;k&lt;s.<span class="built_in">size</span>()&amp;&amp;s[k]==s[j];j--,k++)</span><br><span class="line">             <span class="keyword">if</span>(res.<span class="built_in">size</span>()&lt;k-j+<span class="number">1</span>) res=s.substr(j,k-j+<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="在这里总结下判断回文字符串的几种常见方法"><a href="#在这里总结下判断回文字符串的几种常见方法" class="headerlink" title="在这里总结下判断回文字符串的几种常见方法"></a>在这里总结下判断回文字符串的几种常见方法</h4></li>
+</ul>
+<ol>
+<li>双指针从首尾向中间靠拢</li>
+<li>从中间向两边，但是需要注意考虑奇偶情况，如果仅仅只是判断单个的字符串是否满足回文<br>这样来做是划不来的，调用<code>reverse()</code>直接将字符串翻转比较</li>
+</ol>
+<p>2020年2月11日</p>
+<h3 id="6-Z字形变换"><a href="#6-Z字形变换" class="headerlink" title="6. Z字形变换"></a>6. Z字形变换</h3><p>这道题目描述有点长，属于一找规律的题目</p>
+<p>关键规律：行数 n<br>自己画一下 Z图发现 首尾行为等差数列 2(n-1)<br>其他行为 两个交错的等差数列 第二个等差数列的首相需要注意下<br>以及对于边界条件的判断 n==1</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">convert</span><span class="params">(<span class="built_in">string</span> s, <span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">if</span>(n==<span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//rule 1 for begin row and end</span></span><br><span class="line">            <span class="keyword">if</span>(!i||i==n<span class="number">-1</span>) </span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &lt; s.<span class="built_in">size</span>(); j+=<span class="number">2</span>*(n<span class="number">-1</span>))  res+=s[j];</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = i,k=<span class="number">2</span>*(n<span class="number">-1</span>)-i; j &lt; s.<span class="built_in">size</span>()||k&lt;s.<span class="built_in">size</span>(); j+=<span class="number">2</span>*(n<span class="number">-1</span>),k+=<span class="number">2</span>*(n<span class="number">-1</span>))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(j&lt;s.<span class="built_in">size</span>()) res+=s[j];</span><br><span class="line">                <span class="keyword">if</span>(k&lt;s.<span class="built_in">size</span>()) res+=s[k];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;&#125;</span><br><span class="line">        <span class="keyword">return</span> res;   </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="208-前缀树-trie"><a href="#208-前缀树-trie" class="headerlink" title="208.前缀树(trie)"></a>208.前缀树(trie)</h3><p>这个概念之前没有接触过<br>基本数据结构</p>
+<ul>
+<li>根节点不包含字符，除根节点外每一个节点都只包含一个字符。</li>
+<li>从根节点到某一节点，路径上经过的字符连接起来，为该节点对应的字符串。</li>
+<li>每个节点的所有子节点包含的字符都不相同。<br>以该题为例 都是小写字母 则有26个子节点</li>
+</ul>
+<p>每个字符串需要有一个标志结尾，考虑上述因素定义如下数据结构</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">        <span class="keyword">bool</span> is_end;</span><br><span class="line">        node* son[<span class="number">26</span>];</span><br><span class="line">        node()&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">26</span>;i++) son[i]=<span class="literal">NULL</span>;</span><br><span class="line">            is_end=<span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;*root;</span><br></pre></td></tr></table></figure>
+<p>开始写的时候对面向对象的知识都丢了，不记得怎么来 new 一个对象。。。</p>
+<h3 id="trie-基础"><a href="#trie-基础" class="headerlink" title="trie 基础"></a>trie 基础</h3><p>目的：高效存储和查找字符串集合</p>
+<p>特点：要么都是小写，大写，或者数字</p>
+<p>使用数组来实现trie基本操作</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> son[N][<span class="number">26</span>], cnt[N], idx;</span><br><span class="line"><span class="comment">// 0号点既是根节点，又是空节点</span></span><br><span class="line"><span class="comment">// son[][]存储树中每个节点的子节点</span></span><br><span class="line"><span class="comment">// cnt[]存储以每个节点结尾的单词数量</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 插入一个字符串</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> p = <span class="number">0</span>; <span class="comment">//表示从根节点开始遍历</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; str[i]; i ++ ) <span class="comment">//str[i] 作为判断条件 因为 字符串以`0`结尾</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> u = str[i] - <span class="string">'a'</span>; <span class="comment">//求孩子下标index</span></span><br><span class="line">        <span class="keyword">if</span> (!son[p][u]) son[p][u] = ++ idx;<span class="comment">//如果孩子不存在分配新的节点，类比new ，注意是前置++</span></span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    cnt[p] ++ ; <span class="comment">//表示插入字符串个数++</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 查询字符串出现的次数</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">query</span><span class="params">(<span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> p = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; str[i]; i ++ )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> u = str[i] - <span class="string">'a'</span>;</span><br><span class="line">        <span class="keyword">if</span> (!son[p][u]) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        p = son[p][u];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cnt[p];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>trie 不仅能用来存储字符串，也能够存储0-1bit,如下面例子</p>
+<h3 id="421-数组中两个数的最大异或值"><a href="#421-数组中两个数的最大异或值" class="headerlink" title="421. 数组中两个数的最大异或值"></a><a href="https://leetcode-cn.com/problems/maximum-xor-of-two-numbers-in-an-array/" target="_blank" rel="noopener">421. 数组中两个数的最大异或值</a></h3><p>不要觉得构建字典树麻烦，能对时间性能有很大提升。</p>
+<p>思路</p>
+<p>按整数从高位到低位异或比较，在字典树中查找最大的异或对</p>
+<p>这里看起来比较复杂的点在于trie的构建，需要自己定义数据结构</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">node</span>&#123;</span></span><br><span class="line">    node*son[<span class="number">2</span>];</span><br><span class="line">    node()&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">2</span>;i++) son[i]=<span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">trie</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">        trie()&#123;</span><br><span class="line">            root =<span class="keyword">new</span> node();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//将元素插入到字典树</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">            <span class="keyword">auto</span> p=root;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">31</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">                <span class="keyword">int</span> path=(x&gt;&gt;i)&amp;<span class="number">1</span>;</span><br><span class="line">                <span class="keyword">if</span>(!p-&gt;son[path]) p-&gt;son[path]=<span class="keyword">new</span> node();</span><br><span class="line">                p=p-&gt;son[path];</span><br><span class="line">            &#125;            </span><br><span class="line">        &#125;</span><br><span class="line">    <span class="comment">//查找x 对应的异或最大值</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">int</span> x)</span></span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> p=root;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">31</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">            <span class="keyword">int</span> path=(x&gt;&gt;i)&amp;<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span>(p-&gt;son[!path]) &#123;<span class="comment">//优先选相反位 这样异或值最大</span></span><br><span class="line">                res=res*<span class="number">2</span>+!path;</span><br><span class="line">                 p=p-&gt;son[!path]; </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">             res=res*<span class="number">2</span>+path;</span><br><span class="line">             p=p-&gt;son[path];&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">        node* root;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">findMaximumXOR</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        trie t;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.size();i++)&#123;</span><br><span class="line">            t.insert(nums[i]);</span><br><span class="line">            res=max(res,nums[i]^t.find(nums[i]));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>时间复杂度分析，树的查找时间复杂度为logn, 循环n次，所以整个的时间复杂度为nlogn, 但是题目里面的要求是<strong>O(n)， 如何进一步优化</strong></p>
+<h3 id="1371-每个元音包含偶数次的最长子字符串"><a href="#1371-每个元音包含偶数次的最长子字符串" class="headerlink" title="1371. 每个元音包含偶数次的最长子字符串"></a><a href="https://leetcode-cn.com/problems/find-the-longest-substring-containing-vowels-in-even-counts/" target="_blank" rel="noopener">1371. 每个元音包含偶数次的最长子字符串</a></h3><p>给你一个字符串 s，请你返回满足以下条件的最长子字符串的长度：每个元音字母，即 ‘a’，’e’，’i’，’o’，’u’，在子字符串中都恰好出现了偶数次。</p>
+<p>解题思路: 哈希表+状态压缩+前缀和</p>
+<p>将5个元音字母出现次数的奇偶视为一种状态，一共有32种状态，不妨使用一个整数代表状态，第0位为1表示a出现奇数次，第一位为1表示e出现奇数次……以此类推。仅有状态0符合题意。</p>
+<p>而如果子串[0，i]与字串[0,j]状态相同，那么字串[i+1,j]的状态一定是0，因此可以记录每个状态第一次出现的位置，此后再出现该状态时相减即可。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findTheLongestSubstring</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=s.size();</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>; <span class="comment">//前缀和-&gt;第一次出现</span></span><br><span class="line">        <span class="built_in">map</span>[<span class="number">0</span>]=<span class="number">-1</span>;</span><br><span class="line">        <span class="built_in">string</span> p=<span class="string">"aeiou"</span>;</span><br><span class="line">        <span class="keyword">int</span> mask=<span class="number">0</span>,res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">5</span>;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(s[i]==p[j])&#123;</span><br><span class="line">                    mask^=<span class="number">1</span>&lt;&lt;j;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">map</span>.count(mask)) res=max(res,i-<span class="built_in">map</span>[mask]);</span><br><span class="line">            <span class="keyword">else</span> <span class="built_in">map</span>[mask]=i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="227-基本计算器-II-加减乘除表达式"><a href="#227-基本计算器-II-加减乘除表达式" class="headerlink" title="227. 基本计算器 II(加减乘除表达式)"></a>227. 基本计算器 II(加减乘除表达式)</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">calculate</span><span class="params">(<span class="built_in">string</span> s)</span> </span>&#123;</span><br><span class="line">        s=s+<span class="string">"+0"</span>; <span class="comment">//数据预处理防止  最后一个运算符可能用不到</span></span><br><span class="line">        <span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; nums;</span><br><span class="line">        <span class="keyword">int</span> n=s.<span class="built_in">size</span>();</span><br><span class="line">        <span class="keyword">long</span> <span class="keyword">long</span> num=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">char</span> sign=<span class="string">'+'</span>; <span class="comment">//前一个字符 这里由于+/- 优先级最低 初始化</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(s[i]&lt;=<span class="string">'9'</span>&amp;&amp;s[i]&gt;=<span class="string">'0'</span>) num=num*<span class="number">10</span>+s[i]-<span class="string">'0'</span>; <span class="comment">//可能出现符号溢出</span></span><br><span class="line">            <span class="keyword">if</span>(s[i]==<span class="string">'/'</span>||s[i]==<span class="string">'*'</span>||s[i]==<span class="string">'+'</span>||s[i]==<span class="string">'-'</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'+'</span>) nums.push(num);</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'-'</span>)nums.push(-num);</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'*'</span>)&#123;</span><br><span class="line">                    <span class="keyword">int</span> t=nums.top();</span><br><span class="line">                    nums.pop();</span><br><span class="line">                    nums.push(t*num);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span>(sign==<span class="string">'/'</span>)&#123;</span><br><span class="line">                    <span class="keyword">int</span> t=nums.top();</span><br><span class="line">                    nums.pop();</span><br><span class="line">                    nums.push(t/num);</span><br><span class="line">                &#125;</span><br><span class="line">                sign=s[i];</span><br><span class="line">                num=<span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(nums.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="comment">//cout&lt;&lt;nums.top()&lt;&lt;endl;</span></span><br><span class="line">            res+=nums.top();</span><br><span class="line">            nums.pop();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>算法笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>排序二叉树转化为双向链表</title>
+    <url>/2020/05/24/pai-xu-er-cha-shu-zhuan-hua-wei-shuang-xiang-lian-biao/</url>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
+<a id="more"></a>
+
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
     <title>并发</title>
     <url>/2020/08/05/bing-fa/</url>
     <content><![CDATA[<p>《OSTEP》线程并发小结</p>
@@ -1619,163 +1664,6 @@
         <tag>读书笔记</tag>
         <tag>操作系统</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>排序二叉树转化为双向链表</title>
-    <url>/2020/05/24/pai-xu-er-cha-shu-zhuan-hua-wei-shuang-xiang-lian-biao/</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
-<a id="more"></a>
-
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>数据流算法题目小结</title>
-    <url>/2020/06/09/shu-ju-liu-suan-fa-ti-mu-xiao-jie/</url>
-    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
-<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
-<a id="more"></a>
-
-<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
-<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
-<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
-<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
-<p>当新元素val加入如何维护堆?</p>
-<ol>
-<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
-<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
-</ol>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>《把自己作为方法:与项飙谈话》整理</title>
-    <url>/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/</url>
-    <content><![CDATA[<ul>
-<li><p>项飙小时候和外公住在一起，他们家隔壁是一个暗娼，附近大一点的孩子就趴在木墙缝隙中看，声音都听得见。这个性启蒙真的比较直接，比起我当时在新华书店看啥《三言二拍》直接多了。</p>
-</li>
-<li><p>项谈到自己做调查时候不够放松，缺少和大家打成一片的能力，这和他小时候经常和外公玩有关系。外公对外非常客气，但内心可能又是一种鄙视。</p>
-</li>
-<li><p>一个理论不至于新旧，正确与否，关键在于是否具有可沟通性，能够调动对方的积极性，那么这个理论就是革命性的</p>
-</li>
-<li><p><strong>真正的英雄不是改变世界，而是改变自己生活的每一天</strong></p>
-<p>当下边缘与中心变为对立概念，中国人自古就有很强的中心情节，觉得边缘生活不值得过，造成极大焦虑。传统儒家文化通过意识上的“内在化”来处理边缘与中心问题，地方与中央不是等级化关系，有高有低，而是像月照千湖，每一个湖都有自己的月亮 #example</p>
-</li>
-<li><p>不要怕边缘，怕知识不够，天真真实地体现出来，就会很可爱，不要装腔作势。</p>
-</li>
-<li><p>高平子孙子高准和胡适说他要继承“为天地立心，为生民立命，为往圣继绝学，为万世开太平”，胡适用他一套英国实证主义来反问他”到底怎么叫为天地立心”，这些都是情感表达，没有着落，没有价值。英国实证主义的代表罗素，应该是来过中国，胡适可能受他影响比较大。</p>
-</li>
-<li><p>杜赞奇对项影响比较大，缘起杜对彭湃感兴趣，彭老家在海丰，就是五条人的故乡，五条人有首歌《彭啊湃》还提到了彭湃。彭作为地主阶级却反叛自己阶级，回家搞土地革命这让杜赞奇感到不可思议。</p>
-</li>
-<li><p>再谈乡绅，好的人民代表就是现代社会的乡绅，但现在人大代表按照职业划分，代表和被代表之间的关系疏远，那么代表如何这群人利益理解清楚？</p>
-</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>读书笔记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>文件系统的持久化</title>
-    <url>/2020/06/11/wen-jian-xi-tong-de-chi-jiu-hua/</url>
-    <content><![CDATA[<p>《OSTEP》文件持久化部分阅读笔记</p>
-<a id="more"></a>
-
-<h3 id="什么是crash-consistency-problem"><a href="#什么是crash-consistency-problem" class="headerlink" title="什么是crash-consistency problem?"></a>什么是crash-consistency problem?</h3><p>在两次write()之间，系统可能出现异常的断电，崩溃等情况，导致磁盘文件被部分更新。</p>
-<p>在系统重启时，文件系统被再次装载，如何解决之前异常崩溃带来的on-disk image inconsistent state 是接下来要讨论的重点</p>
-<p>具体来看下磁盘出现不一致的情况</p>
-<p>当我们append new data block 到一个文件，至少需要更新3个数据结构:<code>inode,data block,data bitmap</code>在更新这三个数据结构的过程中，系统都可能崩溃，在不同的阶段崩溃造成的后果不一样。</p>
-<p><img src="https://s1.ax1x.com/2020/06/11/tHFAQx.png" alt="tHFAQx.png"></p>
-<p>假设只有一次更新成功</p>
-<ul>
-<li>data block is updated  不会造成一致性问题，因为没有inode指向更新的data block</li>
-<li>inode  造成一致性问题，与bitmap 冲突，同时由于data block没有更新，会读取脏数据。</li>
-<li>data bitmap 同上带来一致性问题，同时带来空间泄漏，因为bitmap更新之后，指向的空间不会被系统分配</li>
-</ul>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><h4 id="1-file-system-checker"><a href="#1-file-system-checker" class="headerlink" title="1.file system checker"></a>1.file system checker</h4><p>基本思路是让不一致发生，然后修复它。</p>
-<p>但是存在一些问题比如,即使inode 与data bitmap 一致，仍然可能存在读取脏数据<br>其次这种做法最大的问题就是速度太慢！ 需要扫描整个磁盘来检查所有相关的数据结构。</p>
-<ol start="2">
-<li><h4 id="日志-write-ahead-logging"><a href="#日志-write-ahead-logging" class="headerlink" title="日志(write-ahead logging)"></a>日志(write-ahead logging)</h4></li>
-</ol>
-<p>在更新磁盘之前，先将当前操作(trananactions) 记录下来，当系统崩溃时候，能够replay。这样做的好处就是能够精准定位崩溃问题，不需要扫描整个磁盘。</p>
-<p>具体如何实现</p>
-<h5 id="data-log"><a href="#data-log" class="headerlink" title="data log"></a>data log</h5><ol>
-<li>Journal write: Write the transaction, including a transaction-begin block, all pending data and metadata updates, and a transaction-end block, to the log; wait for these writes to complete.</li>
-<li>Checkpoint: Write the pending metadata and data updates to their final locations in the file system.</li>
-</ol>
-<p>问题<br>在写日志的时候可能崩溃</p>
-<p>改进<br>将写日志操作拆分为两步</p>
-<ul>
-<li>写日志开始标志+data+inode+bitmap</li>
-<li>写日志结束标志</li>
-</ul>
-<p>这样做的好处在于磁盘能够保证对单个区块(512byte)的原子操作，进而保证对单条日志记录要么成功要么失败。</p>
-<p>日志的空间大小有限，一旦日志空间满，之后的transactions 将不能被记录。<br>具体解决方法通过循环日志(类似循环队列) 一旦一个transaction 被check了，系统就释放对应的日志空间</p>
-<p>经过上述几个改进，我们现在的做法如下</p>
-<ol>
-<li><p>Journal write: Write the contents of the transaction (containing TxBand the contents of the update) to the log; wait for these writes to<br> complete.</p>
-</li>
-<li><p>Journal commit: Write the transaction commit block (containingTxE) to the log; wait for the write to complete; the transaction is now committed.</p>
-</li>
-<li><p>Checkpoint: Write the contents of the update to their final locations within the file system.</p>
-</li>
-<li><p>Free: Some time later, mark the transaction free in the journal by updating the journal superblock.</p>
-</li>
-</ol>
-<p>上述解决方案还能进一步优化: 我们将data block 两次写到了磁盘</p>
-<h5 id="metadata-log"><a href="#metadata-log" class="headerlink" title="metadata log"></a>metadata log</h5><p>基本操作与之前一样，只是没有将data 写到日志中。</p>
-<ol>
-<li>Data write: Write data to final location; wait for completion(the wait is optional; see below for details).</li>
-<li>Journal metadata write: Write the begin block and metadata to thelog; wait for writes to complete.</li>
-<li>Journal commit: Write the transaction commit block (containingTxE) to the log; wait for the write to complete; the transaction (including data) is now committed.</li>
-<li>Checkpoint metadata: Write the contents of the metadata updateto their final locations within the file system.</li>
-<li>Free: Later, mark the transaction free in journal superblock.</li>
-</ol>
-<p>先写data 是为了避免脏读，如果先写meta，然后系统崩溃，就会导致读取旧的数据。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>操作系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>最长上升子序列</title>
-    <url>/2020/05/27/zui-chang-shang-sheng-zi-xu-lie/</url>
-    <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
-<a id="more"></a>
-
-<h3 id="解法1-动态规划"><a href="#解法1-动态规划" class="headerlink" title="解法1.动态规划"></a>解法1.动态规划</h3><p><strong>时间复杂度O($n^2$)</strong></p>
-<p><strong>思路</strong></p>
-<p><code>f[i]</code>表示以ith字符结尾的最长上升子序列长度</p>
-<p>这道题难在状态转移的求解<br><code>f[i]=max(f[i-1],f[i-2],......)+1</code>  前提条件是 f[j]&lt;f[i] 才能构成上升子序列</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;f(n);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            f[i]=<span class="number">1</span>; <span class="comment">//表示只含当前字符的序列长度</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(nums[j]&lt;nums[i]) f[i]=<span class="built_in">max</span>(f[i],f[j]+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:f) res=<span class="built_in">max</span>(res,c);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解法2-直接构造最长上升子序列"><a href="#解法2-直接构造最长上升子序列" class="headerlink" title="解法2  直接构造最长上升子序列"></a>解法2  直接构造最长上升子序列</h3><p>时间复杂度 $O(nlogn)$</p>
-<p>开一个辅助数组 <code>f[i]</code> 表示最长上升子序列长度为<code>i+1</code> 中最小结尾值</p>
-<p>eg. [1,2,4] ,[1,2,3]两个子序列长度都为3， 但是第一个子序列结尾值3&lt;4 ，于是 f[2]=3;</p>
-<p>这里面的思路背景是 在dp解法中  f[i]=max(f[j]+1)  nums[j] 越小 那么对nums[i]限制就越小</p>
-<p>两个最长上升子序列长度相同 那么子序列尾部值越小 越有可能构建成更加长的子序列</p>
-<p>由于构造的辅助数组一定单调上升，因此可以通过二分查找来做。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.size(),len=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; f;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            <span class="keyword">int</span> p=lower_bound(f.begin(),f.end(),c)-f.begin(); </span><br><span class="line">            <span class="keyword">if</span>(p==f.size()) f.push_back(c);<span class="comment">//查找元素比辅助数组最大值还要大</span></span><br><span class="line">            <span class="keyword">else</span> f[p]=c;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f.size();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>最好是通过一个 toy example 来给给面试官讲这个思路。</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
   </entry>
   <entry>
     <title>理解比特币</title>
@@ -1900,6 +1788,195 @@
       </categories>
   </entry>
   <entry>
+    <title>最长上升子序列</title>
+    <url>/2020/05/27/zui-chang-shang-sheng-zi-xu-lie/</url>
+    <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
+<a id="more"></a>
+
+<h3 id="解法1-动态规划"><a href="#解法1-动态规划" class="headerlink" title="解法1.动态规划"></a>解法1.动态规划</h3><p><strong>时间复杂度O($n^2$)</strong></p>
+<p><strong>思路</strong></p>
+<p><code>f[i]</code>表示以ith字符结尾的最长上升子序列长度</p>
+<p>这道题难在状态转移的求解<br><code>f[i]=max(f[i-1],f[i-2],......)+1</code>  前提条件是 f[j]&lt;f[i] 才能构成上升子序列</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;f(n);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            f[i]=<span class="number">1</span>; <span class="comment">//表示只含当前字符的序列长度</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(nums[j]&lt;nums[i]) f[i]=<span class="built_in">max</span>(f[i],f[j]+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:f) res=<span class="built_in">max</span>(res,c);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解法2-直接构造最长上升子序列"><a href="#解法2-直接构造最长上升子序列" class="headerlink" title="解法2  直接构造最长上升子序列"></a>解法2  直接构造最长上升子序列</h3><p>时间复杂度 $O(nlogn)$</p>
+<p>开一个辅助数组 <code>f[i]</code> 表示最长上升子序列长度为<code>i+1</code> 中最小结尾值</p>
+<p>eg. [1,2,4] ,[1,2,3]两个子序列长度都为3， 但是第一个子序列结尾值3&lt;4 ，于是 f[2]=3;</p>
+<p>这里面的思路背景是 在dp解法中  f[i]=max(f[j]+1)  nums[j] 越小 那么对nums[i]限制就越小</p>
+<p>两个最长上升子序列长度相同 那么子序列尾部值越小 越有可能构建成更加长的子序列</p>
+<p>由于构造的辅助数组一定单调上升，因此可以通过二分查找来做。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.size(),len=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; f;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            <span class="keyword">int</span> p=lower_bound(f.begin(),f.end(),c)-f.begin(); </span><br><span class="line">            <span class="keyword">if</span>(p==f.size()) f.push_back(c);<span class="comment">//查找元素比辅助数组最大值还要大</span></span><br><span class="line">            <span class="keyword">else</span> f[p]=c;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f.size();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>最好是通过一个 toy example 来给给面试官讲这个思路。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数据流算法题目小结</title>
+    <url>/2020/06/09/shu-ju-liu-suan-fa-ti-mu-xiao-jie/</url>
+    <content><![CDATA[<p>由于数据是动态的，按照一般的做法，比如遍历，当新数据的加入，处理单个操作的时间复杂度为<code>O(n)</code>,这样往往造成TLE</p>
+<p>通过使用合理的数据结构来存储，比如堆，能够将时间复杂度降低到 <code>logn</code></p>
+<a id="more"></a>
+
+<h4 id="703-数据流中的第K大元素"><a href="#703-数据流中的第K大元素" class="headerlink" title="703. 数据流中的第K大元素"></a><a href="https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/" target="_blank" rel="noopener">703. 数据流中的第K大元素</a></h4><p>这个本质的思想就是通过小根堆来求第K大元素，通过限制堆大小为k,以及判断堆顶元素与新加入元素val大小关系，将时间复杂度降低到logn.</p>
+<p>有一点需要注意的就是做<code>pop()</code> 一定要检查堆是否为空。</p>
+<h4 id="295-数据流的中位数"><a href="#295-数据流的中位数" class="headerlink" title="295. 数据流的中位数"></a><a href="https://leetcode-cn.com/problems/find-median-from-data-stream/" target="_blank" rel="noopener">295. 数据流的中位数</a></h4><p>通过使用两个堆，一个小根堆存放序列中较大的一部分元素，大根堆存放较小的一部分元素，可以形象的把这个结构想象成一个沙漏</p>
+<p>通过堆顶元素就能够很方便的得到数据流的中位数。</p>
+<p>当新元素val加入如何维护堆?</p>
+<ol>
+<li>val 先添加到大根堆maxq,  如果maxq.top&gt;minq.top 需要交换两个堆定元素</li>
+<li>始终保持maxq.size()&lt;=minq.size()+1 这样才能通过堆顶来求中位数</li>
+</ol>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>《禅与摩托车维修艺术》阅读笔记</title>
+    <url>/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</url>
+    <content><![CDATA[<blockquote>
+<p>理性的幽灵悬浮在空中，我决定去一探究竟</p>
+</blockquote>
+<a id="more"></a>
+
+
+<ul>
+<li>谈科学研究现状</li>
+</ul>
+<blockquote>
+<p>在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他们的野心。有一些人则完全是为了实用的目的，而将自己思考的产物献在祭坛上。如果上帝派来的天使将上面两种人从殿里驱逐出去，那么殿里显然会空旷许多，但是里面仍然会住着一批古今人物……如果殿里本来只住着前述两种人，那么如今的它就只不过是一座空木屋，只有四处攀爬的蔓草……那些得到天使青睐的人……有些古怪、沉默和孤独，除了同是不受欢迎的人之外，彼此之间少有相似之处。</p>
+</blockquote>
+<p>这不仅仅适用于科学研究领域的现状，当下计算机甚至各行各业，大部分人都谈不上真正热爱，只想讨饭吃，但是一个推动一个行业前进的可能就只是前面那1%的少数人</p>
+<ul>
+<li>谈少有人走的路</li>
+</ul>
+<blockquote>
+<p>“好像我们身后山谷里的那些人，大部分望着灵性的高峰，但是一生从来不曾攀上去过，只是听听别人的经验就已经满足，而自己不愿意花费任何心血。另一些人则是靠着有经验的向导，他们知道最安全的路，因而能够顺利到达他们的目的地。但是还有另外一批人，不但没有经验，而且不太相信别人的经验，想要走出自己的路。其中很少有人能成功，但是总有一些靠着自己的意志、运气，还有上天的恩典而做到了。那些成功的人要比别人明白，其实登山并没有唯一或是固定的路线，有多少这样的人就有多少条路。”</p>
+</blockquote>
+<p>古人之观于天地、山川、草木、虫鱼、鸟兽，往往有得，以其求思之深而无不在也。夫夷以近，则游者众；险以远，则至者少。而世之奇伟、瑰怪，非常之观，常在于险远，而人之所罕至焉，故非有志者不能至也。有志矣，不随以止也，然力不足者，亦不能至也。有志与力，而又不随以怠，至于幽暗昏惑而无物以相之，亦不能至也。然力足以至焉，于人为可讥，而在己为有悔；尽吾志也而不能至者，可以无悔矣，其孰能讥之乎？此余之所得也！</p>
+<ul>
+<li>谈教育</li>
+</ul>
+<blockquote>
+<p>这个学生最大的问题就是，因为多年来胡萝卜和鞭子的教育方式，造成了他思考上的惰性。就好像一头驴子：“如果你不打我，我就不工作。”如果没有人鞭打他，他就不会努力工作。而训练他去拉的文明的车子，很可能就会因此而走慢了一点。</p>
+</blockquote>
+<blockquote>
+<p>于是他就会回到没有分数也没有学位的学校里，这时他变了，不再为分数而来，而是为了追求真正的知识。他不需要别人强迫他去学习，他的动力来自于内在。这个时候，他就是一个自由的人，他不需要许多规章制度的督促。事实上，如果老师上课的态度松懈，他倒可能会唐突地问许多问题去督促老师。他来这儿是要学东西的，并且付了钱，那么老师们最好也不要懈怠。</p>
+</blockquote>
+<blockquote>
+<p>他真正的想法是，这些规则是作品写好之后才归纳出来的，作者不是依照这些原则来写作的。他最后终于确信，这些学生想模仿的作家，根本就没有所谓的原则，只是把他们认为对的东西写下来，然后再回头看看是否有问题，如果修辞不妥，可以再修“</p>
+</blockquote>
+<p>这一点我深以为然，写作技巧层面的东西，一开始都没有那么重要，切记不要做过早优化(<strong>premature optimization is the root of all evil</strong>)， 写作，写播客，刷题等等一开始都需要先搞起来，没有原始积累，谈技巧都是耍流氓。</p>
+]]></content>
+      <tags>
+        <tag>读书笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件系统的持久化</title>
+    <url>/2020/06/11/wen-jian-xi-tong-de-chi-jiu-hua/</url>
+    <content><![CDATA[<p>《OSTEP》文件持久化部分阅读笔记</p>
+<a id="more"></a>
+
+<h3 id="什么是crash-consistency-problem"><a href="#什么是crash-consistency-problem" class="headerlink" title="什么是crash-consistency problem?"></a>什么是crash-consistency problem?</h3><p>在两次write()之间，系统可能出现异常的断电，崩溃等情况，导致磁盘文件被部分更新。</p>
+<p>在系统重启时，文件系统被再次装载，如何解决之前异常崩溃带来的on-disk image inconsistent state 是接下来要讨论的重点</p>
+<p>具体来看下磁盘出现不一致的情况</p>
+<p>当我们append new data block 到一个文件，至少需要更新3个数据结构:<code>inode,data block,data bitmap</code>在更新这三个数据结构的过程中，系统都可能崩溃，在不同的阶段崩溃造成的后果不一样。</p>
+<p><img src="https://s1.ax1x.com/2020/06/11/tHFAQx.png" alt="tHFAQx.png"></p>
+<p>假设只有一次更新成功</p>
+<ul>
+<li>data block is updated  不会造成一致性问题，因为没有inode指向更新的data block</li>
+<li>inode  造成一致性问题，与bitmap 冲突，同时由于data block没有更新，会读取脏数据。</li>
+<li>data bitmap 同上带来一致性问题，同时带来空间泄漏，因为bitmap更新之后，指向的空间不会被系统分配</li>
+</ul>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><h4 id="1-file-system-checker"><a href="#1-file-system-checker" class="headerlink" title="1.file system checker"></a>1.file system checker</h4><p>基本思路是让不一致发生，然后修复它。</p>
+<p>但是存在一些问题比如,即使inode 与data bitmap 一致，仍然可能存在读取脏数据<br>其次这种做法最大的问题就是速度太慢！ 需要扫描整个磁盘来检查所有相关的数据结构。</p>
+<ol start="2">
+<li><h4 id="日志-write-ahead-logging"><a href="#日志-write-ahead-logging" class="headerlink" title="日志(write-ahead logging)"></a>日志(write-ahead logging)</h4></li>
+</ol>
+<p>在更新磁盘之前，先将当前操作(trananactions) 记录下来，当系统崩溃时候，能够replay。这样做的好处就是能够精准定位崩溃问题，不需要扫描整个磁盘。</p>
+<p>具体如何实现</p>
+<h5 id="data-log"><a href="#data-log" class="headerlink" title="data log"></a>data log</h5><ol>
+<li>Journal write: Write the transaction, including a transaction-begin block, all pending data and metadata updates, and a transaction-end block, to the log; wait for these writes to complete.</li>
+<li>Checkpoint: Write the pending metadata and data updates to their final locations in the file system.</li>
+</ol>
+<p>问题<br>在写日志的时候可能崩溃</p>
+<p>改进<br>将写日志操作拆分为两步</p>
+<ul>
+<li>写日志开始标志+data+inode+bitmap</li>
+<li>写日志结束标志</li>
+</ul>
+<p>这样做的好处在于磁盘能够保证对单个区块(512byte)的原子操作，进而保证对单条日志记录要么成功要么失败。</p>
+<p>日志的空间大小有限，一旦日志空间满，之后的transactions 将不能被记录。<br>具体解决方法通过循环日志(类似循环队列) 一旦一个transaction 被check了，系统就释放对应的日志空间</p>
+<p>经过上述几个改进，我们现在的做法如下</p>
+<ol>
+<li><p>Journal write: Write the contents of the transaction (containing TxBand the contents of the update) to the log; wait for these writes to<br> complete.</p>
+</li>
+<li><p>Journal commit: Write the transaction commit block (containingTxE) to the log; wait for the write to complete; the transaction is now committed.</p>
+</li>
+<li><p>Checkpoint: Write the contents of the update to their final locations within the file system.</p>
+</li>
+<li><p>Free: Some time later, mark the transaction free in the journal by updating the journal superblock.</p>
+</li>
+</ol>
+<p>上述解决方案还能进一步优化: 我们将data block 两次写到了磁盘</p>
+<h5 id="metadata-log"><a href="#metadata-log" class="headerlink" title="metadata log"></a>metadata log</h5><p>基本操作与之前一样，只是没有将data 写到日志中。</p>
+<ol>
+<li>Data write: Write data to final location; wait for completion(the wait is optional; see below for details).</li>
+<li>Journal metadata write: Write the begin block and metadata to thelog; wait for writes to complete.</li>
+<li>Journal commit: Write the transaction commit block (containingTxE) to the log; wait for the write to complete; the transaction (including data) is now committed.</li>
+<li>Checkpoint metadata: Write the contents of the metadata updateto their final locations within the file system.</li>
+<li>Free: Later, mark the transaction free in journal superblock.</li>
+</ol>
+<p>先写data 是为了避免脏读，如果先写meta，然后系统崩溃，就会导致读取旧的数据。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>系统调用open(),read(),write()具体发了什么?</title>
+    <url>/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/</url>
+    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
+<a id="more"></a>
+
+
+
+<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
+<p><strong>文件系统</strong></p>
+<p>文件系统可以简单的理解为数据结构+方法</p>
+<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
+<p>方法:open(),read()等调用如何与数据结构打交道</p>
+<p>一个简单的文件系统一般有这几部分</p>
+<ul>
+<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
+<li>data block 存储实际问文件内容</li>
+<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
+<li>data bitmap 记录data blocks 分配情况</li>
+<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
+</ul>
+<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
+<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
+<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
+<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
+<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
+<p>下面的图直观的说明这一过程</p>
+<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>网络协议栈收包过程小结</title>
     <url>/2020/08/05/wang-luo-xie-yi-zhan-shou-bao-guo-cheng-xiao-jie/</url>
     <content><![CDATA[<p>linux网络协议栈学习小结</p>
@@ -1931,7 +2008,7 @@
 <li><code>bind()</code>绑定套接字</li>
 <li><code>listen()</code>监听套接字</li>
 </ul>
-<p>这里详细参考我的这篇文章   <a href="https://hustddl.com/2020/08/08/socket%E4%BB%8E%E5%88%9B%E5%BB%BA%E5%88%B0%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/#more">socket从创建到连接过程小结</a></p>
+<p>这里详细参考我的这篇文章   <a href="https://hustddl.com/2020/08/08/socket%E4%BB%8E%E5%88%9B%E5%BB%BA%E5%88%B0%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B%E5%B0%8F%E7%BB%93/#more" target="_blank" rel="noopener">socket从创建到连接过程小结</a></p>
 <h4 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h4><p>TCP 栈简要过程：</p>
 <ol>
 <li><p>tcp_sendmsg 函数会首先检查已经建立的 TCP connection 的状态，然后获取该连接的 MSS，开始 segement 发送流程。</p>
@@ -2062,61 +2139,6 @@
       </tags>
   </entry>
   <entry>
-    <title>系统调用open(),read(),write()具体发了什么?</title>
-    <url>/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/</url>
-    <content><![CDATA[<p>本文主要想探究的是我们平时说的IO系统调用与<code>inode</code>，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。</p>
-<a id="more"></a>
-
-
-
-<p>在讲具体的系统调用之前，先要简单了解几个概念</p>
-<p><strong>文件系统</strong></p>
-<p>文件系统可以简单的理解为数据结构+方法</p>
-<p>数据结构：文件系统以一种怎样的结构来组织其存储的数据</p>
-<p>方法:open(),read()等调用如何与数据结构打交道</p>
-<p>一个简单的文件系统一般有这几部分</p>
-<ul>
-<li>inode table记录文件的metadata,主要有文件的权限，用户，创建时间，文件所对应blocks</li>
-<li>data block 存储实际问文件内容</li>
-<li>inode bitmap 记录inode table 分配情况位图用0/1来表示对应项是否分配</li>
-<li>data bitmap 记录data blocks 分配情况</li>
-<li>superblock 记录了整个文件系统的一些信息，比如inode个数，data blocks个数，inode table 起始地址。当文件系统<code>mount()</code> superblock被加载到内存。</li>
-</ul>
-<h4 id="read"><a href="#read" class="headerlink" title="read()"></a>read()</h4><p>以<code>/foo/bar</code> 为例，假设文件大小为4kb</p>
-<p>首先<code>open(&quot;/foo/bar&quot;,O_RDONLY)</code> 需要找到文件bar对应的inode,具体的做法是按照文件路径遍历，通过目录中存储的文件名-&gt;inode-number来找到文件<code>bar</code>对应的inode。</p>
-<p>将文件对应的inode加载到内存，做权限检查，比如文件读写属性。每个进程中都有一个open-file-table,系统为打开的文件分配文件描述符。</p>
-<p>一旦文件打开之后，read()按照顺序从第一个block开始读取，具体来看需要读取inode来获取区块位置信息，更新inode中last-access-time。更新open-file-table中的file offset。</p>
-<p>打开一个文件所涉及到的IO操作与文件路径长度成正比。每次通过父目录中的data-block来获取inode-number，用来在inode table查找对应的inode，通过inode来查找data-block位置。 因此每多添加一层目录就会有额外的两次IO.</p>
-<p>下面的图直观的说明这一过程</p>
-<p><img src="https://s1.ax1x.com/2020/06/01/tJimWt.png" alt="tJimWt.png"></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>操作系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/2020/11/20/shui-xiang-kan-qing-chen-shi-jiu-ying-dang-tong-ta-bao-chi-bi-yao-de-ju-chi/</url>
-    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
-<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
-<blockquote>
-<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
-</blockquote>
-<blockquote>
-<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
-</blockquote>
-<blockquote>
-<p>如果不感到自身充满力量，就不可能有爱情。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>读书</category>
-      </categories>
-  </entry>
-  <entry>
     <title>许知远-罗翔访谈记录</title>
     <url>/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/</url>
     <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
@@ -2152,6 +2174,25 @@
 ]]></content>
   </entry>
   <entry>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <url>/2020/11/20/shui-xiang-kan-qing-chen-shi-jiu-ying-dang-tong-ta-bao-chi-bi-yao-de-ju-chi/</url>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>读书</category>
+      </categories>
+  </entry>
+  <entry>
     <title>负载均衡大量TW分析</title>
     <url>/2020/08/23/fu-zai-jun-heng-da-liang-tw-fen-xi/</url>
     <content><![CDATA[<a id="more"></a>
@@ -2165,47 +2206,6 @@
 <li>调整tcp_max_tw_buckets</li>
 </ul>
 ]]></content>
-  </entry>
-  <entry>
-    <title>《禅与摩托车维修艺术》阅读笔记</title>
-    <url>/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</url>
-    <content><![CDATA[<blockquote>
-<p>理性的幽灵悬浮在空中，我决定去一探究竟</p>
-</blockquote>
-<a id="more"></a>
-
-
-<ul>
-<li>谈科学研究现状</li>
-</ul>
-<blockquote>
-<p>在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他们的野心。有一些人则完全是为了实用的目的，而将自己思考的产物献在祭坛上。如果上帝派来的天使将上面两种人从殿里驱逐出去，那么殿里显然会空旷许多，但是里面仍然会住着一批古今人物……如果殿里本来只住着前述两种人，那么如今的它就只不过是一座空木屋，只有四处攀爬的蔓草……那些得到天使青睐的人……有些古怪、沉默和孤独，除了同是不受欢迎的人之外，彼此之间少有相似之处。</p>
-</blockquote>
-<p>这不仅仅适用于科学研究领域的现状，当下计算机甚至各行各业，大部分人都谈不上真正热爱，只想讨饭吃，但是一个推动一个行业前进的可能就只是前面那1%的少数人</p>
-<ul>
-<li>谈少有人走的路</li>
-</ul>
-<blockquote>
-<p>“好像我们身后山谷里的那些人，大部分望着灵性的高峰，但是一生从来不曾攀上去过，只是听听别人的经验就已经满足，而自己不愿意花费任何心血。另一些人则是靠着有经验的向导，他们知道最安全的路，因而能够顺利到达他们的目的地。但是还有另外一批人，不但没有经验，而且不太相信别人的经验，想要走出自己的路。其中很少有人能成功，但是总有一些靠着自己的意志、运气，还有上天的恩典而做到了。那些成功的人要比别人明白，其实登山并没有唯一或是固定的路线，有多少这样的人就有多少条路。”</p>
-</blockquote>
-<p>古人之观于天地、山川、草木、虫鱼、鸟兽，往往有得，以其求思之深而无不在也。夫夷以近，则游者众；险以远，则至者少。而世之奇伟、瑰怪，非常之观，常在于险远，而人之所罕至焉，故非有志者不能至也。有志矣，不随以止也，然力不足者，亦不能至也。有志与力，而又不随以怠，至于幽暗昏惑而无物以相之，亦不能至也。然力足以至焉，于人为可讥，而在己为有悔；尽吾志也而不能至者，可以无悔矣，其孰能讥之乎？此余之所得也！</p>
-<ul>
-<li>谈教育</li>
-</ul>
-<blockquote>
-<p>这个学生最大的问题就是，因为多年来胡萝卜和鞭子的教育方式，造成了他思考上的惰性。就好像一头驴子：“如果你不打我，我就不工作。”如果没有人鞭打他，他就不会努力工作。而训练他去拉的文明的车子，很可能就会因此而走慢了一点。</p>
-</blockquote>
-<blockquote>
-<p>于是他就会回到没有分数也没有学位的学校里，这时他变了，不再为分数而来，而是为了追求真正的知识。他不需要别人强迫他去学习，他的动力来自于内在。这个时候，他就是一个自由的人，他不需要许多规章制度的督促。事实上，如果老师上课的态度松懈，他倒可能会唐突地问许多问题去督促老师。他来这儿是要学东西的，并且付了钱，那么老师们最好也不要懈怠。</p>
-</blockquote>
-<blockquote>
-<p>他真正的想法是，这些规则是作品写好之后才归纳出来的，作者不是依照这些原则来写作的。他最后终于确信，这些学生想模仿的作家，根本就没有所谓的原则，只是把他们认为对的东西写下来，然后再回头看看是否有问题，如果修辞不妥，可以再修“</p>
-</blockquote>
-<p>这一点我深以为然，写作技巧层面的东西，一开始都没有那么重要，切记不要做过早优化(<strong>premature optimization is the root of all evil</strong>)， 写作，写播客，刷题等等一开始都需要先搞起来，没有原始积累，谈技巧都是耍流氓。</p>
-]]></content>
-      <tags>
-        <tag>读书笔记</tag>
-      </tags>
   </entry>
   <entry>
     <title>适合反复看的技术入门教程</title>
