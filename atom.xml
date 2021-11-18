@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ddl-hust.github.io/"/>
-  <updated>2021-01-25T15:30:06.090Z</updated>
+  <updated>2021-11-18T13:58:28.456Z</updated>
   <id>https://ddl-hust.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>hexo使用小记</title>
+    <link href="https://ddl-hust.github.io/2021/11/18/hexo-shi-yong-xiao-ji/"/>
+    <id>https://ddl-hust.github.io/2021/11/18/hexo-shi-yong-xiao-ji/</id>
+    <published>2021-11-18T13:55:29.000Z</published>
+    <updated>2021-11-18T13:58:28.456Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+
+&lt;ol&gt;
+&lt;li&gt;在路径 hexo/blog 进行deploy g 等操作&lt;/li&gt;
+&lt;li&gt;_config.yml 指定了远端git 仓库，这里没考虑备份样式等文件&lt;/li&gt;
+&lt;li&gt;删掉cname ,清理浏览器缓存，直接访问github
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>理解比特币</title>
@@ -460,29 +488,6 @@
     </summary>
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>socket从创建到连接过程小结</title>
-    <link href="https://ddl-hust.github.io/2020/08/08/socket-cong-chuang-jian-dao-lian-jie-guo-cheng-xiao-jie/"/>
-    <id>https://ddl-hust.github.io/2020/08/08/socket-cong-chuang-jian-dao-lian-jie-guo-cheng-xiao-jie/</id>
-    <published>2020-08-08T02:40:45.000Z</published>
-    <updated>2020-08-08T02:44:29.819Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;分析了套接字创建到连接过程中，一些关键的函数调用以及数据结构，同时分析了connect()过程中tcp三次握手状态变化。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="网络" scheme="https://ddl-hust.github.io/categories/%E7%BD%91%E7%BB%9C/"/>
-    
-    
-      <category term="socket" scheme="https://ddl-hust.github.io/tags/socket/"/>
-    
-      <category term="linux" scheme="https://ddl-hust.github.io/tags/linux/"/>
     
   </entry>
   

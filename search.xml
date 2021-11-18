@@ -2207,4 +2207,16 @@
 <p>每遇到一个不认识的命令，在 <a href="https://link.zhihu.com/?target=https%3A//gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1">Effective Modern CMake</a> 这个页面里搜索一下，看看这个命令是否取代了某个老命令。</p>
 ]]></content>
   </entry>
+  <entry>
+    <title>hexo使用小记</title>
+    <url>/2021/11/18/hexo-shi-yong-xiao-ji/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<ol>
+<li>在路径 hexo/blog 进行deploy g 等操作</li>
+<li>_config.yml 指定了远端git 仓库，这里没考虑备份样式等文件</li>
+<li>删掉cname ,清理浏览器缓存，直接访问github io</li>
+</ol>
+]]></content>
+  </entry>
 </search>
