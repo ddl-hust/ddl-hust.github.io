@@ -47,67 +47,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>overload,override,overwrite小结</title>
-    <url>/2020/05/23/overload-override-overwrite-xiao-jie/</url>
-    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
-<a id="more"></a>
-
-<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
-<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
-<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
-<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
-<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>什么函数不能够被重载?</p>
-<ol>
-<li>仅仅返回类型不同，不能够做函数重载</li>
-<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
-<li>函数参数差别仅在于有无顶层const或volatile</li>
-</ol>
-<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
-<p>这里就引入什么是top-level const/volatile</p>
-<blockquote>
-<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
-</blockquote>
-<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
-<p>override 可能存在二义性</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
-<ul>
-<li><p>范围不同(作用域不同)</p>
-</li>
-<li><p>函数签名完全一样(名字，常数列表)</p>
-</li>
-<li><p>基类函数必须带有virtual 关键字</p>
-<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
-</li>
-</ul>
-<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
-<ul>
-<li>派生类函数参数与基类不同，不管基类有无virtual</li>
-<li>派生类函数参数与基类相同，但是基类没有virtual</li>
-</ul>
-<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
-<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
-<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>IO复用</title>
     <url>/2020/05/19/io-fu-yong/</url>
     <content><![CDATA[<p>以往服务器等待客户端连接需要阻塞accept(),等待客户端发数据需要阻塞，如果同时有多个客户端发起请求，那么就gg,<br>当然可以通过多线程，多进程来解决，但是开销太大。于是就有了IO多路转接，</p>
@@ -303,91 +242,16 @@
 ]]></content>
   </entry>
   <entry>
-    <title>shared_from_this解决了什么问题</title>
-    <url>/2020/06/02/shared-from-this-jie-jue-liao-shi-me-wen-ti/</url>
+    <title>hexo使用小记</title>
+    <url>/2021/11/18/hexo-shi-yong-xiao-ji/</url>
     <content><![CDATA[<a id="more"></a>
 
-<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
-<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
-]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>《Factluness》阅读笔记</title>
-    <url>/2021/01/20/factluness-yue-du-bi-ji/</url>
-    <content><![CDATA[<p>《Factluness》开篇给了11个选择题，用来测试人们对这个世界存在的认知偏差。作者通过一系列数据说明简单的将这个世界分为发展&amp;&amp;发达，贫穷&amp;&amp;富有早已经不合适了，于是作者提出了一个概念:按照收入水平将世界人口分为四个等级，现阶段大部分人处于第二，第三等级。</p>
-<p>这本书比较好读，有明确的问题导向， 每一个大章节最后都会有总结，但作者给出的一些数据和在非洲国家的亲身经历让我深思。</p>
-<a id="more"></a>
-
-
-
-<p><strong>一分为二看待问题会出什么问题</strong></p>
-<ul>
-<li><p>从1965年到2017年，这期间人们生活水平发生了巨大变化，已经不能简单的用发达，发展国家来分类，75%的人口，生活在中等收入国家中，不是穷国，也不是富国，而是介于二者之间的一种生活水平。</p>
-</li>
-<li><p>对事实忽略带来的机会损失</p>
-</li>
-</ul>
-<p>对事实的忽略将错失巨大的商业机会，以卫生巾为例，很多公司在欧洲饱和市场做细分领域的开发， 比如探寻在为穿比基尼泳装的妇女们提供更薄的卫生巾，但是却忽视了活在收入水平第四级的三亿处于月经期的妇女服务，而没有去拓展收入水平更低的新市场。</p>
-<p><strong>以偏概全</strong></p>
-<ul>
-<li>想当然的归纳带来的危险</li>
-</ul>
-<p>作者和学生去印度一个医院实地调查，当他学生差点赶不上电梯时候，用脚去拦住快要关闭的电梯，最后被电梯卡住。在瑞典，所有的电梯门上都有传感器。如果探测到门之间有东西的话，电梯门会自动打开。这位印度医生非常疑惑地看着我说：“但是你怎么知道这种先进的设备每次都可以正常工作呢？”我的回答显得很愚蠢，我说：“嗯，在我印象里好像每一次都管用。可能设备在出厂的时候经过了严格的检测吧。”他看起来并不太相信我说的话，他说：“你们国家的生活太安全了，使得其他国家都显得很危险。”</p>
-<p>这一点的确让我惊讶，很多生活中想当然的情况换一个环境就不是这样了。</p>
-<ul>
-<li>NGO项目查看不同收入水平阶级的生活方式对比</li>
-</ul>
-<p><a href="https://www.gapminder.org/dollar-street/?lng=zh-CN&topic=make-up&regions=as" target="_blank" rel="noopener">dollarstreet</a>通过对比相同的主题（eg。家园，牙刷等)下，看下不同生活水平的人差别有多大。 处于同一收入阶层的人即使在不同国家，生活方式是差不多的。同一国家不同收入阶级的生活方式差别很大。</p>
-<p>作者下面提到的避免以偏盖全方法，同样适用于软件工程领域。</p>
-<ul>
-<li>适用于软件测试的方法<ul>
-<li>注意大多数； 99%和51%区别很大</li>
-<li>注意极端案例(corner case),这个很好理解，一些边界条件</li>
-<li>不要把自己放在中心位置，也不要假设他人是傻子，比如下面这个例子</li>
-</ul>
-</li>
-</ul>
-<p>突尼斯可能看到很多盖到一半的房子，初看觉得当地人没有规划，很懒。但实际情况是，对于当地人而言，去银行贷款很难，同时保存现金很不安全（可能贬值或者被偷），单个的屯砖也可能被偷。于是他们用钱去买砖慢慢盖房子。这恰巧体现了当地人的智慧。</p>
-<blockquote>
-<p>世界总的趋势是变好还是变坏？</p>
-</blockquote>
-<p>心理学上人们对悲观负面情绪更加敏感，存在下面几点原因</p>
 <ol>
-<li>记忆存在美好滤镜，人们回忆起童年很多时候都美化了记忆，实际情况可能没这么好</li>
-<li>新闻对于负面新闻的选择报道</li>
-<li>悲观被感性情绪主导</li>
+<li>在路径 hexo/blog 进行deploy g 等操作</li>
+<li>_config.yml 指定了远端git 仓库，这里没考虑备份样式等文件</li>
+<li>删掉cname ,清理浏览器缓存，直接访问github io</li>
 </ol>
-<p>但作者从统计数据来看， 世界总的贫困人口数最近20年减少了一半，平均寿命也有了大幅提升。</p>
-<p>解决之道”不是我们要多看一些正面的新闻来对冲负面新闻带来的影响，因为那将会带来另一种自我欺骗的、自我安慰的、误导性的偏见。”这让我想到方可成提到的<strong>连接与共情</strong>观点，通过主动释放善意，不消极的认为这个世界就是一个丛林法则。 这方面可以订阅下他=最近的一个项目 微博账号“放晴公园”</p>
-<p><strong>直线思维</strong></p>
-<p>书中提到联合国的人口预估报告，认为2100年儿童人口将和现在数目基本一致，维持在20亿左右。</p>
-<p>这似乎与我们直观认识不符合。毕竟现在总人口还在缓慢增长估计到2100年将到100亿。 这是为什么？</p>
-<ul>
-<li>过去几十年妇女生育人均数目大幅度下降从1965年的5-&gt;2.5/人</li>
-<li>增长的人口主要是由现在小孩变为的成年人</li>
-</ul>
-<p>作者为了阐述很多数据分布不一定符合直线思维，举了一些有意思的案例</p>
-<ul>
-<li>滑梯曲线</li>
-</ul>
-<p>女性人均生育数</p>
-<ul>
-<li>正态分布(驼峰曲线)</li>
-</ul>
-<p>一个有意思的案例关于蛀牙情况分布，第一级人们没钱买糖，第四级人们牙齿健康水平得到了提升，比如他们会去定期洗牙等，反而是处于第二，三级的人蛀牙率比较高。机动车事故也符合同样的逻辑。</p>
-<ul>
-<li>指数曲线； 常见的流行病感染</li>
-</ul>
 ]]></content>
-      <tags>
-        <tag>读书笔记</tag>
-      </tags>
   </entry>
   <entry>
     <title>socket从创建到连接过程小结</title>
@@ -630,6 +494,35 @@
       </tags>
   </entry>
   <entry>
+    <title>stringstream 处理字符串</title>
+    <url>/2020/05/20/stringstream-chu-li-zi-fu-chuan/</url>
+    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
+<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
+<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
+<a id="more"></a>
+
+<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
+<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
+<ul>
+<li>用输入字符串来初始化<code>stringstream</code>对象</li>
+<li>while循环提取子字符串，根据情况判断</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>tcp40ms延迟问题分析</title>
     <url>/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/</url>
     <content><![CDATA[<a id="more"></a>
@@ -669,6 +562,37 @@
 </li>
 </ol>
 ]]></content>
+  </entry>
+  <entry>
+    <title>人体上肢自然运动数据采集</title>
+    <url>/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/</url>
+    <content><![CDATA[<p>实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。</p>
+<a id="more"></a>
+
+<p>基本思路是通过离散人上肢可达操作空间，然后采点，多次测量人手掌中心到采样点的运动轨迹，但空间中直接采点测量存在较大难度，精度也达不到要求，于是通过引入协作机器人UR5来辅助定位，在编写好程序之后，能够适应不同受试者臂长，并且能够做到对空间中点随机采样。</p>
+<p>示意图如下</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120145436.png" alt="image-20210120145435979"></p>
+<p>坐标系原点O与实验对象利手侧肩部盂肱关节旋转中心对齐，双肩连线为X轴，盂肱关节旋转中心的铅垂线为Z轴，Y轴垂直于冠状面并指向实验对象正前方，只讨论Y轴正半轴，也就是冠状面以前部分的工作空间。以球极坐标描述实验工作区各点，以实验对象臂长AL为半径作为工作空间边界，目标点位于以0.5AL,0.7AL,0.9AL为半径的半球面上，r的取值分别是0.5AL,0.7AL,0.9AL。</p>
+<p>在XOY平面上定义手腕与盂肱关节旋转中心连线和Y轴夹角为方位角，手腕与盂肱关节旋转中心连线与Z轴夹角为俯仰角 。通过三个参数$\gamma$ ,$\theta$,$r$ 来表示腕关节中心在球面坐标系下表达。</p>
+<p><strong>实现流程</strong></p>
+<ol>
+<li>用vicon测量人体肩关节中心与jUR5基座中心相对姿态</li>
+<li>以人体肩关节为中心，臂长为参数，离散操作空间采样点</li>
+<li>将采样点按照相邻顺序，序列化“一条线” 目的为了减少机械臂在相邻采样点关节运动范围。</li>
+<li>处理UR5多组反解，优选不与机架存在干涉的解 并且尽量减少相邻两次运动中关节角移动</li>
+</ol>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ol>
+<li><p>需要注意的是第4步我们使用了第三方库得到UR5所有的8组反解， 这个库用到了ikfast，因此依赖Egien，如果系统没有安装，记得添加上。</p>
+</li>
+<li><p>其次反解库对C++做了封装，提供matlab接口，因此还需要安装C++-mex编译器。</p>
+</li>
+<li><p>我们之所以手动做反解，不用UR5自带的反解器是因为我们一开始的确是发送操作空间指令，即给定目标点位姿。但是在实际执行中发现在相邻两次运动中，即使目标点距离很近，但是由于UR5存在多组反解，这就可能导致两次运动中关节角实际变换特别大，超出了关节角限制</p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>机器人</tag>
+      </tags>
   </entry>
   <entry>
     <title>内存虚拟化</title>
@@ -800,83 +724,91 @@
       </tags>
   </entry>
   <entry>
-    <title>人体上肢自然运动数据采集</title>
-    <url>/2021/01/20/ren-ti-shang-zhi-yun-dong-shu-ju-cai-ji/</url>
-    <content><![CDATA[<p>实验室现有的数据集数量有限，局限于人体日常功能运动，比如摸头，摸嘴等。为了扩充人体上肢运动数据集，于是设计了下面的实验方案，这里记录下执行过程中遇到的一些工程问题。</p>
+    <title>《Factluness》阅读笔记</title>
+    <url>/2021/01/20/factluness-yue-du-bi-ji/</url>
+    <content><![CDATA[<p>《Factluness》开篇给了11个选择题，用来测试人们对这个世界存在的认知偏差。作者通过一系列数据说明简单的将这个世界分为发展&amp;&amp;发达，贫穷&amp;&amp;富有早已经不合适了，于是作者提出了一个概念:按照收入水平将世界人口分为四个等级，现阶段大部分人处于第二，第三等级。</p>
+<p>这本书比较好读，有明确的问题导向， 每一个大章节最后都会有总结，但作者给出的一些数据和在非洲国家的亲身经历让我深思。</p>
 <a id="more"></a>
 
-<p>基本思路是通过离散人上肢可达操作空间，然后采点，多次测量人手掌中心到采样点的运动轨迹，但空间中直接采点测量存在较大难度，精度也达不到要求，于是通过引入协作机器人UR5来辅助定位，在编写好程序之后，能够适应不同受试者臂长，并且能够做到对空间中点随机采样。</p>
-<p>示意图如下</p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210120145436.png" alt="image-20210120145435979"></p>
-<p>坐标系原点O与实验对象利手侧肩部盂肱关节旋转中心对齐，双肩连线为X轴，盂肱关节旋转中心的铅垂线为Z轴，Y轴垂直于冠状面并指向实验对象正前方，只讨论Y轴正半轴，也就是冠状面以前部分的工作空间。以球极坐标描述实验工作区各点，以实验对象臂长AL为半径作为工作空间边界，目标点位于以0.5AL,0.7AL,0.9AL为半径的半球面上，r的取值分别是0.5AL,0.7AL,0.9AL。</p>
-<p>在XOY平面上定义手腕与盂肱关节旋转中心连线和Y轴夹角为方位角，手腕与盂肱关节旋转中心连线与Z轴夹角为俯仰角 。通过三个参数$\gamma$ ,$\theta$,$r$ 来表示腕关节中心在球面坐标系下表达。</p>
-<p><strong>实现流程</strong></p>
+
+
+<p><strong>一分为二看待问题会出什么问题</strong></p>
+<ul>
+<li><p>从1965年到2017年，这期间人们生活水平发生了巨大变化，已经不能简单的用发达，发展国家来分类，75%的人口，生活在中等收入国家中，不是穷国，也不是富国，而是介于二者之间的一种生活水平。</p>
+</li>
+<li><p>对事实忽略带来的机会损失</p>
+</li>
+</ul>
+<p>对事实的忽略将错失巨大的商业机会，以卫生巾为例，很多公司在欧洲饱和市场做细分领域的开发， 比如探寻在为穿比基尼泳装的妇女们提供更薄的卫生巾，但是却忽视了活在收入水平第四级的三亿处于月经期的妇女服务，而没有去拓展收入水平更低的新市场。</p>
+<p><strong>以偏概全</strong></p>
+<ul>
+<li>想当然的归纳带来的危险</li>
+</ul>
+<p>作者和学生去印度一个医院实地调查，当他学生差点赶不上电梯时候，用脚去拦住快要关闭的电梯，最后被电梯卡住。在瑞典，所有的电梯门上都有传感器。如果探测到门之间有东西的话，电梯门会自动打开。这位印度医生非常疑惑地看着我说：“但是你怎么知道这种先进的设备每次都可以正常工作呢？”我的回答显得很愚蠢，我说：“嗯，在我印象里好像每一次都管用。可能设备在出厂的时候经过了严格的检测吧。”他看起来并不太相信我说的话，他说：“你们国家的生活太安全了，使得其他国家都显得很危险。”</p>
+<p>这一点的确让我惊讶，很多生活中想当然的情况换一个环境就不是这样了。</p>
+<ul>
+<li>NGO项目查看不同收入水平阶级的生活方式对比</li>
+</ul>
+<p><a href="https://www.gapminder.org/dollar-street/?lng=zh-CN&topic=make-up&regions=as" target="_blank" rel="noopener">dollarstreet</a>通过对比相同的主题（eg。家园，牙刷等)下，看下不同生活水平的人差别有多大。 处于同一收入阶层的人即使在不同国家，生活方式是差不多的。同一国家不同收入阶级的生活方式差别很大。</p>
+<p>作者下面提到的避免以偏盖全方法，同样适用于软件工程领域。</p>
+<ul>
+<li>适用于软件测试的方法<ul>
+<li>注意大多数； 99%和51%区别很大</li>
+<li>注意极端案例(corner case),这个很好理解，一些边界条件</li>
+<li>不要把自己放在中心位置，也不要假设他人是傻子，比如下面这个例子</li>
+</ul>
+</li>
+</ul>
+<p>突尼斯可能看到很多盖到一半的房子，初看觉得当地人没有规划，很懒。但实际情况是，对于当地人而言，去银行贷款很难，同时保存现金很不安全（可能贬值或者被偷），单个的屯砖也可能被偷。于是他们用钱去买砖慢慢盖房子。这恰巧体现了当地人的智慧。</p>
+<blockquote>
+<p>世界总的趋势是变好还是变坏？</p>
+</blockquote>
+<p>心理学上人们对悲观负面情绪更加敏感，存在下面几点原因</p>
 <ol>
-<li>用vicon测量人体肩关节中心与jUR5基座中心相对姿态</li>
-<li>以人体肩关节为中心，臂长为参数，离散操作空间采样点</li>
-<li>将采样点按照相邻顺序，序列化“一条线” 目的为了减少机械臂在相邻采样点关节运动范围。</li>
-<li>处理UR5多组反解，优选不与机架存在干涉的解 并且尽量减少相邻两次运动中关节角移动</li>
+<li>记忆存在美好滤镜，人们回忆起童年很多时候都美化了记忆，实际情况可能没这么好</li>
+<li>新闻对于负面新闻的选择报道</li>
+<li>悲观被感性情绪主导</li>
 </ol>
-<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ol>
-<li><p>需要注意的是第4步我们使用了第三方库得到UR5所有的8组反解， 这个库用到了ikfast，因此依赖Egien，如果系统没有安装，记得添加上。</p>
-</li>
-<li><p>其次反解库对C++做了封装，提供matlab接口，因此还需要安装C++-mex编译器。</p>
-</li>
-<li><p>我们之所以手动做反解，不用UR5自带的反解器是因为我们一开始的确是发送操作空间指令，即给定目标点位姿。但是在实际执行中发现在相邻两次运动中，即使目标点距离很近，但是由于UR5存在多组反解，这就可能导致两次运动中关节角实际变换特别大，超出了关节角限制</p>
-</li>
-</ol>
+<p>但作者从统计数据来看， 世界总的贫困人口数最近20年减少了一半，平均寿命也有了大幅提升。</p>
+<p>解决之道”不是我们要多看一些正面的新闻来对冲负面新闻带来的影响，因为那将会带来另一种自我欺骗的、自我安慰的、误导性的偏见。”这让我想到方可成提到的<strong>连接与共情</strong>观点，通过主动释放善意，不消极的认为这个世界就是一个丛林法则。 这方面可以订阅下他=最近的一个项目 微博账号“放晴公园”</p>
+<p><strong>直线思维</strong></p>
+<p>书中提到联合国的人口预估报告，认为2100年儿童人口将和现在数目基本一致，维持在20亿左右。</p>
+<p>这似乎与我们直观认识不符合。毕竟现在总人口还在缓慢增长估计到2100年将到100亿。 这是为什么？</p>
+<ul>
+<li>过去几十年妇女生育人均数目大幅度下降从1965年的5-&gt;2.5/人</li>
+<li>增长的人口主要是由现在小孩变为的成年人</li>
+</ul>
+<p>作者为了阐述很多数据分布不一定符合直线思维，举了一些有意思的案例</p>
+<ul>
+<li>滑梯曲线</li>
+</ul>
+<p>女性人均生育数</p>
+<ul>
+<li>正态分布(驼峰曲线)</li>
+</ul>
+<p>一个有意思的案例关于蛀牙情况分布，第一级人们没钱买糖，第四级人们牙齿健康水平得到了提升，比如他们会去定期洗牙等，反而是处于第二，三级的人蛀牙率比较高。机动车事故也符合同样的逻辑。</p>
+<ul>
+<li>指数曲线； 常见的流行病感染</li>
+</ul>
 ]]></content>
       <tags>
-        <tag>机器人</tag>
+        <tag>读书笔记</tag>
       </tags>
   </entry>
   <entry>
-    <title>stringstream 处理字符串</title>
-    <url>/2020/05/20/stringstream-chu-li-zi-fu-chuan/</url>
-    <content><![CDATA[<p>在刷leetcode 过程中，C++一直没有比较好的方法来分割字符串，尤其对于带有很明显的分隔符比如<code>.,\</code>,等</p>
-<p>我一般的做法都是用两个下标来标识一段子字符串，然后<code>substr()</code>来做进一步处理。</p>
-<p>最近学习了用<code>stringstream</code>来处理字符串，类似<code>iosteam,fsteam</code>,使得操作<code>string</code>就像操作输入流一样。</p>
-<a id="more"></a>
+    <title>shared_from_this解决了什么问题</title>
+    <url>/2020/06/02/shared-from-this-jie-jue-liao-shi-me-wen-ti/</url>
+    <content><![CDATA[<a id="more"></a>
 
-<h4 id="71-简化路径"><a href="#71-简化路径" class="headerlink" title="71. 简化路径"></a><a href="https://leetcode-cn.com/problems/simplify-path/" target="_blank" rel="noopener">71. 简化路径</a></h4><p><strong>思路</strong></p>
-<p>对于文件路径有很明显的分隔符<code>/</code>，类似的对于IP地址分隔符<code>.</code></p>
-<ul>
-<li>用输入字符串来初始化<code>stringstream</code>对象</li>
-<li>while循环提取子字符串，根据情况判断</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">simplifyPath</span><span class="params">(<span class="built_in">string</span> path)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; st;</span><br><span class="line">        <span class="function"><span class="built_in">stringstream</span> <span class="title">is</span><span class="params">(path)</span></span>;</span><br><span class="line">        <span class="built_in">string</span> res,temp;</span><br><span class="line">        <span class="keyword">while</span>(getline(is,temp,<span class="string">'/'</span>))&#123;</span><br><span class="line">            <span class="comment">// cout&lt;&lt;"temp:    "&lt;&lt;temp&lt;&lt;endl;</span></span><br><span class="line">            <span class="keyword">if</span>(temp==<span class="string">""</span>||temp==<span class="string">"."</span>) <span class="comment">// 处理// /./情况</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span>(temp==<span class="string">".."</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(st.size())st.pop_back();</span><br><span class="line">            &#125;</span><br><span class="line">                </span><br><span class="line">            <span class="keyword">else</span> st.push_back(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> str:st)&#123;</span><br><span class="line">            res+=<span class="string">"/"</span>+str;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(res.empty()) <span class="keyword">return</span> <span class="string">"/"</span>;</span><br><span class="line">        <span class="keyword">return</span> res; </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>enable_shared_from_this 含义<br>如果一个T类型的对象t,是被std::shared_ptr管理的，且类型T继承自<code>std::enable_shared_from_this</code>，那么T就有个<code>shared_from_this</code>成员函数，这个函数返回一个新的<code>std::shared_ptr</code>的对象，也指向对象t</p>
+<p>如果不这么做, 会出现什么问题，看下面一段代码</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">obj</span>&#123;</span></span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">get_shr</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">ret</span><span class="params">(<span class="keyword">this</span>)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">shared_ptr</span>&lt;obj&gt; <span class="title">smart_ptr</span><span class="params">(<span class="keyword">new</span> obj)</span></span>;</span><br><span class="line">    obj&amp; a=*smart_ptr;</span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;obj&gt; b=a.get_shr(); <span class="comment">//两个智能指针管理的是同一个对象，造成对象两次释放</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-<p>下面的snippet code 用来处理类似<code>&quot;dog cat mouse ...&quot;</code>字符串</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">stringstream</span> <span class="title">raw</span><span class="params">(str)</span></span>;</span><br><span class="line">     <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt; strs;</span><br><span class="line">     <span class="built_in">string</span> line;</span><br><span class="line">     <span class="keyword">while</span> (raw &gt;&gt; line) strs.push_back(line);</span><br></pre></td></tr></table></figure>
-
+<p>上述场景是 对象希望获得管理自己的智能指针，但是直接通过成员函数返回一个<code>shared_ptr</code>,造成了被管理对象的重复删除。</p>
 ]]></content>
       <categories>
-        <category>技术</category>
+        <category>C++</category>
       </categories>
-      <tags>
-        <tag>C++</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>回忆围棋</title>
-    <url>/2021/01/23/hui-yi-wei-qi/</url>
-    <content><![CDATA[<p>回顾到今年三月看到的一篇文章<a href="https://weibo.com/ttarticle/p/show?id=2309404475844541153439#_0" target="_blank" rel="noopener">《<strong>一个时代的退隐——李世石退役的纪念</strong> 》</a>，作者李喆疫情期间困在武汉，作为国手在微博上写一些自己的随想，围棋见解。我非常喜欢李的文字，优美又充满哲学般的深思。比如下面这段</p>
-<a id="more"></a>
-
-<blockquote>
-<p>“毫无疑问，李世石是一位创造感极强的棋士，他的棋谱中充斥着将棋局引入陌生领域的激情，时而选择在悬崖峭壁上跳跃翻腾，时而自降于黑暗地底寻一点灵明，不满足于在既定的航线上平稳前行，宁愿冒着暗礁冰山的风险驶向前所未见的风景。因此当他在退役前夕说出 “我将围棋视为艺术，我心中的围棋是两个人齐心协力创造一部作品” 时，我们也就不应感到丝毫意外了。而他的退役，与韩国棋院的不和解当然是一种外力，而内在更深刻的原因，还是在于围棋 AI 对他作为棋士的创造感的冲击。”</p>
-</blockquote>
-<p>我很小就和围棋接触过，甚至还短暂下过围棋，起因是家里面有一个很大的玻璃围棋，晶莹透亮，最开始是作为我无聊玩具，后来长大了能认字，发现家里书架上为数不多的书中有好几本围棋相关的书，一本是讲南朝鲜传奇棋手曹薰铉的围棋生涯，还有几本小册子讲围棋定式之类的。我爸年轻时代有一股围棋之风， 吴清源，聂卫平那些人当时都是神话般的人物。</p>
-<p>吴清源这个名字我在锵锵三人行经常听到，原因是他们请的嘉宾江铸久妻子是吴清源弟子，吴被称作“昭和棋圣”，宇宙流下法极具观赏性，同时新布局开启了一个新的时代。有一个趣事记得很清楚，吴小时候在北京层下棋就小有名气，于是被叫去陪段祺瑞下棋，别人都让着段， 吴年少不知，沉迷围棋，赢了段，丝毫不给面子。但是段祺瑞仍然每个月给吴清源100大洋养着他，所以看来军阀也不是像书里面说的十足的恶。</p>
-<p>围棋的高深我是一直没有体会到的，但是之后很长时间还是会对这个话题感兴趣，围棋少年动画片，《天龙八部》里面虚竹破珍珑棋局，吴清源的纪录片，以及现在李喆，柯洁的一些动态。说起他们两个人，简直截然不同，李的围棋成就没有柯高，但我觉得在下棋中他找到了新的世界，后来去念了哲学，关于”围棋究竟更偏向艺术还是竞技” 李肯定是偏向艺术的。柯洁打破了我对围棋选手固有的认识，印象里面棋手都是温文尔雅，强调”不显”，但是柯我很喜欢的一点就是他展现了一个人除了作为棋手，同时更多作为一个年轻人的一面，李和柯是完全不一样的，但不妨碍他们同时存在。</p>
-<p><strong>shownotes</strong></p>
-<p>木遥录的一期播客谈李喆写的<a href="https://farmostwood.fireside.fm/6" target="_blank" rel="noopener">《<strong>一个时代的退隐</strong> 》</a></p>
-]]></content>
-      <tags>
-        <tag>随笔</tag>
-      </tags>
   </entry>
   <entry>
     <title>哈希专题</title>
@@ -1127,42 +1059,23 @@
       </tags>
   </entry>
   <entry>
-    <title>多抓鱼采访</title>
-    <url>/2020/12/28/duo-zhua-yu-cai-fang/</url>
-    <content><![CDATA[<ul>
-<li>多抓鱼和咸鱼区别？</li>
-</ul>
-<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
-<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
-<p><strong>为什么做多抓鱼</strong>？</p>
-<ul>
-<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
-</li>
-<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
-</li>
-<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
-</li>
-<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
-</li>
-<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
-</li>
-<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
-</li>
-</ul>
+    <title>回忆围棋</title>
+    <url>/2021/01/23/hui-yi-wei-qi/</url>
+    <content><![CDATA[<p>回顾到今年三月看到的一篇文章<a href="https://weibo.com/ttarticle/p/show?id=2309404475844541153439#_0" target="_blank" rel="noopener">《<strong>一个时代的退隐——李世石退役的纪念</strong> 》</a>，作者李喆疫情期间困在武汉，作为国手在微博上写一些自己的随想，围棋见解。我非常喜欢李的文字，优美又充满哲学般的深思。比如下面这段</p>
+<a id="more"></a>
+
 <blockquote>
-<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
+<p>“毫无疑问，李世石是一位创造感极强的棋士，他的棋谱中充斥着将棋局引入陌生领域的激情，时而选择在悬崖峭壁上跳跃翻腾，时而自降于黑暗地底寻一点灵明，不满足于在既定的航线上平稳前行，宁愿冒着暗礁冰山的风险驶向前所未见的风景。因此当他在退役前夕说出 “我将围棋视为艺术，我心中的围棋是两个人齐心协力创造一部作品” 时，我们也就不应感到丝毫意外了。而他的退役，与韩国棋院的不和解当然是一种外力，而内在更深刻的原因，还是在于围棋 AI 对他作为棋士的创造感的冲击。”</p>
 </blockquote>
-<p><strong>多抓鱼的定价策略</strong></p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
-<ul>
-<li>确定几类书不收</li>
-<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
-<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
-</ul>
+<p>我很小就和围棋接触过，甚至还短暂下过围棋，起因是家里面有一个很大的玻璃围棋，晶莹透亮，最开始是作为我无聊玩具，后来长大了能认字，发现家里书架上为数不多的书中有好几本围棋相关的书，一本是讲南朝鲜传奇棋手曹薰铉的围棋生涯，还有几本小册子讲围棋定式之类的。我爸年轻时代有一股围棋之风， 吴清源，聂卫平那些人当时都是神话般的人物。</p>
+<p>吴清源这个名字我在锵锵三人行经常听到，原因是他们请的嘉宾江铸久妻子是吴清源弟子，吴被称作“昭和棋圣”，宇宙流下法极具观赏性，同时新布局开启了一个新的时代。有一个趣事记得很清楚，吴小时候在北京层下棋就小有名气，于是被叫去陪段祺瑞下棋，别人都让着段， 吴年少不知，沉迷围棋，赢了段，丝毫不给面子。但是段祺瑞仍然每个月给吴清源100大洋养着他，所以看来军阀也不是像书里面说的十足的恶。</p>
+<p>围棋的高深我是一直没有体会到的，但是之后很长时间还是会对这个话题感兴趣，围棋少年动画片，《天龙八部》里面虚竹破珍珑棋局，吴清源的纪录片，以及现在李喆，柯洁的一些动态。说起他们两个人，简直截然不同，李的围棋成就没有柯高，但我觉得在下棋中他找到了新的世界，后来去念了哲学，关于”围棋究竟更偏向艺术还是竞技” 李肯定是偏向艺术的。柯洁打破了我对围棋选手固有的认识，印象里面棋手都是温文尔雅，强调”不显”，但是柯我很喜欢的一点就是他展现了一个人除了作为棋手，同时更多作为一个年轻人的一面，李和柯是完全不一样的，但不妨碍他们同时存在。</p>
 <p><strong>shownotes</strong></p>
-<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
-<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
+<p>木遥录的一期播客谈李喆写的<a href="https://farmostwood.fireside.fm/6" target="_blank" rel="noopener">《<strong>一个时代的退隐</strong> 》</a></p>
 ]]></content>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
   </entry>
   <entry>
     <title>套接字选项小结</title>
@@ -1338,33 +1251,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《把自己作为方法:与项飙谈话》整理</title>
-    <url>/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/</url>
-    <content><![CDATA[<ul>
-<li><p>项飙小时候和外公住在一起，他们家隔壁是一个暗娼，附近大一点的孩子就趴在木墙缝隙中看，声音都听得见。这个性启蒙真的比较直接，比起我当时在新华书店看啥《三言二拍》直接多了。</p>
-</li>
-<li><p>项谈到自己做调查时候不够放松，缺少和大家打成一片的能力，这和他小时候经常和外公玩有关系。外公对外非常客气，但内心可能又是一种鄙视。</p>
-</li>
-<li><p>一个理论不至于新旧，正确与否，关键在于是否具有可沟通性，能够调动对方的积极性，那么这个理论就是革命性的</p>
-</li>
-<li><p><strong>真正的英雄不是改变世界，而是改变自己生活的每一天</strong></p>
-<p>当下边缘与中心变为对立概念，中国人自古就有很强的中心情节，觉得边缘生活不值得过，造成极大焦虑。传统儒家文化通过意识上的“内在化”来处理边缘与中心问题，地方与中央不是等级化关系，有高有低，而是像月照千湖，每一个湖都有自己的月亮 #example</p>
-</li>
-<li><p>不要怕边缘，怕知识不够，天真真实地体现出来，就会很可爱，不要装腔作势。</p>
-</li>
-<li><p>高平子孙子高准和胡适说他要继承“为天地立心，为生民立命，为往圣继绝学，为万世开太平”，胡适用他一套英国实证主义来反问他”到底怎么叫为天地立心”，这些都是情感表达，没有着落，没有价值。英国实证主义的代表罗素，应该是来过中国，胡适可能受他影响比较大。</p>
-</li>
-<li><p>杜赞奇对项影响比较大，缘起杜对彭湃感兴趣，彭老家在海丰，就是五条人的故乡，五条人有首歌《彭啊湃》还提到了彭湃。彭作为地主阶级却反叛自己阶级，回家搞土地革命这让杜赞奇感到不可思议。</p>
-</li>
-<li><p>再谈乡绅，好的人民代表就是现代社会的乡绅，但现在人大代表按照职业划分，代表和被代表之间的关系疏远，那么代表如何这群人利益理解清楚？</p>
-</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>读书笔记</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>字符串专题</title>
     <url>/2021/01/06/zi-fu-chuan/</url>
     <content><![CDATA[<p>校招期间刷题做的一些笔记，主要配合leetcode, acwing平台使用。<br>这些题目是20年疫情期间一个一个做的，一开始啥也不会，acwing的一些视频对我算法学习帮助很大。<br>最近在回顾很多东西，发的日记，印象笔记里面的笔记，这些算法题现在没啥兴趣做了，但是我觉得以后有一天总还是要用得上的。</p>
@@ -1513,22 +1399,31 @@
       </tags>
   </entry>
   <entry>
-    <title>排序二叉树转化为双向链表</title>
-    <url>/2020/05/24/pai-xu-er-cha-shu-zhuan-hua-wei-shuang-xiang-lian-biao/</url>
-    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
-<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
-<a id="more"></a>
-
-<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
-<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
+    <title>《把自己作为方法:与项飙谈话》整理</title>
+    <url>/2021/01/22/ba-zi-ji-zuo-wei-fang-fa/</url>
+    <content><![CDATA[<ul>
+<li><p>项飙小时候和外公住在一起，他们家隔壁是一个暗娼，附近大一点的孩子就趴在木墙缝隙中看，声音都听得见。这个性启蒙真的比较直接，比起我当时在新华书店看啥《三言二拍》直接多了。</p>
+</li>
+<li><p>项谈到自己做调查时候不够放松，缺少和大家打成一片的能力，这和他小时候经常和外公玩有关系。外公对外非常客气，但内心可能又是一种鄙视。</p>
+</li>
+<li><p>一个理论不至于新旧，正确与否，关键在于是否具有可沟通性，能够调动对方的积极性，那么这个理论就是革命性的</p>
+</li>
+<li><p><strong>真正的英雄不是改变世界，而是改变自己生活的每一天</strong></p>
+<p>当下边缘与中心变为对立概念，中国人自古就有很强的中心情节，觉得边缘生活不值得过，造成极大焦虑。传统儒家文化通过意识上的“内在化”来处理边缘与中心问题，地方与中央不是等级化关系，有高有低，而是像月照千湖，每一个湖都有自己的月亮 #example</p>
+</li>
+<li><p>不要怕边缘，怕知识不够，天真真实地体现出来，就会很可爱，不要装腔作势。</p>
+</li>
+<li><p>高平子孙子高准和胡适说他要继承“为天地立心，为生民立命，为往圣继绝学，为万世开太平”，胡适用他一套英国实证主义来反问他”到底怎么叫为天地立心”，这些都是情感表达，没有着落，没有价值。英国实证主义的代表罗素，应该是来过中国，胡适可能受他影响比较大。</p>
+</li>
+<li><p>杜赞奇对项影响比较大，缘起杜对彭湃感兴趣，彭老家在海丰，就是五条人的故乡，五条人有首歌《彭啊湃》还提到了彭湃。彭作为地主阶级却反叛自己阶级，回家搞土地革命这让杜赞奇感到不可思议。</p>
+</li>
+<li><p>再谈乡绅，好的人民代表就是现代社会的乡绅，但现在人大代表按照职业划分，代表和被代表之间的关系疏远，那么代表如何这群人利益理解清楚？</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>读书笔记</tag>
+      </tags>
   </entry>
   <entry>
     <title>并发</title>
@@ -1630,157 +1525,9 @@
 
 ]]></content>
       <tags>
-        <tag>读书笔记</tag>
         <tag>操作系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>理解比特币</title>
-    <url>/2021/01/25/bi-te-bi-hou-mian-de-shu-xue-yuan-li/</url>
-    <content><![CDATA[<p>关于比特币有太多的消息，关于人们赚了多少亏了多少，但是比特币到底是什么呢？想起木遥说</p>
-<blockquote>
-<p>在过去的一年里，我身边的几乎每个朋友都或多或少问过我关于比特币的问题，往往是非常初等的问题。这有点奇怪，因为比特币已经诞生了有将近十年之久，差不多跟智能手机同龄，但今天没有人还会好奇地问智能手机是什么。一个省事的解释是比特币没有像智能手机一样进入千家万户，可是反过来想，拥有一部智能手机并不会让人暴富，人们对比特币的求知欲应该成百上千倍更高才对。我觉得更本质的原因在于，比特币首先是一种知识，而知识在今天的信息网络里的传播速度正在变得越来越慢，越来越低效。</p>
-</blockquote>
-<p>20年暑期实习时候，住在一起的一个大哥就是做比特币的，我们开始每天晚上回去了聊天，聊了几天就觉得他满嘴跑火车，拿着一本社会学书在看，聊来聊去就是一些大而空的词，同样关于比特币我问道具体是啥，他也解释不不清楚。我对于比特币能不能赚钱现在兴趣不大，但是我很好奇比特币究竟是什么，他背后的基础是啥？</p>
-<p>现在把我最近学的关于比特币知识梳理下。</p>
-<a id="more"></a>
-
-<hr>
-<p>稍微查一下wiki的定义，比特币是一个去中心化，互不信任的交易验证体系。其中<strong>去中心化</strong>，<strong>trustless</strong>，这些词语其实我早就听说了，但是这对于比特币到底意味着什么呢？</p>
-<p>在介绍比特币这一种加密货币之前，我们看一下基本概念账本（ledger）和数字签名（digital signature）是啥</p>
-<h3 id="账本"><a href="#账本" class="headerlink" title="账本"></a>账本</h3><p>账本需要保证下面两点</p>
-<ol>
-<li>记录的唯一性</li>
-<li>记录的有效性</li>
-</ol>
-<p>假设四个人之间有频繁的交易往来，每次用现金结算比较麻烦，于是他们约定将所有的交易记录在一个<strong>公有的账本</strong>上，每个人都可以添加和查看这个公有账本。这个账本其实可以理解为庄家，每过一定时间庄家就去查账本，欠了钱的需要把钱补齐给庄家。</p>
-<p>当这里存在一个问题，假设B向账本添加一笔记录 “A欠B100元”(实际上应该由A来作这笔记录),此时A可能并不知情，这该怎么办呢？</p>
-<p>这里就引入了数字签名，每一个人都有一对公钥(public key)和私钥(serect key) ，密钥可能是一串256位的01字符串。私钥是必须自己保管好的，用过github的应该都知道。</p>
-<p>在现实生活中同一个人签名在不同文档上都是一样的，但是数字签名不是这样的，不同的文件内容+私钥通过加密函数能够产生不一样的签名，这样就能避免在不同文件上用同一个数字签名伪造。用符号表示就是</p>
-<p>$$<br>F(文件,私钥)=数字签名<br>$$</p>
-<p>有了数字签名之后，我们还需要验证签名的正确性</p>
-<p>$$<br>F(文件,数字签名，公钥)=True/False<br>$$</p>
-<p>有了数字签名之后账本上的一条记录可能如下</p>
-<blockquote>
-<p>A欠B100元 数字签名(01110000…..)</p>
-</blockquote>
-<p>解决了记录的有效性，还需要解决同一条交易记录唯一性问题，即给每条记录加上一个唯一的id,此时一条交易记录看起来</p>
-<blockquote>
-<p>1 A欠B100元 数字签名(01110000…..)</p>
-</blockquote>
-<p>简单总结下我们现在这个交易系统的特点</p>
-<ol>
-<li>每个人都可以向账本添加记录</li>
-<li>间隔固定时间做账本结算</li>
-<li>只有数字签名合法的交易记录才有效</li>
-</ol>
-<p>上述系统存在一个问题，如果有人到月底欠了钱，但是他又没有出现怎么办？。因此在原有系统更进一步，假设在系统初期我们每个人都向系统交一笔固定的钱，每次交易我们都去查历史记录，一旦发现这笔交易可能导致这个人收入小于支出，就认为这笔交易不合法。这样改进之后的另一个好处就是不需要做账本结算了。其次，数字货币和纸币脱离了关系(不在依赖纸币的结算)</p>
-<p>有了上边的知识，到这里我们可以给比特币做一个简单的定义，比特币就是一个共有账本，等价于所有</p>
-<p>的历史总和。</p>
-<h3 id="去中心化"><a href="#去中心化" class="headerlink" title="去中心化"></a>去中心化</h3><p>上述提到的系统设计，实际上有一个“庄家”或者叫一个中心机构，但是如果每一个人都有一份这样的账本，那么我们岂不是就不再需要中间人了么？</p>
-<p>但这带来了一个问题，按照设想<strong>每一个都有一个账本</strong>，这个账本应该是相同的，那么如何保证每笔交易以及交易顺序在每个人的账本中一样呢?</p>
-<p>这个问题实际上是整个加密货币最难的一部分，比特币是通过选择相信<strong>消耗算力资源最多的那一份账本</strong>.</p>
-<p>现在看起来比较不知所云，先放下引入一个新概念</p>
-<p><strong>哈希函数</strong></p>
-<p>以最常见的加密函数SHA256为例，输入任何文本，输出一串256位的0/1字符串，哈希函数的特点有</p>
-<ul>
-<li>对文本有任何轻微改动，计算得到哈希值都不一样</li>
-<li>哈希函数不可逆</li>
-</ul>
-<p>有了哈希函数(这个和数字签名里面的函数有啥区别？) 我们如何来看一个账本消耗的算力多少呢？</p>
-<p>在原有账本的基础上</p>
-<blockquote>
-<p>1 A欠B100元 数字签名(01110000…..)</p>
-<p>2 B欠C 100元  110000……</p>
-<p>….</p>
-</blockquote>
-<p>我们规定在这个账本的末位加上一个魔数， 使得整个账本经过哈希运算之后得到的哈希值，前30位(具体位数可以改变)都为0，我们就认为这个账本暂且是合法的。</p>
-<p>从概率的角度找到这样一个魔数，是 $1/(2^{30})$  ，并且只能够通过穷举的方式来找。所以可以认为需要很大算力，平时我们说的挖矿其实就在做这个事情。</p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232949.png" alt="20210125222452-7na7m6o-image"></p>
-<p><strong>区块链( block chain)</strong>就是我们的账本，他把账本拆分成了很多小块，每一块除了有交易记录，还有前一个块的工作量证明(挖矿穷举得到的魔数)，以及当前块工作量证明。</p>
-<p><strong>区块建立者</strong></p>
-<p>可以理解为有人在全网监听所有交易记录，然后根据这些交易记录去计算魔数，一旦找到满足要求的魔数，就认为一个新的区块被建立，然后将新区块广播到全网。为了奖励这些找到魔数的人，规定给他们一定数目的比特币回报。这也就是我们说的挖矿的收入。</p>
-<p>每找到一个区块，意味整个区块链网络系统总的货币变多了。</p>
-<p><strong>系统交易员</strong></p>
-<p>对于我们不去挖矿的人，我们不需要监听交易记录，即不需要计算产生新的区块，我们需要做的就是收听被矿工挖到并且广播的新区块，并且更新我们自己拥有的一份区块链(账本）</p>
-<p>这里又产生了一个问题，即一个矿工伪造一笔交易记录，计算产生一个新的区块，同时不在全网广播，只发给特定人。在这个系统里面做假账的代价有多大？</p>
-<p>这里有个原则即</p>
-<blockquote>
-<p>人们相信他所指向的最长区块链</p>
-</blockquote>
-<p>每次矿工产生了一个新的区块，收到区块的人并不会立马将区块合并到自己的区块链中，而是观望一段时间，比如规定等五个新的区块才合并一个区块。这样即使Alice欺骗了Bob,产生了下图中上方分叉的一条链，网络中的其他矿工此时也在不停挖矿，产生新的区块，并且在向Bob广播，除非Alices的算力达到全网50%y以上，后者他产生的区块链分支就被认为是假的。</p>
-<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232904.png" alt="20210125224435-4nit26o-image"></p>
-<h3 id="其他细节"><a href="#其他细节" class="headerlink" title="其他细节"></a>其他细节</h3><ol>
-<li>前面提到计算魔数，使得散列值前30位为0，这个“30位”会根据当前挖矿难度变化，系统保证大约10分钟产生一个新的区块</li>
-<li>比特币系统中的币都来自于生成新区块的奖励，币的总数目被设计为一定的，一开始挖矿生成一个区块能够得到50个比特币，过一段时间减少为25 -&gt;12.5-&gt;6.25…</li>
-<li>矿工得到的奖励还可以有每笔交易支付的小费</li>
-<li>比特币中每个区块包含的交易记录大约为2400条</li>
-</ol>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://docs.google.com/presentation/d/1Ari-Y1T1in15-RsbYMQ2rohafGMkvPCSUBbq_luZs4c/present?slide=id.g2acf3bb0d7_0_0" target="_blank" rel="noopener">ppt</a></p>
-<p><a href="https://www.blockchain.com/explorer" target="_blank" rel="noopener">比特币查询</a></p>
-<p><a href="https://www.youtube.com/watch?v=bBC-nXj3Ng4" target="_blank" rel="noopener">3blue1blown</a></p>
-<p><a href="https://www.youtube.com/watch?t=17s&v=-lNgWFbETeI&feature=youtu.be&ab_channel=ProductSchool" target="_blank" rel="noopener">google视频</a></p>
-]]></content>
-      <tags>
         <tag>读书笔记</tag>
-        <tag>好奇</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>滑动窗口小结</title>
-    <url>/2020/06/11/hua-dong-chuang-kou-xiao-jie/</url>
-    <content><![CDATA[<p>滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。</p>
-<a id="more"></a>
-
-<h4 id="76-最小覆盖子串"><a href="#76-最小覆盖子串" class="headerlink" title="76. 最小覆盖子串"></a>76. 最小覆盖子串</h4><p>给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字符的最小子串。</p>
-<p>思路</p>
-<ul>
-<li>先扫描一遍T，把对应的字符及其出现的次数存到 HashMap 中。</li>
-<li>然后开始遍历S，就把遍历到的字母对应的 HashMap 中的 value 减一，如果减1后仍大于等于0，cnt 自增1。</li>
-<li>如果 cnt 等于T串长度时，开始循环，纪录一个字串并更新最小字串值。然后将子窗口的左边界向右移，如果某个移除掉的字母是T串中不可缺少的字母(hash表中对应value&gt;0)，那么 cnt 自减1，表示此时T串并没有完全匹配。</li>
-</ul>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">minWindow</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> t)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:t) <span class="built_in">map</span>[c]++;</span><br><span class="line">        <span class="keyword">int</span> len=t.size();</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;i&lt;s.size();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(--<span class="built_in">map</span>[s[i]]&gt;=<span class="number">0</span>) cnt++;</span><br><span class="line">            <span class="keyword">while</span>(cnt==len)&#123;</span><br><span class="line">                <span class="keyword">if</span>(res.empty()||res.size()&gt;i-j+<span class="number">1</span>) res=s.substr(j,i-j+<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span>(++<span class="built_in">map</span>[s[j++]]&gt;<span class="number">0</span>) cnt--;<span class="comment">//移动左边界</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>进一步理解</strong><br>本来我们是可以开两个哈希表，这里为了节省空间，将其合并，遍历S字符串的时候，哈希表中字符出现的次数可以理解还缺多少个，就可以满足和T字符串匹配。这样一来就能很好理解在移动左边界的判断条件<code>++hash[s[j++]]&gt;0</code> 表示左边界指针移动之后，缺的个数大于0.</p>
-<h4 id="438-找到字符串中所有字母异位词"><a href="#438-找到字符串中所有字母异位词" class="headerlink" title="438. 找到字符串中所有字母异位词"></a><a href="https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">438. 找到字符串中所有字母异位词</a></h4><p>给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。</p>
-<p>字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。</p>
-<p><strong>滑动窗口</strong>  思路非常类似上一题76.最小覆盖子串</p>
-<p>这个题目的滑动窗口大小固定，因此需要先调整大小，然后添加满足条件的答案。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">findAnagrams</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> p)</span> </span>&#123;</span><br><span class="line">       <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">auto</span> c:p) <span class="built_in">map</span>[c]++;</span><br><span class="line">       <span class="keyword">int</span> total=p.size();</span><br><span class="line">       <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;j&lt;s.size();j++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(--<span class="built_in">map</span>[s[j]]&gt;=<span class="number">0</span>) cnt++; <span class="comment">//移动右指针</span></span><br><span class="line">           <span class="comment">//移动左指针 维护窗口大小为p.size</span></span><br><span class="line">           <span class="keyword">while</span>(j-i+<span class="number">1</span>&gt;total)&#123;</span><br><span class="line">               <span class="keyword">if</span>(++<span class="built_in">map</span>[s[i++]]&gt;<span class="number">0</span>) cnt--;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">if</span>(cnt==total) res.push_back(i);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>最长上升子序列</title>
-    <url>/2020/05/27/zui-chang-shang-sheng-zi-xu-lie/</url>
-    <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
-<a id="more"></a>
-
-<h3 id="解法1-动态规划"><a href="#解法1-动态规划" class="headerlink" title="解法1.动态规划"></a>解法1.动态规划</h3><p><strong>时间复杂度O($n^2$)</strong></p>
-<p><strong>思路</strong></p>
-<p><code>f[i]</code>表示以ith字符结尾的最长上升子序列长度</p>
-<p>这道题难在状态转移的求解<br><code>f[i]=max(f[i-1],f[i-2],......)+1</code>  前提条件是 f[j]&lt;f[i] 才能构成上升子序列</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;f(n);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            f[i]=<span class="number">1</span>; <span class="comment">//表示只含当前字符的序列长度</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(nums[j]&lt;nums[i]) f[i]=<span class="built_in">max</span>(f[i],f[j]+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:f) res=<span class="built_in">max</span>(res,c);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="解法2-直接构造最长上升子序列"><a href="#解法2-直接构造最长上升子序列" class="headerlink" title="解法2  直接构造最长上升子序列"></a>解法2  直接构造最长上升子序列</h3><p>时间复杂度 $O(nlogn)$</p>
-<p>开一个辅助数组 <code>f[i]</code> 表示最长上升子序列长度为<code>i+1</code> 中最小结尾值</p>
-<p>eg. [1,2,4] ,[1,2,3]两个子序列长度都为3， 但是第一个子序列结尾值3&lt;4 ，于是 f[2]=3;</p>
-<p>这里面的思路背景是 在dp解法中  f[i]=max(f[j]+1)  nums[j] 越小 那么对nums[i]限制就越小</p>
-<p>两个最长上升子序列长度相同 那么子序列尾部值越小 越有可能构建成更加长的子序列</p>
-<p>由于构造的辅助数组一定单调上升，因此可以通过二分查找来做。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.size(),len=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; f;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            <span class="keyword">int</span> p=lower_bound(f.begin(),f.end(),c)-f.begin(); </span><br><span class="line">            <span class="keyword">if</span>(p==f.size()) f.push_back(c);<span class="comment">//查找元素比辅助数组最大值还要大</span></span><br><span class="line">            <span class="keyword">else</span> f[p]=c;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f.size();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>最好是通过一个 toy example 来给给面试官讲这个思路。</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
   </entry>
   <entry>
     <title>数据流算法题目小结</title>
@@ -1804,44 +1551,120 @@
       </categories>
   </entry>
   <entry>
-    <title>《禅与摩托车维修艺术》阅读笔记</title>
-    <url>/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</url>
-    <content><![CDATA[<blockquote>
-<p>理性的幽灵悬浮在空中，我决定去一探究竟</p>
+    <title>多抓鱼采访</title>
+    <url>/2020/12/28/duo-zhua-yu-cai-fang/</url>
+    <content><![CDATA[<ul>
+<li>多抓鱼和咸鱼区别？</li>
+</ul>
+<p>咸鱼更像是一个平台，一个流量入口，对于商品的质量没有过多的把控，当然这也是一种商业模式，通过动态调整容错率，用户的信用来优化。 但是多抓鱼是负责品控的，对于什么书卖不卖有自己的逻辑，同时也会对回收的书做消毒等后期处理，提升整个交易的体验感。</p>
+<p>“可能因为多抓鱼是做书的，所以大家对我们经常有一种误解，觉得我们是一家卖情怀的公司，但事实上真不是这样的，我们是一家正经的商业公司。虽然我们的员工都很喜欢看书，也非常喜欢逛二手店，但是我们觉得，想要把一件事情做好，就一定要有一个良好的商业模式在背后支撑，这样才可以走得比较长远，而不是用爱来发电。”</p>
+<p><strong>为什么做多抓鱼</strong>？</p>
+<ul>
+<li><p>猫助自己大学期间对文化产品需求很高，同时没什么钱，于是在毕业季做起了摆摊。</p>
+</li>
+<li><p>解决交易信用，解决交易摩擦；用定价系统解决了交易效率的问题，用翻新的技术解决了交易信用的问题</p>
+</li>
+<li><p>因为我们的员工非常相信一句话：一家书店的气质是由它不卖什么书决定的</p>
+</li>
+<li><p>二手物品往往有它自己的故事，它都带着上一个主人的回忆，这也是多抓鱼名字的来源，是一个法语单词，déjà vu</p>
+</li>
+<li><p>安全感不会是你的年薪带给你的，就像曾经的我那样。安全感其实是通过你的创造带给你的</p>
+</li>
+<li><p>猫助的职业路径从搜狐-&gt;知乎-&gt;阿里，合伙创始人陈托前知乎商业产品负责人、豆瓣社区开发负责人</p>
+</li>
+</ul>
+<blockquote>
+<p>“当时的打工让我感受到很多虚无的光环，大公司的title、夸张的年薪，这些跟「你是谁」「你想在世界上做什么」完全没有关系的世俗定位让我很迷失，我很害怕失去这种定位带来的安全感。”</p>
 </blockquote>
+<p><strong>多抓鱼的定价策略</strong></p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20201228114008.png" alt=""></p>
+<ul>
+<li>确定几类书不收</li>
+<li>一开始人工判断书收不收，慢慢积累数据集，通过人工智能来判断。</li>
+<li>定价通过多抓鱼内部数据，根据市场供求关系动态变化</li>
+</ul>
+<p><strong>shownotes</strong></p>
+<p><a href="https://www.yixi.tv/h5/speech/667/" target="_blank" rel="noopener">一席采访多抓鱼CEO猫助</a></p>
+<p><a href="https://www.listennotes.com/zh-hans/podcasts/%E4%B8%89%E4%BA%94%E7%8E%AF/no26-%E8%B7%9F%E5%A4%9A%E6%8A%93%E9%B1%BC%E7%9A%84%E7%8C%AB%E5%8A%A9%E8%81%8A%E8%81%8A%E4%BA%8C%E6%89%8B%E7%94%9F%E6%84%8F%E5%92%8C%E5%88%9B%E4%B8%9A%E6%80%81%E5%BA%A6-VlHYyDs2f1p/" target="_blank" rel="noopener">三五环</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>排序二叉树转化为双向链表</title>
+    <url>/2020/05/24/pai-xu-er-cha-shu-zhuan-hua-wei-shuang-xiang-lian-biao/</url>
+    <content><![CDATA[<p>问题描述：<br>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的循环双向链表。要求不能创建任何新的节点，只能调整树中节点指针的指向。</p>
+<p>这道题目注意审题，注意双向链表的表头和表尾部是否连接，如果连接就是一个循环双向链表。</p>
 <a id="more"></a>
 
+<h3 id="循环双向链表-递归"><a href="#循环双向链表-递归" class="headerlink" title="循环双向链表+递归"></a>循环双向链表+递归</h3><p>思路上很直接，在二叉搜索树的中序遍历基础上，改变当前节点<code>root</code>指针指向，因为我们需要将<code>root-&gt;left</code> 指向前一个顺序遍历的节点，我们用一个指针<code>pre</code>表示当前节点的前一个节点。</p>
+<p>解法一<br>递归返回头节点和尾节点，注意递归传递的参数应该是引用类型(<del>不然debug搞死你。。。)</del></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        Node*head=<span class="literal">nullptr</span>,*pre=<span class="literal">nullptr</span>;</span><br><span class="line">        dfs(root,head,pre);</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root,Node*&amp;head,Node*&amp;pre)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left,head,pre);</span><br><span class="line">        <span class="comment">//cout&lt;&lt;root-&gt;val&lt;&lt;endl;</span></span><br><span class="line">        <span class="keyword">if</span>(!head)&#123;</span><br><span class="line">            head=root;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            pre-&gt;right=root;</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            pre=root;</span><br><span class="line">        &#125;</span><br><span class="line">        dfs(root-&gt;right,head,pre);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法2"><a href="#解法2" class="headerlink" title="解法2"></a>解法2</h3><p>大体和上面一样递归，但是递归的时候没有保存头节点,而是在把节点指针顺序改变好之后(实际上这个时候双链表已经建好了）通过链表的反向遍历找到头节点</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">Node*pre=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        dfs(root);</span><br><span class="line">        <span class="keyword">auto</span> head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node*root)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> ;</span><br><span class="line">        dfs(root-&gt;left);</span><br><span class="line">        root-&gt;left=pre;</span><br><span class="line">        <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">        pre=root;</span><br><span class="line">        dfs(root-&gt;right);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解法3-利用栈非递归中序遍历"><a href="#解法3-利用栈非递归中序遍历" class="headerlink" title="解法3  利用栈非递归中序遍历"></a>解法3  利用栈非递归中序遍历</h3><p>二叉搜索树的中序遍历后结果是一个有序数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function">Node* <span class="title">treeToDoublyList</span><span class="params">(Node* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!root) <span class="keyword">return</span> root;</span><br><span class="line">        <span class="built_in">stack</span>&lt;Node*&gt; stk;</span><br><span class="line">        Node*pre=<span class="literal">NULL</span>,*head=<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">while</span>(root||stk.<span class="built_in">size</span>())&#123;</span><br><span class="line">            <span class="keyword">while</span>(root)&#123;</span><br><span class="line">                stk.push(root);</span><br><span class="line">                root=root-&gt;left;</span><br><span class="line">            &#125;</span><br><span class="line">            root=stk.top();</span><br><span class="line">            stk.pop();</span><br><span class="line">            root-&gt;left=pre;</span><br><span class="line">            <span class="keyword">if</span>(pre) pre-&gt;right=root;</span><br><span class="line">            pre=root;</span><br><span class="line">            root=root-&gt;right;</span><br><span class="line">        &#125;</span><br><span class="line">        head=pre;</span><br><span class="line">        <span class="keyword">while</span>(head&amp;&amp;head-&gt;left) head=head-&gt;left;</span><br><span class="line">        head-&gt;left=pre;</span><br><span class="line">        pre-&gt;right=head;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>overload,override,overwrite小结</title>
+    <url>/2020/05/23/overload-override-overwrite-xiao-jie/</url>
+    <content><![CDATA[<h3 id="overload-override-overwrite小结"><a href="#overload-override-overwrite小结" class="headerlink" title="overload,override,overwrite小结"></a>overload,override,overwrite小结</h3><p>这几个关键字本身没有多大联系，但是因为名字上的关系,造成了一些误解，其次C++里面也没有overwrite这一说法，对应的概念应该为覆盖重写。</p>
+<a id="more"></a>
 
+<h4 id="overload"><a href="#overload" class="headerlink" title="overload"></a>overload</h4><p><strong>同一个作用域中</strong>，定义了多个函数名完全相同、参数（类型或者个数）不相同的函数</p>
+<p>如何解决命名冲突？<br>根据“作用域+返回类型+函数名+参数列表” 做name tangling。作用域指的是在一个类中定义了不同的重载函数，类本身就标识了一个作用域。</p>
+<p>不同的编译器有不同的名字修饰规则，因此很少有链接器能够处理所有编译器产生的目标代码。</p>
+<p>名字修饰还有一个很常见的点，在C++代码里面经常看到下面代码，这是为了保证条件编译的代码段按照C语言处理，即不做名字修饰。</p>
+<p>如果不加<code>extern C</code>,对下面的一些C库函数做了名字修饰，那么在C runtime libaray将导致链接错误</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">"C"</span> &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">memset</span> <span class="params">(<span class="keyword">void</span> *, <span class="keyword">int</span>, <span class="keyword">size_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>   <span class="title">strcmp</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span> <span class="params">(<span class="keyword">char</span> *, <span class="keyword">const</span> <span class="keyword">char</span> *)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>什么函数不能够被重载?</p>
+<ol>
+<li>仅仅返回类型不同，不能够做函数重载</li>
+<li>成员函数名称以及参数完全相同，仅仅其中一个是static成员函数。</li>
+<li>函数参数差别仅在于有无顶层const或volatile</li>
+</ol>
+<p>注意，用<strong>const 修饰的成员函数是重载</strong>， 因为const 用来修饰成员函数中隐含的this 指针</p>
+<p>这里就引入什么是top-level const/volatile</p>
+<blockquote>
+<p>A top-level const qualifier affects the object itself. Others are only relevant with pointers and references. </p>
+</blockquote>
+<p><code>char const x = &#39;t&#39;;</code>就是顶层常量 </p>
+<p>override 可能存在二义性</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//转型造成二义性</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">float</span>)</span></span>; </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line">function(<span class="number">3.4</span>);<span class="comment">// 转型 C++中浮点数为double </span></span><br><span class="line">function(<span class="number">34</span>);  </span><br><span class="line"></span><br><span class="line"><span class="comment">//默认形参带来的二义性v</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span>,<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> x)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of x is : "</span> &lt;&lt;x&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">function</span><span class="params">(<span class="keyword">int</span> y,<span class="keyword">int</span> z=<span class="number">12</span>)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of y is : "</span> &lt;&lt;y&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Value of z is : "</span> &lt;&lt;z&lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-override"><a href="#2-override" class="headerlink" title="2.override"></a>2.override</h4><p>子类重新改写父类声明为virtual的函数<br>有几个特点：</p>
 <ul>
-<li>谈科学研究现状</li>
+<li><p>范围不同(作用域不同)</p>
+</li>
+<li><p>函数签名完全一样(名字，常数列表)</p>
+</li>
+<li><p>基类函数必须带有virtual 关键字</p>
+<p>  C++11 中的 <code>override</code>关键字，可以显式的在派生类中声明，哪些成员函数需要被重写，如果没被重写，则编译阶段会报错</p>
+</li>
 </ul>
-<blockquote>
-<p>在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他们的野心。有一些人则完全是为了实用的目的，而将自己思考的产物献在祭坛上。如果上帝派来的天使将上面两种人从殿里驱逐出去，那么殿里显然会空旷许多，但是里面仍然会住着一批古今人物……如果殿里本来只住着前述两种人，那么如今的它就只不过是一座空木屋，只有四处攀爬的蔓草……那些得到天使青睐的人……有些古怪、沉默和孤独，除了同是不受欢迎的人之外，彼此之间少有相似之处。</p>
-</blockquote>
-<p>这不仅仅适用于科学研究领域的现状，当下计算机甚至各行各业，大部分人都谈不上真正热爱，只想讨饭吃，但是一个推动一个行业前进的可能就只是前面那1%的少数人</p>
+<h4 id="3-overwrite"><a href="#3-overwrite" class="headerlink" title="3.overwrite"></a>3.overwrite</h4><p>派生类的函数隐藏了与其同名的基类函数 ，两种情况</p>
 <ul>
-<li>谈少有人走的路</li>
+<li>派生类函数参数与基类不同，不管基类有无virtual</li>
+<li>派生类函数参数与基类相同，但是基类没有virtual</li>
 </ul>
-<blockquote>
-<p>“好像我们身后山谷里的那些人，大部分望着灵性的高峰，但是一生从来不曾攀上去过，只是听听别人的经验就已经满足，而自己不愿意花费任何心血。另一些人则是靠着有经验的向导，他们知道最安全的路，因而能够顺利到达他们的目的地。但是还有另外一批人，不但没有经验，而且不太相信别人的经验，想要走出自己的路。其中很少有人能成功，但是总有一些靠着自己的意志、运气，还有上天的恩典而做到了。那些成功的人要比别人明白，其实登山并没有唯一或是固定的路线，有多少这样的人就有多少条路。”</p>
-</blockquote>
-<p>古人之观于天地、山川、草木、虫鱼、鸟兽，往往有得，以其求思之深而无不在也。夫夷以近，则游者众；险以远，则至者少。而世之奇伟、瑰怪，非常之观，常在于险远，而人之所罕至焉，故非有志者不能至也。有志矣，不随以止也，然力不足者，亦不能至也。有志与力，而又不随以怠，至于幽暗昏惑而无物以相之，亦不能至也。然力足以至焉，于人为可讥，而在己为有悔；尽吾志也而不能至者，可以无悔矣，其孰能讥之乎？此余之所得也！</p>
-<ul>
-<li>谈教育</li>
-</ul>
-<blockquote>
-<p>这个学生最大的问题就是，因为多年来胡萝卜和鞭子的教育方式，造成了他思考上的惰性。就好像一头驴子：“如果你不打我，我就不工作。”如果没有人鞭打他，他就不会努力工作。而训练他去拉的文明的车子，很可能就会因此而走慢了一点。</p>
-</blockquote>
-<blockquote>
-<p>于是他就会回到没有分数也没有学位的学校里，这时他变了，不再为分数而来，而是为了追求真正的知识。他不需要别人强迫他去学习，他的动力来自于内在。这个时候，他就是一个自由的人，他不需要许多规章制度的督促。事实上，如果老师上课的态度松懈，他倒可能会唐突地问许多问题去督促老师。他来这儿是要学东西的，并且付了钱，那么老师们最好也不要懈怠。</p>
-</blockquote>
-<blockquote>
-<p>他真正的想法是，这些规则是作品写好之后才归纳出来的，作者不是依照这些原则来写作的。他最后终于确信，这些学生想模仿的作家，根本就没有所谓的原则，只是把他们认为对的东西写下来，然后再回头看看是否有问题，如果修辞不妥，可以再修“</p>
-</blockquote>
-<p>这一点我深以为然，写作技巧层面的东西，一开始都没有那么重要，切记不要做过早优化(<strong>premature optimization is the root of all evil</strong>)， 写作，写播客，刷题等等一开始都需要先搞起来，没有原始积累，谈技巧都是耍流氓。</p>
+<p>overwrite 是要被避免的，其行为不是我们预期的，C++11 引入override 关键字就是起这个作用的</p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://stackoverflow.com/questions/13880205/is-the-override-keyword-just-a-check-for-a-overridden-virtual-method" target="_blank" rel="noopener">override keyword’s function</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Name_mangling" target="_blank" rel="noopener">名字修饰</a></p>
+<p><a href="https://stackoverflow.com/questions/3789340/combining-c-and-c-how-does-ifdef-cplusplus-work" target="_blank" rel="noopener">extern c/c++</a></p>
 ]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
       <tags>
-        <tag>读书笔记</tag>
+        <tag>C++</tag>
       </tags>
   </entry>
   <entry>
@@ -1907,6 +1730,103 @@
       </categories>
       <tags>
         <tag>操作系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>滑动窗口小结</title>
+    <url>/2020/06/11/hua-dong-chuang-kou-xiao-jie/</url>
+    <content><![CDATA[<p>滑动窗口可以用来优化一些暴力求解问题，将时间复杂度降低到线性。</p>
+<a id="more"></a>
+
+<h4 id="76-最小覆盖子串"><a href="#76-最小覆盖子串" class="headerlink" title="76. 最小覆盖子串"></a>76. 最小覆盖子串</h4><p>给你一个字符串 S、一个字符串 T，请在字符串 S 里面找出：包含 T 所有字符的最小子串。</p>
+<p>思路</p>
+<ul>
+<li>先扫描一遍T，把对应的字符及其出现的次数存到 HashMap 中。</li>
+<li>然后开始遍历S，就把遍历到的字母对应的 HashMap 中的 value 减一，如果减1后仍大于等于0，cnt 自增1。</li>
+<li>如果 cnt 等于T串长度时，开始循环，纪录一个字串并更新最小字串值。然后将子窗口的左边界向右移，如果某个移除掉的字母是T串中不可缺少的字母(hash表中对应value&gt;0)，那么 cnt 自减1，表示此时T串并没有完全匹配。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">minWindow</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> t)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:t) <span class="built_in">map</span>[c]++;</span><br><span class="line">        <span class="keyword">int</span> len=t.size();</span><br><span class="line">        <span class="built_in">string</span> res;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;i&lt;s.size();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(--<span class="built_in">map</span>[s[i]]&gt;=<span class="number">0</span>) cnt++;</span><br><span class="line">            <span class="keyword">while</span>(cnt==len)&#123;</span><br><span class="line">                <span class="keyword">if</span>(res.empty()||res.size()&gt;i-j+<span class="number">1</span>) res=s.substr(j,i-j+<span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span>(++<span class="built_in">map</span>[s[j++]]&gt;<span class="number">0</span>) cnt--;<span class="comment">//移动左边界</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>进一步理解</strong><br>本来我们是可以开两个哈希表，这里为了节省空间，将其合并，遍历S字符串的时候，哈希表中字符出现的次数可以理解还缺多少个，就可以满足和T字符串匹配。这样一来就能很好理解在移动左边界的判断条件<code>++hash[s[j++]]&gt;0</code> 表示左边界指针移动之后，缺的个数大于0.</p>
+<h4 id="438-找到字符串中所有字母异位词"><a href="#438-找到字符串中所有字母异位词" class="headerlink" title="438. 找到字符串中所有字母异位词"></a><a href="https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">438. 找到字符串中所有字母异位词</a></h4><p>给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。</p>
+<p>字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。</p>
+<p><strong>滑动窗口</strong>  思路非常类似上一题76.最小覆盖子串</p>
+<p>这个题目的滑动窗口大小固定，因此需要先调整大小，然后添加满足条件的答案。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">findAnagrams</span><span class="params">(<span class="built_in">string</span> s, <span class="built_in">string</span> p)</span> </span>&#123;</span><br><span class="line">       <span class="built_in">unordered_map</span>&lt;<span class="keyword">char</span>,<span class="keyword">int</span>&gt; <span class="built_in">map</span>;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">auto</span> c:p) <span class="built_in">map</span>[c]++;</span><br><span class="line">       <span class="keyword">int</span> total=p.size();</span><br><span class="line">       <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; res;</span><br><span class="line">       <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>,j=<span class="number">0</span>,cnt=<span class="number">0</span>;j&lt;s.size();j++)&#123;</span><br><span class="line">           <span class="keyword">if</span>(--<span class="built_in">map</span>[s[j]]&gt;=<span class="number">0</span>) cnt++; <span class="comment">//移动右指针</span></span><br><span class="line">           <span class="comment">//移动左指针 维护窗口大小为p.size</span></span><br><span class="line">           <span class="keyword">while</span>(j-i+<span class="number">1</span>&gt;total)&#123;</span><br><span class="line">               <span class="keyword">if</span>(++<span class="built_in">map</span>[s[i++]]&gt;<span class="number">0</span>) cnt--;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">if</span>(cnt==total) res.push_back(i);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> res;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>最长上升子序列</title>
+    <url>/2020/05/27/zui-chang-shang-sheng-zi-xu-lie/</url>
+    <content><![CDATA[<p>给定一个无序的整数数组，找到其中最长上升子序列的长度。</p>
+<a id="more"></a>
+
+<h3 id="解法1-动态规划"><a href="#解法1-动态规划" class="headerlink" title="解法1.动态规划"></a>解法1.动态规划</h3><p><strong>时间复杂度O($n^2$)</strong></p>
+<p><strong>思路</strong></p>
+<p><code>f[i]</code>表示以ith字符结尾的最长上升子序列长度</p>
+<p>这道题难在状态转移的求解<br><code>f[i]=max(f[i-1],f[i-2],......)+1</code>  前提条件是 f[j]&lt;f[i] 才能构成上升子序列</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.<span class="built_in">size</span>();</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;f(n);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)&#123;</span><br><span class="line">            f[i]=<span class="number">1</span>; <span class="comment">//表示只含当前字符的序列长度</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(nums[j]&lt;nums[i]) f[i]=<span class="built_in">max</span>(f[i],f[j]+<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:f) res=<span class="built_in">max</span>(res,c);</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解法2-直接构造最长上升子序列"><a href="#解法2-直接构造最长上升子序列" class="headerlink" title="解法2  直接构造最长上升子序列"></a>解法2  直接构造最长上升子序列</h3><p>时间复杂度 $O(nlogn)$</p>
+<p>开一个辅助数组 <code>f[i]</code> 表示最长上升子序列长度为<code>i+1</code> 中最小结尾值</p>
+<p>eg. [1,2,4] ,[1,2,3]两个子序列长度都为3， 但是第一个子序列结尾值3&lt;4 ，于是 f[2]=3;</p>
+<p>这里面的思路背景是 在dp解法中  f[i]=max(f[j]+1)  nums[j] 越小 那么对nums[i]限制就越小</p>
+<p>两个最长上升子序列长度相同 那么子序列尾部值越小 越有可能构建成更加长的子序列</p>
+<p>由于构造的辅助数组一定单调上升，因此可以通过二分查找来做。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLIS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.size(),len=<span class="number">0</span>;</span><br><span class="line">        <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; f;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">auto</span> c:nums)&#123;</span><br><span class="line">            <span class="keyword">int</span> p=lower_bound(f.begin(),f.end(),c)-f.begin(); </span><br><span class="line">            <span class="keyword">if</span>(p==f.size()) f.push_back(c);<span class="comment">//查找元素比辅助数组最大值还要大</span></span><br><span class="line">            <span class="keyword">else</span> f[p]=c;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> f.size();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>最好是通过一个 toy example 来给给面试官讲这个思路。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>《禅与摩托车维修艺术》阅读笔记</title>
+    <url>/2021/01/20/shan-yu-mo-tuo-che-wei-xiu-yi-zhu/</url>
+    <content><![CDATA[<blockquote>
+<p>理性的幽灵悬浮在空中，我决定去一探究竟</p>
+</blockquote>
+<a id="more"></a>
+
+
+<ul>
+<li>谈科学研究现状</li>
+</ul>
+<blockquote>
+<p>在科学的殿堂里有许多深宅大院……有各种人住在其中，而他们住在这儿的动机也是形形色色，五花八门。有些人倾心于科学是因为有优越的智力，科学成了他们独有的活动，在其中他们得到了生动的经验，也满足了他们的野心。有一些人则完全是为了实用的目的，而将自己思考的产物献在祭坛上。如果上帝派来的天使将上面两种人从殿里驱逐出去，那么殿里显然会空旷许多，但是里面仍然会住着一批古今人物……如果殿里本来只住着前述两种人，那么如今的它就只不过是一座空木屋，只有四处攀爬的蔓草……那些得到天使青睐的人……有些古怪、沉默和孤独，除了同是不受欢迎的人之外，彼此之间少有相似之处。</p>
+</blockquote>
+<p>这不仅仅适用于科学研究领域的现状，当下计算机甚至各行各业，大部分人都谈不上真正热爱，只想讨饭吃，但是一个推动一个行业前进的可能就只是前面那1%的少数人</p>
+<ul>
+<li>谈少有人走的路</li>
+</ul>
+<blockquote>
+<p>“好像我们身后山谷里的那些人，大部分望着灵性的高峰，但是一生从来不曾攀上去过，只是听听别人的经验就已经满足，而自己不愿意花费任何心血。另一些人则是靠着有经验的向导，他们知道最安全的路，因而能够顺利到达他们的目的地。但是还有另外一批人，不但没有经验，而且不太相信别人的经验，想要走出自己的路。其中很少有人能成功，但是总有一些靠着自己的意志、运气，还有上天的恩典而做到了。那些成功的人要比别人明白，其实登山并没有唯一或是固定的路线，有多少这样的人就有多少条路。”</p>
+</blockquote>
+<p>古人之观于天地、山川、草木、虫鱼、鸟兽，往往有得，以其求思之深而无不在也。夫夷以近，则游者众；险以远，则至者少。而世之奇伟、瑰怪，非常之观，常在于险远，而人之所罕至焉，故非有志者不能至也。有志矣，不随以止也，然力不足者，亦不能至也。有志与力，而又不随以怠，至于幽暗昏惑而无物以相之，亦不能至也。然力足以至焉，于人为可讥，而在己为有悔；尽吾志也而不能至者，可以无悔矣，其孰能讥之乎？此余之所得也！</p>
+<ul>
+<li>谈教育</li>
+</ul>
+<blockquote>
+<p>这个学生最大的问题就是，因为多年来胡萝卜和鞭子的教育方式，造成了他思考上的惰性。就好像一头驴子：“如果你不打我，我就不工作。”如果没有人鞭打他，他就不会努力工作。而训练他去拉的文明的车子，很可能就会因此而走慢了一点。</p>
+</blockquote>
+<blockquote>
+<p>于是他就会回到没有分数也没有学位的学校里，这时他变了，不再为分数而来，而是为了追求真正的知识。他不需要别人强迫他去学习，他的动力来自于内在。这个时候，他就是一个自由的人，他不需要许多规章制度的督促。事实上，如果老师上课的态度松懈，他倒可能会唐突地问许多问题去督促老师。他来这儿是要学东西的，并且付了钱，那么老师们最好也不要懈怠。</p>
+</blockquote>
+<blockquote>
+<p>他真正的想法是，这些规则是作品写好之后才归纳出来的，作者不是依照这些原则来写作的。他最后终于确信，这些学生想模仿的作家，根本就没有所谓的原则，只是把他们认为对的东西写下来，然后再回头看看是否有问题，如果修辞不妥，可以再修“</p>
+</blockquote>
+<p>这一点我深以为然，写作技巧层面的东西，一开始都没有那么重要，切记不要做过早优化(<strong>premature optimization is the root of all evil</strong>)， 写作，写播客，刷题等等一开始都需要先搞起来，没有原始积累，谈技巧都是耍流氓。</p>
+]]></content>
+      <tags>
+        <tag>读书笔记</tag>
       </tags>
   </entry>
   <entry>
@@ -2108,6 +2028,117 @@
       </tags>
   </entry>
   <entry>
+    <title>理解比特币</title>
+    <url>/2021/01/25/bi-te-bi-hou-mian-de-shu-xue-yuan-li/</url>
+    <content><![CDATA[<p>关于比特币有太多的消息，关于人们赚了多少亏了多少，但是比特币到底是什么呢？想起木遥说</p>
+<blockquote>
+<p>在过去的一年里，我身边的几乎每个朋友都或多或少问过我关于比特币的问题，往往是非常初等的问题。这有点奇怪，因为比特币已经诞生了有将近十年之久，差不多跟智能手机同龄，但今天没有人还会好奇地问智能手机是什么。一个省事的解释是比特币没有像智能手机一样进入千家万户，可是反过来想，拥有一部智能手机并不会让人暴富，人们对比特币的求知欲应该成百上千倍更高才对。我觉得更本质的原因在于，比特币首先是一种知识，而知识在今天的信息网络里的传播速度正在变得越来越慢，越来越低效。</p>
+</blockquote>
+<p>20年暑期实习时候，住在一起的一个大哥就是做比特币的，我们开始每天晚上回去了聊天，聊了几天就觉得他满嘴跑火车，拿着一本社会学书在看，聊来聊去就是一些大而空的词，同样关于比特币我问道具体是啥，他也解释不不清楚。我对于比特币能不能赚钱现在兴趣不大，但是我很好奇比特币究竟是什么，他背后的基础是啥？</p>
+<p>现在把我最近学的关于比特币知识梳理下。</p>
+<a id="more"></a>
+
+<hr>
+<p>稍微查一下wiki的定义，比特币是一个去中心化，互不信任的交易验证体系。其中<strong>去中心化</strong>，<strong>trustless</strong>，这些词语其实我早就听说了，但是这对于比特币到底意味着什么呢？</p>
+<p>在介绍比特币这一种加密货币之前，我们看一下基本概念账本（ledger）和数字签名（digital signature）是啥</p>
+<h3 id="账本"><a href="#账本" class="headerlink" title="账本"></a>账本</h3><p>账本需要保证下面两点</p>
+<ol>
+<li>记录的唯一性</li>
+<li>记录的有效性</li>
+</ol>
+<p>假设四个人之间有频繁的交易往来，每次用现金结算比较麻烦，于是他们约定将所有的交易记录在一个<strong>公有的账本</strong>上，每个人都可以添加和查看这个公有账本。这个账本其实可以理解为庄家，每过一定时间庄家就去查账本，欠了钱的需要把钱补齐给庄家。</p>
+<p>当这里存在一个问题，假设B向账本添加一笔记录 “A欠B100元”(实际上应该由A来作这笔记录),此时A可能并不知情，这该怎么办呢？</p>
+<p>这里就引入了数字签名，每一个人都有一对公钥(public key)和私钥(serect key) ，密钥可能是一串256位的01字符串。私钥是必须自己保管好的，用过github的应该都知道。</p>
+<p>在现实生活中同一个人签名在不同文档上都是一样的，但是数字签名不是这样的，不同的文件内容+私钥通过加密函数能够产生不一样的签名，这样就能避免在不同文件上用同一个数字签名伪造。用符号表示就是</p>
+<p>$$<br>F(文件,私钥)=数字签名<br>$$</p>
+<p>有了数字签名之后，我们还需要验证签名的正确性</p>
+<p>$$<br>F(文件,数字签名，公钥)=True/False<br>$$</p>
+<p>有了数字签名之后账本上的一条记录可能如下</p>
+<blockquote>
+<p>A欠B100元 数字签名(01110000…..)</p>
+</blockquote>
+<p>解决了记录的有效性，还需要解决同一条交易记录唯一性问题，即给每条记录加上一个唯一的id,此时一条交易记录看起来</p>
+<blockquote>
+<p>1 A欠B100元 数字签名(01110000…..)</p>
+</blockquote>
+<p>简单总结下我们现在这个交易系统的特点</p>
+<ol>
+<li>每个人都可以向账本添加记录</li>
+<li>间隔固定时间做账本结算</li>
+<li>只有数字签名合法的交易记录才有效</li>
+</ol>
+<p>上述系统存在一个问题，如果有人到月底欠了钱，但是他又没有出现怎么办？。因此在原有系统更进一步，假设在系统初期我们每个人都向系统交一笔固定的钱，每次交易我们都去查历史记录，一旦发现这笔交易可能导致这个人收入小于支出，就认为这笔交易不合法。这样改进之后的另一个好处就是不需要做账本结算了。其次，数字货币和纸币脱离了关系(不在依赖纸币的结算)</p>
+<p>有了上边的知识，到这里我们可以给比特币做一个简单的定义，比特币就是一个共有账本，等价于所有</p>
+<p>的历史总和。</p>
+<h3 id="去中心化"><a href="#去中心化" class="headerlink" title="去中心化"></a>去中心化</h3><p>上述提到的系统设计，实际上有一个“庄家”或者叫一个中心机构，但是如果每一个人都有一份这样的账本，那么我们岂不是就不再需要中间人了么？</p>
+<p>但这带来了一个问题，按照设想<strong>每一个都有一个账本</strong>，这个账本应该是相同的，那么如何保证每笔交易以及交易顺序在每个人的账本中一样呢?</p>
+<p>这个问题实际上是整个加密货币最难的一部分，比特币是通过选择相信<strong>消耗算力资源最多的那一份账本</strong>.</p>
+<p>现在看起来比较不知所云，先放下引入一个新概念</p>
+<p><strong>哈希函数</strong></p>
+<p>以最常见的加密函数SHA256为例，输入任何文本，输出一串256位的0/1字符串，哈希函数的特点有</p>
+<ul>
+<li>对文本有任何轻微改动，计算得到哈希值都不一样</li>
+<li>哈希函数不可逆</li>
+</ul>
+<p>有了哈希函数(这个和数字签名里面的函数有啥区别？) 我们如何来看一个账本消耗的算力多少呢？</p>
+<p>在原有账本的基础上</p>
+<blockquote>
+<p>1 A欠B100元 数字签名(01110000…..)</p>
+<p>2 B欠C 100元  110000……</p>
+<p>….</p>
+</blockquote>
+<p>我们规定在这个账本的末位加上一个魔数， 使得整个账本经过哈希运算之后得到的哈希值，前30位(具体位数可以改变)都为0，我们就认为这个账本暂且是合法的。</p>
+<p>从概率的角度找到这样一个魔数，是 $1/(2^{30})$  ，并且只能够通过穷举的方式来找。所以可以认为需要很大算力，平时我们说的挖矿其实就在做这个事情。</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232949.png" alt="20210125222452-7na7m6o-image"></p>
+<p><strong>区块链( block chain)</strong>就是我们的账本，他把账本拆分成了很多小块，每一块除了有交易记录，还有前一个块的工作量证明(挖矿穷举得到的魔数)，以及当前块工作量证明。</p>
+<p><strong>区块建立者</strong></p>
+<p>可以理解为有人在全网监听所有交易记录，然后根据这些交易记录去计算魔数，一旦找到满足要求的魔数，就认为一个新的区块被建立，然后将新区块广播到全网。为了奖励这些找到魔数的人，规定给他们一定数目的比特币回报。这也就是我们说的挖矿的收入。</p>
+<p>每找到一个区块，意味整个区块链网络系统总的货币变多了。</p>
+<p><strong>系统交易员</strong></p>
+<p>对于我们不去挖矿的人，我们不需要监听交易记录，即不需要计算产生新的区块，我们需要做的就是收听被矿工挖到并且广播的新区块，并且更新我们自己拥有的一份区块链(账本）</p>
+<p>这里又产生了一个问题，即一个矿工伪造一笔交易记录，计算产生一个新的区块，同时不在全网广播，只发给特定人。在这个系统里面做假账的代价有多大？</p>
+<p>这里有个原则即</p>
+<blockquote>
+<p>人们相信他所指向的最长区块链</p>
+</blockquote>
+<p>每次矿工产生了一个新的区块，收到区块的人并不会立马将区块合并到自己的区块链中，而是观望一段时间，比如规定等五个新的区块才合并一个区块。这样即使Alice欺骗了Bob,产生了下图中上方分叉的一条链，网络中的其他矿工此时也在不停挖矿，产生新的区块，并且在向Bob广播，除非Alices的算力达到全网50%y以上，后者他产生的区块链分支就被认为是假的。</p>
+<p><img src="https://raw.githubusercontent.com/ddl-hust/imagebed/master/20210125232904.png" alt="20210125224435-4nit26o-image"></p>
+<h3 id="其他细节"><a href="#其他细节" class="headerlink" title="其他细节"></a>其他细节</h3><ol>
+<li>前面提到计算魔数，使得散列值前30位为0，这个“30位”会根据当前挖矿难度变化，系统保证大约10分钟产生一个新的区块</li>
+<li>比特币系统中的币都来自于生成新区块的奖励，币的总数目被设计为一定的，一开始挖矿生成一个区块能够得到50个比特币，过一段时间减少为25 -&gt;12.5-&gt;6.25…</li>
+<li>矿工得到的奖励还可以有每笔交易支付的小费</li>
+<li>比特币中每个区块包含的交易记录大约为2400条</li>
+</ol>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://docs.google.com/presentation/d/1Ari-Y1T1in15-RsbYMQ2rohafGMkvPCSUBbq_luZs4c/present?slide=id.g2acf3bb0d7_0_0" target="_blank" rel="noopener">ppt</a></p>
+<p><a href="https://www.blockchain.com/explorer" target="_blank" rel="noopener">比特币查询</a></p>
+<p><a href="https://www.youtube.com/watch?v=bBC-nXj3Ng4" target="_blank" rel="noopener">3blue1blown</a></p>
+<p><a href="https://www.youtube.com/watch?t=17s&v=-lNgWFbETeI&feature=youtu.be&ab_channel=ProductSchool" target="_blank" rel="noopener">google视频</a></p>
+]]></content>
+      <tags>
+        <tag>读书笔记</tag>
+        <tag>好奇</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>谁想看清尘世就应当同它保持必要的距离</title>
+    <url>/2020/11/20/shui-xiang-kan-qing-chen-shi-jiu-ying-dang-tong-ta-bao-chi-bi-yao-de-ju-chi/</url>
+    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
+<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
+<blockquote>
+<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
+</blockquote>
+<blockquote>
+<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
+</blockquote>
+<blockquote>
+<p>如果不感到自身充满力量，就不可能有爱情。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>读书</category>
+      </categories>
+  </entry>
+  <entry>
     <title>许知远-罗翔访谈记录</title>
     <url>/2020/12/29/xu-zhi-yuan-luo-xiang-fang-tan/</url>
     <content><![CDATA[<p>《十三邀》中许对罗翔的访谈，这其中看到了B站张三老师另外的一面</p>
@@ -2143,40 +2174,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>谁想看清尘世就应当同它保持必要的距离</title>
-    <url>/2020/11/20/shui-xiang-kan-qing-chen-shi-jiu-ying-dang-tong-ta-bao-chi-bi-yao-de-ju-chi/</url>
-    <content><![CDATA[<p>《树上的男爵》是一本小册子，200来页，很快就能读完。</p>
-<p>书中探讨了关于自我和集体，自我和爱情，以及为了追求一个完整的自我，所作的取舍。要有不少句子都充满哲理，引人深思。</p>
-<blockquote>
-<p>他懂得这个道理：集体会使人更强大，能突出每个人的长处，使人得到替自己办事时极难以获得的那种快乐，会为看到那么多正直、勇敢而能干的人而喜悦，为了他们值得去争取美好的东西（而在为自己而生活时，经常出现的是相反的情形，看到的是人们的另一副面孔，使你必须永远用手握住剑柄）。 这个火灾的夏季因此而成为一个不错的季节：在大家的心中有一个需要解决的共同问题，每个人都把它放在其他个人利益之前，而且从其他许多优秀人物的赞同和敬佩中得到了满足与报偿。 后来，柯希莫不得不明白，当那个共同的问题不存在之后，集体就不再像从前那么好了，做一个孤独的人更好一些，而不要当首领。</p>
-</blockquote>
-<blockquote>
-<p>真事使人回忆起许多属于过去的时光、细腻的感情、烦扰、幸福、疑惑、光荣和对自己的厌恶，而故事中砍掉了主要的东西，一切显得轻而易举。但变来变去，最后发觉自己在回头去讲自己经历过的真实生活中体验过或发生过的事情。</p>
-</blockquote>
-<blockquote>
-<p>如果不感到自身充满力量，就不可能有爱情。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>读书</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>负载均衡大量TW分析</title>
-    <url>/2020/08/23/fu-zai-jun-heng-da-liang-tw-fen-xi/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<p>背景</p>
-<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
-<p>分析思路</p>
-<ul>
-<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
-<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
-<li>调整tcp_max_tw_buckets</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
     <title>适合反复看的技术入门教程</title>
     <url>/2020/12/23/gua-he-fan-fu-kan-de-ji-zhu-ru-men-jiao-cheng/</url>
     <content><![CDATA[<a id="more"></a>
@@ -2208,15 +2205,18 @@
 ]]></content>
   </entry>
   <entry>
-    <title>hexo使用小记</title>
-    <url>/2021/11/18/hexo-shi-yong-xiao-ji/</url>
+    <title>负载均衡大量TW分析</title>
+    <url>/2020/08/23/fu-zai-jun-heng-da-liang-tw-fen-xi/</url>
     <content><![CDATA[<a id="more"></a>
 
-<ol>
-<li>在路径 hexo/blog 进行deploy g 等操作</li>
-<li>_config.yml 指定了远端git 仓库，这里没考虑备份样式等文件</li>
-<li>删掉cname ,清理浏览器缓存，直接访问github io</li>
-</ol>
+<p>背景</p>
+<p>LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait 状态连接。</p>
+<p>分析思路</p>
+<ul>
+<li>打开tcp_tw_recycle；load balancer作为中间代理应该需要开启tcp_tw_recyvle 同时需要开启tcp_timestamps</li>
+<li>设置SO_LINGER ; 只有正常的四次挥手过程才会出现time-wait。 打开so-linger同时将延时设为0，服务器发起关闭时，发送RST直接断开连接</li>
+<li>调整tcp_max_tw_buckets</li>
+</ul>
 ]]></content>
   </entry>
 </search>
