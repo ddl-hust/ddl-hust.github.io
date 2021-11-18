@@ -226,25 +226,6 @@
   </entry>
   
   <entry>
-    <title>2020年度总结</title>
-    <link href="https://hustddl.com/2021/01/06/2020-nian-du-zong-jie/"/>
-    <id>https://hustddl.com/2021/01/06/2020-nian-du-zong-jie/</id>
-    <published>2021-01-06T12:21:41.076Z</published>
-    <updated>2021-01-07T02:56:09.489Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;2020年度总结&quot;&gt;&lt;a href=&quot;#2020年度总结&quot; class=&quot;headerlink&quot; title=&quot;2020年度总结&quot;&gt;&lt;/a&gt;2020年度总结&lt;/h3&gt;&lt;p&gt;这是我的一次年度小结，从工作，读书等几个角度做了一下年终盘点。&lt;/p&gt;
-    
-    </summary>
-    
-    
-    
-      <category term="总结" scheme="https://hustddl.com/tags/%E6%80%BB%E7%BB%93/"/>
-    
-  </entry>
-  
-  <entry>
     <title>哈希专题</title>
     <link href="https://hustddl.com/2021/01/06/ha-xi/"/>
     <id>https://hustddl.com/2021/01/06/ha-xi/</id>
@@ -471,6 +452,33 @@
 
 &lt;p&gt;背景&lt;/p&gt;
 &lt;p&gt;LB集群使用了LVS做负载均衡，使用的是NAT模式对tcp 80端口进行负载均衡。因为服务器访问量比较大，所以负载均衡后面的web服务器上出现了大量的 timewait
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>tcp40ms延迟问题分析</title>
+    <link href="https://hustddl.com/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/"/>
+    <id>https://hustddl.com/2020/08/23/tcp40ms-yan-chi-wen-ti-fen-xi/</id>
+    <published>2020-08-23T06:53:50.000Z</published>
+    <updated>2020-08-23T07:07:00.659Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+
+&lt;p&gt;&lt;strong&gt;背景&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;tcp抓包发现服务端回复ack存在40ms左右延迟&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://s1.ax1x.com/2020/08/17/dmqEqK.png&quot;
         
       
     
