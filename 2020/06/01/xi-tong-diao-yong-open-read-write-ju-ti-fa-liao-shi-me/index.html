@@ -17,13 +17,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"hustddl.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"ddl-hust.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="本文主要想探究的是我们平时说的IO系统调用与inode，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="系统调用open(),read(),write()具体发了什么?">
-<meta property="og:url" content="https://hustddl.com/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/index.html">
+<meta property="og:url" content="https://ddl-hust.github.io/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/index.html">
 <meta property="og:site_name" content="DDL&#39;s homepage">
 <meta property="og:description" content="本文主要想探究的是我们平时说的IO系统调用与inode，文件系统等之间的交互，或者说，在做文件IO时候，有那些底层的数据结构参与进来。">
 <meta property="og:image" content="https://s1.ax1x.com/2020/06/01/tJimWt.png">
@@ -34,7 +34,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s1.ax1x.com/2020/06/01/tJimWt.png">
 
-<link rel="canonical" href="https://hustddl.com/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/">
+<link rel="canonical" href="https://ddl-hust.github.io/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/">
 
 
 <script id="page-configurations">
@@ -193,7 +193,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="https://hustddl.com/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/">
+    <link itemprop="mainEntityOfPage" href="https://ddl-hust.github.io/2020/06/01/xi-tong-diao-yong-open-read-write-ju-ti-fa-liao-shi-me/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
