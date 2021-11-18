@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://ddl-hust.github.io/"/>
-  <updated>2021-02-22T02:33:09.376Z</updated>
+  <updated>2021-01-25T15:30:06.090Z</updated>
   <id>https://ddl-hust.github.io/</id>
   
   <author>
@@ -15,31 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>2021年寒假小结</title>
-    <link href="https://ddl-hust.github.io/2021/02/22/2021-nian-han-jia-xiao-jie/"/>
-    <id>https://ddl-hust.github.io/2021/02/22/2021-nian-han-jia-xiao-jie/</id>
-    <published>2021-02-22T02:25:32.698Z</published>
-    <updated>2021-02-22T02:33:09.376Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;2021年寒假小结&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;把跑步当作一件正经事，寒假三周的时间基本上保持了每周35km的跑量，现在五公里平均配速pb是430，跑过的最远的距离13km。在学校大概还有三个多月时间，继续跑下去，计划不做大的改变。这也是我在跑步过程中学到的，计划是要有
-        
-      
-    
-    </summary>
-    
-    
-    
-  </entry>
   
   <entry>
     <title>理解比特币</title>
@@ -485,6 +460,29 @@
     </summary>
     
     
+    
+  </entry>
+  
+  <entry>
+    <title>socket从创建到连接过程小结</title>
+    <link href="https://ddl-hust.github.io/2020/08/08/socket-cong-chuang-jian-dao-lian-jie-guo-cheng-xiao-jie/"/>
+    <id>https://ddl-hust.github.io/2020/08/08/socket-cong-chuang-jian-dao-lian-jie-guo-cheng-xiao-jie/</id>
+    <published>2020-08-08T02:40:45.000Z</published>
+    <updated>2020-08-08T02:44:29.819Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;分析了套接字创建到连接过程中，一些关键的函数调用以及数据结构，同时分析了connect()过程中tcp三次握手状态变化。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="网络" scheme="https://ddl-hust.github.io/categories/%E7%BD%91%E7%BB%9C/"/>
+    
+    
+      <category term="socket" scheme="https://ddl-hust.github.io/tags/socket/"/>
+    
+      <category term="linux" scheme="https://ddl-hust.github.io/tags/linux/"/>
     
   </entry>
   
